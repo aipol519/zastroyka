@@ -2,4 +2,12 @@
 
 
 #include "zastroykaGameModeBase.h"
+#include "PlayerPawn.h"
+#include "GamePlayerController.h"
 
+AzastroykaGameModeBase::AzastroykaGameModeBase()
+{
+	DefaultPawnClass = APlayerPawn::StaticClass();
+	PlayerControllerClass = AGamePlayerController::StaticClass();
+
+}

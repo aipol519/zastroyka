@@ -13,5 +13,9 @@ UCLASS()
 class ZASTROYKA_API AzastroykaGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	AzastroykaGameModeBase();
+
 };
