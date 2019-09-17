@@ -14,6 +14,10 @@ class ZASTROYKA_API AGamePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+protected:
+
+	virtual void BeginPlay() override;
+
 public:
 
 	AGamePlayerController();
@@ -23,5 +27,9 @@ public:
 	FVector MouseWorldPosition;
 	FString TestOutput;
 	FHitResult HitResult;
+	int16 XTileCoord, YTileCoord;
+
+	class APaperTileMapActor* MainTilemapObject;
+	class UPaperTileMapComponent* MainTilemapComponent;
 
 };
