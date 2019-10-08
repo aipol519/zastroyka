@@ -4,10 +4,12 @@
 #include "zastroykaGameModeBase.h"
 #include "PlayerPawn.h"
 #include "GamePlayerController.h"
+#include "DefaultHUD.h"
 
 AzastroykaGameModeBase::AzastroykaGameModeBase()
 {
 	DefaultPawnClass = APlayerPawn::StaticClass();
 	PlayerControllerClass = AGamePlayerController::StaticClass();
+	HUDClass = ADefaultHUD::StaticClass();
 
 }

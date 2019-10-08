@@ -2,6 +2,7 @@
 
 
 #include "GamePlayerController.h"
+
 #include "Engine.h"
 #include "PaperTileMapActor.h"
 #include "PaperTileMapComponent.h"
@@ -40,5 +41,11 @@ void AGamePlayerController::BeginPlay()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APaperTileMapActor::StaticClass(), FoundTilemaps);
 	MainTilemapObject = Cast<APaperTileMapActor>(FoundTilemaps[0]);
 	MainTilemapComponent = MainTilemapObject->GetRenderComponent();
+
+}
+
+void AGamePlayerController::SetTickStatus(bool _TickStatus)
+{
+
 
 }

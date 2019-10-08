@@ -23,6 +23,7 @@ public:
 	AGamePlayerController();
 
 	virtual void Tick(float DeltaSeconds) override;
+	void SetTickStatus(bool _TickStatus);
 	
 	FVector MouseWorldPosition;
 	FString TestOutput;
