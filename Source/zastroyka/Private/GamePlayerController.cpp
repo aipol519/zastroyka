@@ -29,7 +29,7 @@ void AGamePlayerController::Tick(float DeltaTime)
 	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
 	TestOutput = FString::Printf(*("X: " + FString::FromInt(XTileCoord) + " Y: " + FString::FromInt(YTileCoord)));
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TestOutput);
+	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TestOutput);
 
 }
 
@@ -46,6 +46,7 @@ void AGamePlayerController::BeginPlay()
 
 void AGamePlayerController::SetTickStatus(bool _TickStatus)
 {
-
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode enabled");
+	SetActorTickEnabled(_TickStatus);
 
 }
