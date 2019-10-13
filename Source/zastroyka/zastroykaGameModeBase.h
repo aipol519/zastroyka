@@ -6,9 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "zastroykaGameModeBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ZASTROYKA_API AzastroykaGameModeBase : public AGameModeBase
 {

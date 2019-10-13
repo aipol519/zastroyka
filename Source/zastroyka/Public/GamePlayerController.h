@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "GamePlayerController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ZASTROYKA_API AGamePlayerController : public APlayerController
 {
@@ -23,14 +20,15 @@ public:
 	AGamePlayerController();
 
 	virtual void Tick(float DeltaSeconds) override;
-	void SetTickStatus(bool _TickStatus);
+
+	void EnableBuildMode();
+	void DisableBuildMode();
 	
 	FVector MouseWorldPosition;
 	FString TestOutput;
 	FHitResult HitResult;
 	int16 XTileCoord, YTileCoord;
 
-	class APaperTileMapActor* MainTilemapObject;
-	class UPaperTileMapComponent* MainTilemapComponent;
+	class ADefaultGameState* DefaultGameStateRef;
 
 };

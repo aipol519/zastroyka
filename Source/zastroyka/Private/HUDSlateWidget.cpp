@@ -4,14 +4,14 @@
 #include "HUDSlateWidget.h"
 
 #include "SlateOptMacros.h"
-#include "GamePlayerController.h"
+#include "DefaultGameState.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void HUDSlateWidget::Construct(const FArguments& InArgs)
 {
 	HUDOwner = InArgs._HUDOwnerArg;
-	PlayerController = InArgs._PlayerControllerRef;
+	DefaultGameStateRef = InArgs._DefaultGameStateArg;
 
 	ChildSlot
 		.VAlign(VAlign_Fill)
@@ -29,18 +29,25 @@ void HUDSlateWidget::Construct(const FArguments& InArgs)
 				.OnClicked(this, &HUDSlateWidget::BuildButtonClicked)
 				[
 					SNew(STextBlock)
-					.Text(FText::FromString("Enter build mode"))
+					.Text(FText::FromString("Building mode"))
 					.ColorAndOpacity(FLinearColor::Black)
-					.Font(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Bold.ttf"), 24))
+					.Font(FSlateFontInfo(FPaths::GameContentDir() / TEXT("fonts/UpheavalPro.ttf"), 24, EFontHinting::None))
 				]
 			]
-	];
+		];
 
 }
 
 FReply HUDSlateWidget::BuildButtonClicked()
 {
-	PlayerController->SetTickStatus(false);
+	if (DefaultGameStateRef->IsBuildModeEnabled)
+	{
+		DefaultGameStateRef->DisableBuildMode();
+	}
+	else
+	{
+		DefaultGameStateRef->EnableBuildMode();
+	}
 
 	return FReply::Handled();
 

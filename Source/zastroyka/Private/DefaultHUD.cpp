@@ -7,11 +7,12 @@
 #include "Widgets/SWeakWidget.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
-#include "GamePlayerController.h"
+#include "DefaultGameState.h"
 
 void ADefaultHUD::BeginPlay()
 {
-	HUDWidget = SNew(HUDSlateWidget).HUDOwnerArg(this).PlayerControllerRef(Cast<AGamePlayerController>(GetWorld()->GetFirstPlayerController()));
+	//Initializing wigdet and adding it to viewport
+	HUDWidget = SNew(HUDSlateWidget).HUDOwnerArg(this).DefaultGameStateArg(Cast<ADefaultGameState>(GetWorld()->GetGameState()));
 	GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(HUDWidget.ToSharedRef()));
 	HUDWidget->SetVisibility(EVisibility::Visible);
 

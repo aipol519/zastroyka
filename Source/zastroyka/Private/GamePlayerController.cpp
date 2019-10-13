@@ -7,6 +7,7 @@
 #include "PaperTileMapActor.h"
 #include "PaperTileMapComponent.h"
 #include "PaperTileSet.h"
+#include "DefaultGameState.h"
 
 AGamePlayerController::AGamePlayerController()
 {
@@ -17,19 +18,20 @@ AGamePlayerController::AGamePlayerController()
 	MouseWorldPosition = FVector(0.0f, 0.0f, 0.0f);
 	XTileCoord = 0;
 	YTileCoord = 0;
-
+    
 }
 
 void AGamePlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Converting mouse position to tile coordinates
 	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
 	XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
 	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
-	TestOutput = FString::Printf(*("X: " + FString::FromInt(XTileCoord) + " Y: " + FString::FromInt(YTileCoord)));
-	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TestOutput);
+	TestOutput = FString::Printf(*("X: " + FString::FromInt(XTileCoord) + " Y: " + FString::FromInt(YTileCoord) + " " + FString::FromInt(DefaultGameStateRef->XMapSize * YTileCoord + XTileCoord)));
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TestOutput);
 
 }
 
@@ -37,16 +39,7 @@ void AGamePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TArray<AActor*> FoundTilemaps;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APaperTileMapActor::StaticClass(), FoundTilemaps);
-	MainTilemapObject = Cast<APaperTileMapActor>(FoundTilemaps[0]);
-	MainTilemapComponent = MainTilemapObject->GetRenderComponent();
-
-}
-
-void AGamePlayerController::SetTickStatus(bool _TickStatus)
-{
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode enabled");
-	SetActorTickEnabled(_TickStatus);
+	//Getting instance of GameState
+	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
 
 }
