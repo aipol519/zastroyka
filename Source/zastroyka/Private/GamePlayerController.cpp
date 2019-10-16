@@ -31,7 +31,7 @@ void AGamePlayerController::Tick(float DeltaTime)
 	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
 	TestOutput = FString::Printf(*("X: " + FString::FromInt(XTileCoord) + " Y: " + FString::FromInt(YTileCoord) + " " + FString::FromInt(DefaultGameStateRef->XMapSize * YTileCoord + XTileCoord)));
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TestOutput);
+	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, TestOutput);
 
 }
 
