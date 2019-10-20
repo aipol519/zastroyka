@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "DefaultHUD.generated.h"
 
+class CameraControlSlateWidget;
 class HUDSlateWidget;
 
 UCLASS()
@@ -15,6 +16,7 @@ class ZASTROYKA_API ADefaultHUD : public AHUD
 
 public:
 
+	TSharedPtr<CameraControlSlateWidget> CameraControlWidget;
 	TSharedPtr<HUDSlateWidget> HUDWidget;
 	
 	void BeginPlay();

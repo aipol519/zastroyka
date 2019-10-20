@@ -14,6 +14,7 @@ class ZASTROYKA_API AGamePlayerController : public APlayerController
 protected:
 
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 public:
 
@@ -21,11 +22,18 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	void EnableBuildMode();
-	void DisableBuildMode();
-	
+	void RightMouseButtonDownOnce();
+	void RightMouseButtonUp();
+
+	void RightMouseButtonDownContinious(float _Value);
+
+	bool IsMouseMoving();
+
 	FVector MouseWorldPosition;
-	FString TestOutput;
+
+	FVector2D MouseStartScreenPosition;
+	FVector2D MouseCurrentScreenPosition;
+
 	FHitResult HitResult;
 	int16 XTileCoord, YTileCoord;
 

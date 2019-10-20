@@ -26,6 +26,8 @@ public:
 
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
 
+	class APlayerPawn* GetPlayerRef();
+
 	TArray<FTile*> Tiles;
 
 	int16 XMapSize, YMapSize;

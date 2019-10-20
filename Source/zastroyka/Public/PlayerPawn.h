@@ -26,4 +26,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SelectMovementDirection(int16 _MovementDirection);
+	void MoveByMouse(FVector _DirectionVector);
+	void StopMovingPlayer();
+
+	int8 XAddition, YAddition;
+	int32 VariableCoordinateX, VariableCoordinateY;
+
 };

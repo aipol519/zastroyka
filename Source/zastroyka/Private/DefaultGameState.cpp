@@ -3,6 +3,7 @@
 #include "DefaultGameState.h"
 
 #include "Engine.h"
+#include "PlayerPawn.h"
 
 ADefaultGameState::ADefaultGameState()
 {
@@ -25,6 +26,7 @@ void ADefaultGameState::BeginPlay()
 	TArray<AActor*> FoundTilemaps;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APaperTileMapActor::StaticClass(), FoundTilemaps);
 	MainTilemapComponent = Cast<APaperTileMapActor>(FoundTilemaps[0])->GetRenderComponent();
+
 	//Let tilemap can changing at runtime
 	MainTilemapComponent->MakeTileMapEditable();
 
@@ -82,4 +84,10 @@ void ADefaultGameState::DisableBuildMode()
 int16 ADefaultGameState::ConvertCoordinateToIndex(int16 _i, int16 _j)
 {
 	return (XMapSize * _i + _j);
+}
+
+//Function to get player instance
+APlayerPawn* ADefaultGameState::GetPlayerRef()
+{
+	return Cast<APlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }

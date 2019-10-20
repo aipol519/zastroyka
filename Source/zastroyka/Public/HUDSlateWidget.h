@@ -18,8 +18,8 @@ class ZASTROYKA_API HUDSlateWidget : public SCompoundWidget
 
 public:
 	void Construct(const FArguments& InArgs);
+
 	FReply BuildButtonClicked();
-	void CameraButtonHovered();
 
 	class ADefaultGameState* DefaultGameStateRef;
 
