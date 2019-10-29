@@ -5,23 +5,19 @@
 FTile::FTile()
 {
 
-
 }
 
-FTile::FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo)
+FTile::FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType)
 {
 	XTileCoord = _XTileCoord;
 	YTileCoord = _YTileCoord;
 	TileInfo = _TileInfo;
-
-	IsBuildingAllowed = true;
-
+	TileType = _TileType;
 }
 
 FPaperTileInfo FTile::GetTileInfo()
 {
 	return TileInfo;
-
 }
 
 void FTile::ChangeInBuildMode(UPaperTileMapComponent * _MainTilemapComponent, bool _BuildFlag)
@@ -31,20 +27,23 @@ void FTile::ChangeInBuildMode(UPaperTileMapComponent * _MainTilemapComponent, bo
 
 	if (_BuildFlag)
 	{
-		if (IsBuildingAllowed)
+		switch (TileType)
 		{
-			TempTileInfo.PackedTileIndex = 2;
-		}
-		else
-		{
+		case GREEN:
+			TempTileInfo.PackedTileIndex = 4;
+			break;
+		case ROAD:
 			TempTileInfo.PackedTileIndex = 3;
+			break;
+		case BUILDING_RESTRICTED:
+			TempTileInfo.PackedTileIndex = 3;
+		default:
+			break;
 		}
-		_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TempTileInfo);
 	}
 	else
 	{
 		TempTileInfo = TileInfo;
-		_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TempTileInfo);
 	}
-
+	_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TempTileInfo);
 }

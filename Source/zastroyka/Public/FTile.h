@@ -7,18 +7,20 @@
 #include "PaperTileMapActor.h"
 #include "PaperTileSet.h"
 
+enum ETileType { GREEN, ROAD, BUILDING_ALLOWED, BUILDING_RESTRICTED, BUILDING_SELECTABLE };
+
 class ZASTROYKA_API FTile
 {
 public:
 	FTile();
-	FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo);
+	FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType);
 
 	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
 
 	FPaperTileInfo GetTileInfo();
 
 	int16 XTileCoord, YTileCoord;
-	bool IsBuildingAllowed;
+	ETileType TileType;
 
 	FPaperTileInfo TileInfo;
 

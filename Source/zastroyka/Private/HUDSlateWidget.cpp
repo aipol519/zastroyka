@@ -43,14 +43,7 @@ void HUDSlateWidget::Construct(const FArguments& InArgs)
 
 FReply HUDSlateWidget::BuildButtonClicked()
 {
-	if (DefaultGameStateRef->IsBuildModeEnabled)
-	{
-		DefaultGameStateRef->DisableBuildMode();
-	}
-	else
-	{
-		DefaultGameStateRef->EnableBuildMode();
-	}
+	DefaultGameStateRef->ToggleBuildMode(!(DefaultGameStateRef->IsBuildModeEnabled));
 
 	return FReply::Handled();
 }

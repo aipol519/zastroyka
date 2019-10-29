@@ -13,6 +13,7 @@
 AGamePlayerController::AGamePlayerController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 	MouseWorldPosition = FVector(0.0f, 0.0f, 0.0f);
 
 	MouseStartScreenPosition = FVector2D(0.0f, 0.0f);
@@ -20,6 +21,8 @@ AGamePlayerController::AGamePlayerController()
 
 	XTileCoord = 0;
 	YTileCoord = 0;
+	PrevXTileCoord = 0;
+	PrevYTileCoord = 0;
 
 }
 
@@ -32,14 +35,15 @@ void AGamePlayerController::Tick(float DeltaTime)
 	XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
 	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
-	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
-	//	"X: " + 
-	//	FString::FromInt(XTileCoord) + 
-	//	" Y: " + 
-	//	FString::FromInt(YTileCoord) + 
-	//	" " + 
-	//	FString::FromInt(DefaultGameStateRef->XMapSize * YTileCoord + XTileCoord));
-
+	DefaultGameStateRef->UpdateTileMap(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
+	
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
+		"X: " + 
+		FString::FromInt(XTileCoord) + 
+		" Y: " + 
+		FString::FromInt(YTileCoord) + 
+		" " + 
+		FString::FromInt(DefaultGameStateRef->XMapSize * YTileCoord + XTileCoord));
 }
 
 void AGamePlayerController::BeginPlay()
@@ -119,13 +123,13 @@ void AGamePlayerController::RightMouseButtonDownContinious(float _Value)
 		DefaultGameStateRef->GetPlayerRef()->MoveByMouse(ResultVector);
 	}
 
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
-		/*FString::SanitizeFloat(DefaultGameStateRef->GetPlayerRef()->GetActorLocation().X) +
-		" " +
-		FString::SanitizeFloat(DefaultGameStateRef->GetPlayerRef()->GetActorLocation().Y) +
-		" " +*/
-		FString::SanitizeFloat(MouseCurrentScreenPosition.X - MouseStartScreenPosition.X) +
-		" " + 
-		FString::SanitizeFloat(MouseCurrentScreenPosition.Y - MouseStartScreenPosition.Y));
+	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
+	//	/*FString::SanitizeFloat(DefaultGameStateRef->GetPlayerRef()->GetActorLocation().X) +
+	//	" " +
+	//	FString::SanitizeFloat(DefaultGameStateRef->GetPlayerRef()->GetActorLocation().Y) +
+	//	" " +*/
+	//	FString::SanitizeFloat(MouseCurrentScreenPosition.X - MouseStartScreenPosition.X) +
+	//	" " + 
+	//	FString::SanitizeFloat(MouseCurrentScreenPosition.Y - MouseStartScreenPosition.Y));
 
 }

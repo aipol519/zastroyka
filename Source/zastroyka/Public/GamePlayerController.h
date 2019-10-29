@@ -35,7 +35,7 @@ public:
 	FVector2D MouseCurrentScreenPosition;
 
 	FHitResult HitResult;
-	int16 XTileCoord, YTileCoord;
+	int16 XTileCoord, YTileCoord, PrevXTileCoord, PrevYTileCoord;
 
 	class ADefaultGameState* DefaultGameStateRef;
 
