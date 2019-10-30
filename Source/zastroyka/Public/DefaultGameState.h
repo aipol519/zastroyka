@@ -34,8 +34,11 @@ public:
 
 	FPaperTileInfo TileInfo;
 	void UpdateTileMap(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
-	TArray<bool> BuildingMap;
+	int16 BuildingLength, BuildingWidth;
 	bool IsBuildingMapRestricted;
+
+	void Action(int16 _XTileCoord, int16 YTileCoord);
+	void PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord);
 
 	class UPaperTileMapComponent* MainTilemapComponent;
 	class UPaperTileSet* DefaultTileset;

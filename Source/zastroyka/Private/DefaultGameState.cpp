@@ -14,7 +14,8 @@ ADefaultGameState::ADefaultGameState()
 	XMapSize = 64;
 	YMapSize = 64;
 
-	BuildingMap.Init(true, 81);
+	BuildingLength = 5;
+	BuildingWidth = 5;
 	IsBuildingMapRestricted = false;
 
 	IsBuildModeEnabled = false;
@@ -82,19 +83,23 @@ void ADefaultGameState::UpdateTileMap(int16& _PrevXTileCoord, int16& _PrevYTileC
 {
 	if ((_PrevXTileCoord != _XTileCoord) || (_PrevYTileCoord != _YTileCoord))
 	{
-		for (int i = _PrevXTileCoord + 4; i > _PrevXTileCoord - 5 && i >= 0 && i < XMapSize; i--)
+		IsBuildingMapRestricted = false;
+		for (int i = _PrevXTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _PrevXTileCoord - div(BuildingWidth, 2).quot; i--)
 		{
-			for (int j = _PrevYTileCoord + 4; j > _PrevYTileCoord - 5 && j >= 0 && j < YMapSize; j--)
+			for (int j = _PrevYTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _PrevYTileCoord - div(BuildingLength, 2).quot; j--)
 			{
-				if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
+				if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 				{
-					TileInfo.PackedTileIndex = 4;
+					if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
+					{
+						TileInfo.PackedTileIndex = 4;
+					}
+					else
+					{
+						TileInfo.PackedTileIndex = 3;
+					}
+					MainTilemapComponent->SetTile(i, j, 0, TileInfo);
 				}
-				else
-				{
-					TileInfo.PackedTileIndex = 3;
-				}
-				MainTilemapComponent->SetTile(i, j, 0, TileInfo);
 			}
 		}
 
@@ -102,20 +107,26 @@ void ADefaultGameState::UpdateTileMap(int16& _PrevXTileCoord, int16& _PrevYTileC
 		_PrevYTileCoord = _YTileCoord;
 
 		TileInfo.PackedTileIndex = 2;
-		if (_XTileCoord - 4 < 0 || _XTileCoord + 5 > XMapSize || _YTileCoord - 4 < 0 || _YTileCoord + 5 > YMapSize)
+		if (((_XTileCoord - div(BuildingWidth, 2).quot) < 0) || ((_XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1) >= XMapSize) ||
+			((_YTileCoord - div(BuildingLength, 2).quot) < 0) || ((_YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1) >= YMapSize))
 		{
 			IsBuildingMapRestricted = true;
+			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Building Restricted");
 		}
 		if (!IsBuildingMapRestricted)
 		{
-			for (int i = _XTileCoord + 4; i > _XTileCoord - 5; i--)
+			for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _XTileCoord - div(BuildingWidth, 2).quot; i--)
 			{
-				for (int j = _YTileCoord + 4; j > _YTileCoord - 5; j--)
+				for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _YTileCoord - div(BuildingLength, 2).quot; j--)
 				{
 					if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType != GREEN)
 					{
 						IsBuildingMapRestricted = true;
 						break;
+					}
+					else if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
+					{
+						MainTilemapComponent->SetTile(i, j, 0, TileInfo);
 					}
 				}
 				if (IsBuildingMapRestricted)
@@ -127,25 +138,57 @@ void ADefaultGameState::UpdateTileMap(int16& _PrevXTileCoord, int16& _PrevYTileC
 		if (IsBuildingMapRestricted)
 		{
 			TileInfo.PackedTileIndex = 3;
-		}	
-
-		for (int i = 0; i < 9 && _XTileCoord + 4 - i >= 0 && _XTileCoord + 4 - i < XMapSize; i++)
-		{
-			for (int j = 0; j < 9 && _YTileCoord + 4 - j >= 0 && _YTileCoord + 4 - j < YMapSize; j++)
+			for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _XTileCoord - div(BuildingWidth, 2).quot; i--)
 			{
-				if (BuildingMap[i * 9 + j])
+				for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _YTileCoord - div(BuildingLength, 2).quot; j--)
 				{
-					MainTilemapComponent->SetTile(_XTileCoord + 4 - i, _YTileCoord + 4 - j, 0, TileInfo);
-					if (_XTileCoord + 4 - i >= 0 && _XTileCoord + 4 - i < XMapSize && _YTileCoord + 4 - j >= 0 && _YTileCoord + 4 - j < YMapSize)
+					if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 					{
-
+						MainTilemapComponent->SetTile(i, j, 0, TileInfo);
 					}
 				}
 			}
-		}
-
-		IsBuildingMapRestricted = false;
+		}	
 	}
+}
+
+void ADefaultGameState::Action(int16 _XTileCoord, int16 YTileCoord)
+{
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Action Triggered");
+	if (IsBuildModeEnabled)
+	{
+		if (!IsBuildingMapRestricted)
+		{
+			PlaceBuilding(_XTileCoord, YTileCoord);
+		}
+	}
+}
+
+void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
+{
+	for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _XTileCoord - div(BuildingWidth, 2).quot; i--)
+	{
+		for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _YTileCoord - div(BuildingLength, 2).quot; j--)
+		{
+			Tiles[ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED;
+			Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
+		}
+	}
+	for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 2; i >= _XTileCoord - div(BuildingWidth, 2).quot + 1; i += BuildingWidth + 1)
+	{
+		for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 2; j >= _YTileCoord - div(BuildingLength, 2).quot + 1; j += BuildingLength + 1)
+		{
+			if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
+			{
+				if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
+				{
+					Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
+					Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 1;
+				}
+			}
+		}
+	}
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Building Placed");
 }
 
 int16 ADefaultGameState::ConvertCoordinateToIndex(int16 _i, int16 _j)

@@ -29,6 +29,8 @@ public:
 
 	bool IsMouseMoving();
 
+	void LeftMouseButtonDownOnce();
+
 	FVector MouseWorldPosition;
 
 	FVector2D MouseStartScreenPosition;

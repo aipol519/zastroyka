@@ -37,13 +37,13 @@ void AGamePlayerController::Tick(float DeltaTime)
 
 	DefaultGameStateRef->UpdateTileMap(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
 	
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
-		"X: " + 
-		FString::FromInt(XTileCoord) + 
-		" Y: " + 
-		FString::FromInt(YTileCoord) + 
-		" " + 
-		FString::FromInt(DefaultGameStateRef->XMapSize * YTileCoord + XTileCoord));
+	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
+	//	"X: " + 
+	//	FString::FromInt(XTileCoord) + 
+	//	" Y: " + 
+	//	FString::FromInt(YTileCoord) + 
+	//	" " + 
+	//	FString::FromInt(DefaultGameStateRef->XMapSize * YTileCoord + XTileCoord));
 }
 
 void AGamePlayerController::BeginPlay()
@@ -72,6 +72,7 @@ void AGamePlayerController::SetupInputComponent()
 	InputComponent->BindAction("RightMouseButtonSingle", EInputEvent::IE_Pressed, this, &AGamePlayerController::RightMouseButtonDownOnce);
 	InputComponent->BindAction("RightMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::RightMouseButtonUp);
 
+	InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Pressed, this, &AGamePlayerController::LeftMouseButtonDownOnce);
 }
 
 bool AGamePlayerController::IsMouseMoving()
@@ -132,4 +133,9 @@ void AGamePlayerController::RightMouseButtonDownContinious(float _Value)
 	//	" " + 
 	//	FString::SanitizeFloat(MouseCurrentScreenPosition.Y - MouseStartScreenPosition.Y));
 
+}
+
+void AGamePlayerController::LeftMouseButtonDownOnce()
+{
+	DefaultGameStateRef->Action(XTileCoord, YTileCoord);
 }
