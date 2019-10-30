@@ -13,12 +13,13 @@ class ZASTROYKA_API FTile
 {
 public:
 	FTile();
-	FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType);
+	FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
 	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
 
 	FPaperTileInfo GetTileInfo();
 
+	bool IsTileConnected;
 	int16 XTileCoord, YTileCoord;
 	ETileType TileType;
 

@@ -35,7 +35,7 @@ void AGamePlayerController::Tick(float DeltaTime)
 	XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
 	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
-	DefaultGameStateRef->UpdateTileMap(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
+	DefaultGameStateRef->MoveSelectionZone(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
 	
 	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
 	//	"X: " + 

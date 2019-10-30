@@ -7,12 +7,13 @@ FTile::FTile()
 
 }
 
-FTile::FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType)
+FTile::FTile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected)
 {
 	XTileCoord = _XTileCoord;
 	YTileCoord = _YTileCoord;
 	TileInfo = _TileInfo;
 	TileType = _TileType;
+	IsTileConnected = _IsTileConnected;
 }
 
 FPaperTileInfo FTile::GetTileInfo()

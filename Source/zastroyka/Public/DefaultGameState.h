@@ -33,11 +33,15 @@ public:
 	bool IsBuildModeEnabled;
 
 	FPaperTileInfo TileInfo;
-	void UpdateTileMap(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
+	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
 	int16 BuildingLength, BuildingWidth;
 	bool IsBuildingMapRestricted;
 
-	void Action(int16 _XTileCoord, int16 YTileCoord);
+	void RefreshConnectionMap();
+	void CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord);
+	int16 temp;
+
+	void Action(int16 _XTileCoord, int16 _YTileCoord);
 	void PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord);
 
 	class UPaperTileMapComponent* MainTilemapComponent;
