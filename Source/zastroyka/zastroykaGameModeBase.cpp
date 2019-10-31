@@ -2,16 +2,21 @@
 
 
 #include "zastroykaGameModeBase.h"
+
 #include "PlayerPawn.h"
 #include "GamePlayerController.h"
 #include "DefaultHUD.h"
 #include "DefaultGameState.h"
 
+#include "UObject/ConstructorHelpers.h" 
+
 AzastroykaGameModeBase::AzastroykaGameModeBase()
 {
 	DefaultPawnClass = APlayerPawn::StaticClass();
 	PlayerControllerClass = AGamePlayerController::StaticClass();
-	HUDClass = ADefaultHUD::StaticClass();
 	GameStateClass = ADefaultGameState::StaticClass();
+
+	static ConstructorHelpers::FClassFinder<ADefaultHUD> HUDClassFinder(TEXT("/Game/blueprints/DefaultHUDBlueprint"));
+	HUDClass = HUDClassFinder.Class;
 
 }

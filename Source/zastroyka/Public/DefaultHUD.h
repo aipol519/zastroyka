@@ -18,7 +18,12 @@ public:
 
 	TSharedPtr<CameraControlSlateWidget> CameraControlWidget;
 	TSharedPtr<HUDSlateWidget> HUDWidget;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UHUDWidgetUMG> MainMenuWidgetClass;
+
+	UHUDWidgetUMG* MainMenuWidgetRef;
+
 	void BeginPlay();
 
 };
