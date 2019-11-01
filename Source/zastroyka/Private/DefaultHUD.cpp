@@ -9,7 +9,9 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
 #include "DefaultGameState.h"
+
 #include "HUDWidgetUMG.h"
+#include "CameraControlWidgetUMG.h"
 
 void ADefaultHUD::BeginPlay()
 {
@@ -24,6 +26,9 @@ void ADefaultHUD::BeginPlay()
 	//GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(HUDWidget.ToSharedRef()), 1);
 
 	//HUDWidget->SetVisibility(EVisibility::SelfHitTestInvisible);
+
+	CameraControlWidgetRef = CreateWidget<UCameraControlWidgetUMG>(GetWorld(), CameraControlWidgetClass);
+	CameraControlWidgetRef->AddToViewport();
 
 	MainMenuWidgetRef = CreateWidget<UHUDWidgetUMG>(GetWorld(), MainMenuWidgetClass);
 	MainMenuWidgetRef->AddToViewport();

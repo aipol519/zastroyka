@@ -22,7 +22,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UHUDWidgetUMG> MainMenuWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UCameraControlWidgetUMG> CameraControlWidgetClass;
+
 	UHUDWidgetUMG* MainMenuWidgetRef;
+	UCameraControlWidgetUMG* CameraControlWidgetRef;
 
 	void BeginPlay();
 

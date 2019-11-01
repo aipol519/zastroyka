@@ -66,35 +66,35 @@ void APlayerPawn::SelectMovementDirection(int16 _MovementDirection)
 	{
 	case 0:
 		XAddition = 0;
-		YAddition = -2;
+		YAddition = -6;
 		break;
 	case 1:
-		XAddition = -2;
-		YAddition = -2;
+		XAddition = -4;
+		YAddition = -4;
 		break;
 	case 2:
-		XAddition = -2;
+		XAddition = -6;
 		YAddition = 0;
 		break;
 	case 3:
-		XAddition = -2;
-		YAddition = 2;
+		XAddition = -6;
+		YAddition = 6;
 		break;
 	case 4:
 		XAddition = 0;
-		YAddition = 2;
+		YAddition = 6;
 		break;
 	case 5:
-		XAddition = 2;
-		YAddition = 2;
+		XAddition = 4;
+		YAddition = 4;
 		break;
 	case 6:
-		XAddition = 2;
+		XAddition = 6;
 		YAddition = 0;
 		break;
 	case 7:
-		XAddition = 2;
-		YAddition = -2;
+		XAddition = 6;
+		YAddition = -6;
 		break;
 	default:
 		break;
