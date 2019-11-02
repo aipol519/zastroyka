@@ -8,6 +8,8 @@
 
 #include "Engine.h"
 #include "DefaultGameState.h"
+#include "DefaultHUD.h"
+#include "ShopWidgetUMG.h"
 
 void UHUDWidgetUMG::NativeConstruct()
 {
@@ -23,7 +25,13 @@ void UHUDWidgetUMG::NativeConstruct()
 
 void UHUDWidgetUMG::BuildButtonClicked()
 {
-	BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
-	DefaultGameStateRef->ToggleBuildMode(!(DefaultGameStateRef->IsBuildModeEnabled));
+	if (!ShopWidgetRef->IsAnimationPlaying(ShopWidgetRef->ShopBorderAnimation))
+	{
+		DefaultGameStateRef->IsBuildModeEnabled ?
+			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Reverse) :
+			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
 
+		BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
+		DefaultGameStateRef->ToggleBuildMode(!(DefaultGameStateRef->IsBuildModeEnabled));
+	}
 }

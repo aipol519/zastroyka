@@ -72,7 +72,7 @@ void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 	IsBuildModeEnabled = _IsBuildModeEnabled;
 	(IsBuildModeEnabled) ? (GetPlayerRef()->GetController()->SetActorTickEnabled(true)) : (GetPlayerRef()->GetController()->SetActorTickEnabled(false));
 	
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
+	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
 	
 	for (FTile* CurrentTile : Tiles)
 	{

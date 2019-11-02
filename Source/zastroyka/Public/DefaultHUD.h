@@ -20,13 +20,17 @@ public:
 	TSharedPtr<HUDSlateWidget> HUDWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<class UHUDWidgetUMG> MainMenuWidgetClass;
+	TSubclassOf<class UHUDWidgetUMG> HUDWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UCameraControlWidgetUMG> CameraControlWidgetClass;
 
-	UHUDWidgetUMG* MainMenuWidgetRef;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UShopWidgetUMG> ShopWidgetClass;
+
+	UHUDWidgetUMG* HUDWidgetRef;
 	UCameraControlWidgetUMG* CameraControlWidgetRef;
+	UShopWidgetUMG* ShopWidgetRef;
 
 	void BeginPlay();
 

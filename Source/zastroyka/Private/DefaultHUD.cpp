@@ -11,6 +11,7 @@
 #include "DefaultGameState.h"
 
 #include "HUDWidgetUMG.h"
+#include "ShopWidgetUMG.h"
 #include "CameraControlWidgetUMG.h"
 
 void ADefaultHUD::BeginPlay()
@@ -27,10 +28,14 @@ void ADefaultHUD::BeginPlay()
 
 	//HUDWidget->SetVisibility(EVisibility::SelfHitTestInvisible);
 
+	HUDWidgetRef = CreateWidget<UHUDWidgetUMG>(GetWorld(), HUDWidgetClass);
+	HUDWidgetRef->AddToViewport();
+
+	ShopWidgetRef = CreateWidget<UShopWidgetUMG>(GetWorld(), ShopWidgetClass);
+	HUDWidgetRef->ShopWidgetRef = ShopWidgetRef;
+	ShopWidgetRef->AddToViewport();
+
 	CameraControlWidgetRef = CreateWidget<UCameraControlWidgetUMG>(GetWorld(), CameraControlWidgetClass);
 	CameraControlWidgetRef->AddToViewport();
-
-	MainMenuWidgetRef = CreateWidget<UHUDWidgetUMG>(GetWorld(), MainMenuWidgetClass);
-	MainMenuWidgetRef->AddToViewport();
 
 }

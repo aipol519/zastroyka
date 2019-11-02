@@ -25,5 +25,7 @@ public:
 	class UTextBlock* BMB_Text;
 
 	class ADefaultGameState* DefaultGameStateRef;
+	class ADefaultHUD* DefaultHUDRef;
+	class UShopWidgetUMG* ShopWidgetRef;
 	
 };
