@@ -3,6 +3,7 @@
 #pragma once
 
 #include "FTile.h"
+#include "FBuilding.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
@@ -21,6 +22,8 @@ public:
 	ADefaultGameState();
 
 	void SetDefaultTiles();
+	void SetDefaultBuildings();
+	void SelectBuilding(FString _BuildingID);
 	void ToggleBuildMode(bool _IsBuildModeEnabled);
 
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
@@ -28,6 +31,9 @@ public:
 	class APlayerPawn* GetPlayerRef();
 
 	TArray<FTile*> Tiles;
+	TMap<FString, FBuilding*> Buildings;
+
+	FBuilding* SelectedBuilding;
 
 	int16 XMapSize, YMapSize;
 	bool IsBuildModeEnabled;

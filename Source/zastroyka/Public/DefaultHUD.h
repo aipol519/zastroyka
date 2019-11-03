@@ -6,18 +6,12 @@
 #include "GameFramework/HUD.h"
 #include "DefaultHUD.generated.h"
 
-class CameraControlSlateWidget;
-class HUDSlateWidget;
-
 UCLASS()
 class ZASTROYKA_API ADefaultHUD : public AHUD
 {
 	GENERATED_BODY()
 
 public:
-
-	TSharedPtr<CameraControlSlateWidget> CameraControlWidget;
-	TSharedPtr<HUDSlateWidget> HUDWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UHUDWidgetUMG> HUDWidgetClass;

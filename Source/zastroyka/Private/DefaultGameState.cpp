@@ -14,13 +14,14 @@ ADefaultGameState::ADefaultGameState()
 	XMapSize = 64;
 	YMapSize = 64;
 
-	BuildingLength = 5;
+	BuildingLength = 10;
 	BuildingWidth = 5;
 	IsBuildingMapRestricted = false;
 
 	IsBuildModeEnabled = false;
 
 	temp = 0;
+
 }
 
 void ADefaultGameState::BeginPlay()
@@ -36,6 +37,7 @@ void ADefaultGameState::BeginPlay()
 	MainTilemapComponent->MakeTileMapEditable();
 
 	SetDefaultTiles();
+	SetDefaultBuildings();
 
 }
 
@@ -51,9 +53,9 @@ void ADefaultGameState::SetDefaultTiles()
 
 	for (int16 i = 27; i < 37; i++)
 	{
-		for (int16 j = 29; j < 35; j++)
+		for (int16 j = 28; j < 36; j++)
 		{
-			if ((i == 27 || i == 36) && ((j == 29) || (j == 34)))
+			if ((i == 27 || i == 36) && ((j == 28) || (j == 35)))
 			{
 				Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
 			}
@@ -67,10 +69,29 @@ void ADefaultGameState::SetDefaultTiles()
 	TileInfo = Tiles[0]->TileInfo;
 }
 
+void ADefaultGameState::SetDefaultBuildings()
+{
+	Buildings.Add("1A", new FBuilding(4, 4, 250, FString("Izba")));
+	Buildings.Add("1B", new FBuilding(6, 4, 500, FString("Barak")));
+	Buildings.Add("1C", new FBuilding(2, 2, 300, FString("Larek")));
+
+}
+
+void ADefaultGameState::SelectBuilding(FString _BuildingID)
+{
+	SelectedBuilding = Buildings.FindRef(_BuildingID);
+
+	GetPlayerRef()->GetController()->SetActorTickEnabled(true);
+
+}
+
 void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 {
+	if (IsBuildModeEnabled) { GetPlayerRef()->GetController()->SetActorTickEnabled(false); }
+
 	IsBuildModeEnabled = _IsBuildModeEnabled;
-	(IsBuildModeEnabled) ? (GetPlayerRef()->GetController()->SetActorTickEnabled(true)) : (GetPlayerRef()->GetController()->SetActorTickEnabled(false));
+
+	//(IsBuildModeEnabled) ? (GetPlayerRef()->GetController()->SetActorTickEnabled(true)) : (GetPlayerRef()->GetController()->SetActorTickEnabled(false));
 	
 	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
 	
@@ -84,13 +105,13 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 {
 	if ((_PrevXTileCoord != _XTileCoord) || (_PrevYTileCoord != _YTileCoord))
 	{
-		if (!(((_XTileCoord - div(BuildingWidth, 2).quot) < 0) || ((_XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1) >= XMapSize) ||
-			((_YTileCoord - div(BuildingLength, 2).quot) < 0) || ((_YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1) >= YMapSize)))
+		if (!(((_XTileCoord - div(SelectedBuilding->XSize, 2).quot) < 0) || ((_XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1) >= XMapSize) ||
+			((_YTileCoord - div(SelectedBuilding->YSize, 2).quot) < 0) || ((_YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1) >= YMapSize)))
 		{
 			IsBuildingMapRestricted = false;
-			for (int i = _PrevXTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _PrevXTileCoord - div(BuildingWidth, 2).quot; i--)
+			for (int i = _PrevXTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _PrevXTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
 			{
-				for (int j = _PrevYTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _PrevYTileCoord - div(BuildingLength, 2).quot; j--)
+				for (int j = _PrevYTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _PrevYTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 				{
 					if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 					{
@@ -114,9 +135,9 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 
 			if (!IsBuildingMapRestricted)
 			{
-				for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _XTileCoord - div(BuildingWidth, 2).quot; i--)
+				for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
 				{
-					for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _YTileCoord - div(BuildingLength, 2).quot; j--)
+					for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 					{
 						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType != GREEN)
 						{
@@ -132,9 +153,9 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 					{
 
 						TileInfo.PackedTileIndex = 3;
-						for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _XTileCoord - div(BuildingWidth, 2).quot; i--)
+						for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
 						{
-							for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _YTileCoord - div(BuildingLength, 2).quot; j--)
+							for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 							{
 								if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 								{
@@ -168,18 +189,18 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
 {
 	TileInfo.PackedTileIndex = 3;
-	for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem - 1; i >= _XTileCoord - div(BuildingWidth, 2).quot; i--)
+	for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
 	{
-		for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem - 1; j >= _YTileCoord - div(BuildingLength, 2).quot; j--)
+		for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 		{
 			Tiles[ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED;
 			Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
 			MainTilemapComponent->SetTile(i, j, 0, TileInfo);
 		}
 	}
-	for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem; i >= _XTileCoord - div(BuildingWidth, 2).quot - 1; i -= (BuildingWidth + 1))
+	for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot - 1; i -= (SelectedBuilding->XSize + 1))
 	{
-		for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem; j >= _YTileCoord - div(BuildingLength, 2).quot - 1; j--)
+		for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot - 1; j--)
 		{
 			if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 			{
@@ -192,9 +213,9 @@ void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
 			}
 		}
 	}
-	for (int j = _YTileCoord + div(BuildingLength, 2).quot + div(BuildingLength, 2).rem; j >= _YTileCoord - div(BuildingLength, 2).quot - 1; j -= (BuildingLength + 1))
+	for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot - 1; j -= (SelectedBuilding->YSize + 1))
 	{
-		for (int i = _XTileCoord + div(BuildingWidth, 2).quot + div(BuildingWidth, 2).rem; i >= _XTileCoord - div(BuildingWidth, 2).quot - 1; i--)
+		for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot - 1; i--)
 		{
 			if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 			{
