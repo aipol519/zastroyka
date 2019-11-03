@@ -9,6 +9,31 @@
 #include "GameFramework/GameStateBase.h"
 #include "DefaultGameState.generated.h"
 
+USTRUCT()
+struct FStat
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int32 Money;
+
+	UPROPERTY()
+	int32 Population;
+
+	UPROPERTY()
+	int32 Climate;
+
+	FStat() {}
+
+	FStat(int32 _Money, int32 _Population, int32 _Climate)
+	{
+		Money = _Money;
+		Population = _Population;
+		Climate = _Climate;
+	}
+
+};
+
 UCLASS()
 class ZASTROYKA_API ADefaultGameState : public AGameStateBase
 {
@@ -32,6 +57,9 @@ public:
 
 	TArray<FTile*> Tiles;
 	TMap<FString, FBuilding*> Buildings;
+
+	FStat* CurrentStat;
+	FStat* Income;
 
 	FBuilding* SelectedBuilding;
 

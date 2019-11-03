@@ -11,8 +11,27 @@ class ZASTROYKA_API AzastroykaGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
+
+	virtual void BeginPlay() override;
+
 public:
 
 	AzastroykaGameModeBase();
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	void PlayTimeline();
+	void CalculateIncome();
+	void UpdateShopWidget();
+
+	class UHUDWidgetUMG* HUDWidgetRef;
+	class ADefaultGameState* DefaultGameStateRef;
+
+	UFUNCTION()
+	void TimelineTick();
+
+	UPROPERTY()
+	class UTimelineComponent* MainTimeline;
 
 };

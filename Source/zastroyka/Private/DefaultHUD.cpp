@@ -9,6 +9,9 @@
 #include "ShopWidgetUMG.h"
 #include "CameraControlWidgetUMG.h"
 
+#include "zastroykaGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+
 void ADefaultHUD::BeginPlay()
 {
 	Super::BeginPlay();
@@ -22,5 +25,8 @@ void ADefaultHUD::BeginPlay()
 
 	CameraControlWidgetRef = CreateWidget<UCameraControlWidgetUMG>(GetWorld(), CameraControlWidgetClass);
 	CameraControlWidgetRef->AddToViewport();
+
+	AzastroykaGameModeBase* GameModeRef = Cast<AzastroykaGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	GameModeRef->HUDWidgetRef = HUDWidgetRef;
 
 }

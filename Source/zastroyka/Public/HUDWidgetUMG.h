@@ -24,6 +24,24 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* BMB_Text;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CurrentMoney;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CurrentPopulation;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CurrentClimate;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MoneyIncome;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* PopulationIncome;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* ClimateIncome;
+
 	class ADefaultGameState* DefaultGameStateRef;
 	class ADefaultHUD* DefaultHUDRef;
 	class UShopWidgetUMG* ShopWidgetRef;

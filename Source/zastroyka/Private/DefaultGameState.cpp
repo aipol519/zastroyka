@@ -18,6 +18,9 @@ ADefaultGameState::ADefaultGameState()
 	BuildingWidth = 5;
 	IsBuildingMapRestricted = false;
 
+	CurrentStat = new FStat(1000, 0, 5);
+	Income = new FStat(-10, 1, 0);
+
 	IsBuildModeEnabled = false;
 
 	temp = 0;
