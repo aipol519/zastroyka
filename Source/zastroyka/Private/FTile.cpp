@@ -33,12 +33,8 @@ void FTile::ChangeInBuildMode(UPaperTileMapComponent * _MainTilemapComponent, bo
 		case GREEN:
 			TempTileInfo.PackedTileIndex = 4;
 			break;
-		case ROAD:
-			TempTileInfo.PackedTileIndex = 3;
-			break;
-		case BUILDING_RESTRICTED:
-			TempTileInfo.PackedTileIndex = 3;
 		default:
+			TempTileInfo.PackedTileIndex = 3;
 			break;
 		}
 	}
