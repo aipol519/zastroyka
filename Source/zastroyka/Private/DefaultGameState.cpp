@@ -50,7 +50,9 @@ void ADefaultGameState::SetDefaultTiles()
 	{
 		for (int16 j = 0; j < YMapSize; j++)
 		{
-			Tiles.Add(new FTile(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false));
+			//Tiles.Add(new ATile(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false));
+			Tiles.Add(NewObject<ATile>(this));
+			Tiles[ConvertCoordinateToIndex(i, j)]->Initialize(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false);
 		}
 	}
 
@@ -74,10 +76,16 @@ void ADefaultGameState::SetDefaultTiles()
 
 void ADefaultGameState::SetDefaultBuildings()
 {
-	Buildings.Add("1A", new FBuilding(4, 4, 250, FString("Izba")));
-	Buildings.Add("1B", new FBuilding(6, 4, 500, FString("Barak")));
-	Buildings.Add("1C", new FBuilding(2, 2, 300, FString("Larek")));
+	//Buildings.Add("1A", new ABuilding(4, 4, 250, FString("Izba")));
+	//Buildings.Add("1B", new ABuilding(6, 4, 500, FString("Barak")));
+	//Buildings.Add("1C", new ABuilding(2, 2, 300, FString("Larek")));
 
+	Buildings.Add("1A", NewObject<ABuilding>(this));
+	Buildings.Add("1B", NewObject<ABuilding>(this));
+	Buildings.Add("1C", NewObject<ABuilding>(this));
+	Buildings["1A"]->Initialize(4, 4, 250, FString("Izba"));
+	Buildings["1B"]->Initialize(6, 4, 500, FString("Barak"));
+	Buildings["1C"]->Initialize(2, 2, 300, FString("Larek"));
 }
 
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
@@ -98,7 +106,7 @@ void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 	
 	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
 	
-	for (FTile* CurrentTile : Tiles)
+	for (ATile* CurrentTile : Tiles)
 	{
 		CurrentTile->ChangeInBuildMode(MainTilemapComponent, _IsBuildModeEnabled);
 	}
@@ -240,7 +248,7 @@ void ADefaultGameState::RefreshConnectionMap()
 {
 	temp = 0;
 
-	for (FTile* CurrentTile : Tiles)
+	for (ATile* CurrentTile : Tiles)
 	{
 		CurrentTile->IsTileConnected = false;
 	}

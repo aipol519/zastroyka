@@ -3,14 +3,20 @@
 
 #include "Time.h"
 
-Time::Time(unsigned short _Day, unsigned short _Month, unsigned short _Year)
+// Sets default values
+ATime::ATime()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+ATime::ATime(unsigned short _Day, unsigned short _Month, unsigned short _Year)
 {
 	Day = _Day;
 	Month = _Month;
 	Year = _Year;
 	CurrentTimeMode = NORMAL;
-
-	//GameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
 
 	TimeTimeline = NewObject<UTimelineComponent>();
 	TimeTimeline->CreationMethod = EComponentCreationMethod::Native;
@@ -30,16 +36,28 @@ Time::Time(unsigned short _Day, unsigned short _Month, unsigned short _Year)
 	Play();
 }
 
-Time::~Time()
+// Called when the game starts or when spawned
+void ATime::BeginPlay()
 {
+	Super::BeginPlay();
+	
 }
 
-void Time::TimelineTick()
+// Called every frame
+void ATime::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+
+
+void ATime::TimelineTick()
 {
 
 }
 
-void Time::Play()
+void ATime::Play()
 {
 	switch (CurrentTimeMode)
 	{
@@ -59,7 +77,7 @@ void Time::Play()
 	}
 }
 
-void Time::Slower()
+void ATime::Slower()
 {
 	switch (CurrentTimeMode)
 	{
@@ -76,7 +94,7 @@ void Time::Slower()
 	}
 }
 
-void Time::Faster()
+void ATime::Faster()
 {
 	switch (CurrentTimeMode)
 	{

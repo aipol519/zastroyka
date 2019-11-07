@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "FTile.h"
-#include "FBuilding.h"
+#include "Tile.h"
+#include "Building.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
@@ -55,13 +55,13 @@ public:
 
 	class APlayerPawn* GetPlayerRef();
 
-	TArray<FTile*> Tiles;
-	TMap<FString, FBuilding*> Buildings;
+	TArray<ATile*> Tiles;
+	TMap<FString, ABuilding*> Buildings;
 
 	FStat* CurrentStat;
 	FStat* Income;
 
-	FBuilding* SelectedBuilding;
+	ABuilding* SelectedBuilding;
 
 	int16 XMapSize, YMapSize;
 	bool IsBuildModeEnabled;
