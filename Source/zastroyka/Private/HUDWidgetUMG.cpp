@@ -5,11 +5,11 @@
 
 #include "Button.h"
 #include "TextBlock.h"
-
 #include "Engine.h"
-#include "DefaultGameState.h"
 #include "DefaultHUD.h"
 #include "ShopWidgetUMG.h"
+#include "DefaultGameState.h"
+#include "Time.h"
 
 void UHUDWidgetUMG::NativeConstruct()
 {
@@ -21,6 +21,11 @@ void UHUDWidgetUMG::NativeConstruct()
 	//Binding event to build button clicked
 	BuildModeButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::BuildButtonClicked);
 
+	PauseButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::PauseButtonClicked);
+	SpeedUpButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SppedUpButtonClicked);
+	SpeedDownButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SpeedDownButtonClicked);
+	
+	DefaultGameStateRef->SetHUDWidgetRef(this);
 }
 
 void UHUDWidgetUMG::BuildButtonClicked()
@@ -34,4 +39,31 @@ void UHUDWidgetUMG::BuildButtonClicked()
 		BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
 		DefaultGameStateRef->ToggleBuildMode(!(DefaultGameStateRef->IsBuildModeEnabled));
 	}
+}
+
+void UHUDWidgetUMG::UpdateVisibleStat()
+{
+	CurrentMoney->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Money));
+	CurrentPopulation->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Population));
+	CurrentClimate->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Climate));
+}
+
+void UHUDWidgetUMG::UpdateVisibleIncome()
+{
+
+}
+
+void UHUDWidgetUMG::PauseButtonClicked()
+{
+	DefaultGameStateRef->CurrentTimeRef->Play();
+}
+
+void UHUDWidgetUMG::SppedUpButtonClicked()
+{
+	DefaultGameStateRef->CurrentTimeRef->Faster();
+}
+
+void UHUDWidgetUMG::SpeedDownButtonClicked()
+{
+	DefaultGameStateRef->CurrentTimeRef->Slower();
 }

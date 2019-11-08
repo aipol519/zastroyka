@@ -3,42 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "PaperTileMapComponent.h"
 #include "PaperTileMapActor.h"
 #include "PaperTileSet.h"
+#include "UObject/NoExportTypes.h"
 #include "Tile.generated.h"
 
-UENUM()
 enum ETileType { GREEN, ROAD, BUILDING_ALLOWED, BUILDING_RESTRICTED, BUILDING_SELECTABLE };
 
 UCLASS()
-class ZASTROYKA_API ATile : public AActor
+class ZASTROYKA_API UTile : public UObject
 {
 	GENERATED_BODY()
-	
-public:	
+public:
 	// Sets default values for this actor's properties
-	ATile();
+	UTile();
 	//ATile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
 	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
 
 	FPaperTileInfo TileInfo;
 	FPaperTileInfo GetTileInfo();
+
 	void Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
+	FPaperTileInfo SetTileInfoIndex(int _Index);
+
 	bool IsTileConnected;
-	int16 XTileCoord, YTileCoord;
-	UPROPERTY()
+	int16 XTileCoord;
+	int16 YTileCoord;
+
 	TEnumAsByte<ETileType> TileType;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

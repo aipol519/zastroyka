@@ -3,38 +3,11 @@
 
 #include "Tile.h"
 
-// Sets default values
-ATile::ATile()
+UTile::UTile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 }
 
-//ATile::ATile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected)
-//{
-//	XTileCoord = _XTileCoord;
-//	YTileCoord = _YTileCoord;
-//	TileInfo = _TileInfo;
-//	TileType = _TileType;
-//	IsTileConnected = _IsTileConnected;
-//}
-
-// Called when the game starts or when spawned
-void ATile::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ATile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void ATile::Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected)
+void UTile::Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected)
 {
 	XTileCoord = _XTileCoord;
 	YTileCoord = _YTileCoord;
@@ -43,12 +16,12 @@ void ATile::Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _Til
 	IsTileConnected = _IsTileConnected;
 }
 
-FPaperTileInfo ATile::GetTileInfo()
+FPaperTileInfo UTile::GetTileInfo()
 {
 	return TileInfo;
 }
 
-void ATile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
+void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
 {
 	FPaperTileInfo TempTileInfo;
 	TempTileInfo.TileSet = TileInfo.TileSet;
@@ -70,4 +43,9 @@ void ATile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, boo
 		TempTileInfo = TileInfo;
 	}
 	_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TempTileInfo);
+}
+
+FPaperTileInfo UTile::SetTileInfoIndex(int _Index)
+{
+	return GetTileInfo();
 }

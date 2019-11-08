@@ -27,6 +27,7 @@ public:
 
 	class UHUDWidgetUMG* HUDWidgetRef;
 	class ADefaultGameState* DefaultGameStateRef;
+	class UTime* CurrentTimeRef;
 
 	UFUNCTION()
 	void TimelineTick();

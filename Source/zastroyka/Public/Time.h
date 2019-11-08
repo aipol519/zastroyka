@@ -3,43 +3,39 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Components/TimelineComponent.h"
+#include "UObject/NoExportTypes.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 #include "Time.generated.h"
 
-
-UENUM()
 enum TimeMode { PAUSE, SLOW, NORMAL, FAST };
 
 UCLASS()
-class ZASTROYKA_API ATime : public AActor
+class ZASTROYKA_API UTime : public UObject
 {
 	GENERATED_BODY()
-	
-public:	
 	// Sets default values for this actor's properties
-	ATime();
-	ATime(unsigned short _Day, unsigned short _Month, unsigned short _Year);
+	UTime();
+public:
 	void Play();
 	void Faster();
 	void Slower();
-	UPROPERTY()
+
+	UFUNCTION()
+	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
+	UFUNCTION()
+	void Initialize();
+
 	TEnumAsByte<TimeMode> CurrentTimeMode;
 	unsigned short Day, Month, Year;
 
 	UPROPERTY()
 	class UTimelineComponent* TimeTimeline;
 
+	FTimerHandle TimeTimer;
+	
+	UFUNCTION()
 	void TimelineTick();
 
-	class ADefaultGameState* GameStateRef;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	class ADefaultGameState* DefaultGameStateRef;
+	class UHUDWidgetUMG* HUDWidgetRef;
 };

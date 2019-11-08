@@ -9,11 +9,14 @@
 #include "DefaultGameState.h"
 
 #include "UObject/ConstructorHelpers.h" 
-
 #include "Components/TimelineComponent.h"
 #include "Engine.h"
 #include "HUDWidgetUMG.h"
 #include "TextBlock.h"
+
+#include "Tile.h"
+#include "Time.h"
+#include "Building.h"
 
 AzastroykaGameModeBase::AzastroykaGameModeBase()
 {
@@ -23,32 +26,36 @@ AzastroykaGameModeBase::AzastroykaGameModeBase()
 
 	static ConstructorHelpers::FClassFinder<ADefaultHUD> HUDClassFinder(TEXT("/Game/blueprints/DefaultHUDBlueprint"));
 	HUDClass = HUDClassFinder.Class;
+	
+	//MainTimeline = NewObject<UTimelineComponent>(this, FName("MainTimeline"));
+	//MainTimeline->CreationMethod = EComponentCreationMethod::Native;
 
-	MainTimeline = NewObject<UTimelineComponent>(this, FName("MainTimeline"));
-	MainTimeline->CreationMethod = EComponentCreationMethod::Native;
+	//MainTimeline->SetLooping(true);
+	//MainTimeline->SetTimelineLength(1.0f);
+	//MainTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_TimelineLength);
 
-	MainTimeline->SetLooping(true);
-	MainTimeline->SetTimelineLength(1.0f);
-	MainTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_TimelineLength);
+	//FOnTimelineEvent TimelineEvent;
+	//TimelineEvent.BindUFunction(this, FName("TimelineTick"));
 
-	FOnTimelineEvent TimelineEvent;
-	TimelineEvent.BindUFunction(this, FName("TimelineTick"));
+	//MainTimeline->AddEvent(0.0f, TimelineEvent);
 
-	MainTimeline->AddEvent(0.0f, TimelineEvent);
-
-	MainTimeline->SetPlaybackPosition(0.0f, false);
-	MainTimeline->SetPlayRate(1.0f);
+	//MainTimeline->SetPlaybackPosition(0.0f, false);
+	//MainTimeline->SetPlayRate(1.0f);
 
 }
 
 void AzastroykaGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	//DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	//DefaultGameStateRef->CurrentTimeRef = NewObject<UTime>(this);
+	//DefaultGameStateRef->CurrentTimeRef->Initialize();
+	//DefaultGameStateRef->HUDWidgetRef = HUDWidgetRef;
+	//PlayTimeline();
+	Cast<ADefaultGameState>(GetWorld()->GetGameState())->GameModeBaseRef = this;
+	Cast<ADefaultGameState>(GetWorld()->GetGameState())->InitializeTime();
 	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
-
-	PlayTimeline();
-
+	//PlayTimeline();
 }
 
 void AzastroykaGameModeBase::Tick(float DeltaSeconds)
@@ -76,8 +83,8 @@ void AzastroykaGameModeBase::CalculateIncome()
 	DefaultGameStateRef->CurrentStat->Money += DefaultGameStateRef->Income->Money;
 	DefaultGameStateRef->CurrentStat->Population += DefaultGameStateRef->Income->Population;
 	DefaultGameStateRef->CurrentStat->Climate += DefaultGameStateRef->Income->Climate;
-
-	UpdateShopWidget();
+	Cast<ADefaultGameState>(GetWorld()->GetGameState())->HUDWidgetRef->UpdateVisibleStat();
+	//UpdateShopWidget();
 }
 
 void AzastroykaGameModeBase::UpdateShopWidget()

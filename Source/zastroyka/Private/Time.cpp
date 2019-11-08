@@ -2,110 +2,112 @@
 
 
 #include "Time.h"
+#include "HUDWidgetUMG.h"
+#include "Components/TimelineComponent.h"
+#include "DefaultGameState.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
-ATime::ATime()
+UTime::UTime()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-ATime::ATime(unsigned short _Day, unsigned short _Month, unsigned short _Year)
+void UTime::TimelineTick()
 {
-	Day = _Day;
-	Month = _Month;
-	Year = _Year;
+	DefaultGameStateRef->UpdateStat();
+	HUDWidgetRef->UpdateVisibleStat();
+}
+
+void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
+{
+
+
+	HUDWidgetRef = _HUDWidgetRef;
+	TimelineTick();
+}
+
+void UTime::Initialize()
+{
+	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	Day = 1;
+	Month = 1;
+	Year = 1950;
 	CurrentTimeMode = NORMAL;
 
-	TimeTimeline = NewObject<UTimelineComponent>();
-	TimeTimeline->CreationMethod = EComponentCreationMethod::Native;
-
-	TimeTimeline->SetLooping(true);
-	TimeTimeline->SetTimelineLength(1.0f);
-	TimeTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_TimelineLength);
-
-	FOnTimelineEvent TimelineEvent;
-	TimelineEvent.BindUFunction(TimeTimeline, FName("TimelineTick"));
-
-	TimeTimeline->AddEvent(0.0f, TimelineEvent);
-
-	TimeTimeline->SetPlaybackPosition(0.0f, false);
-	TimeTimeline->SetPlayRate(1.0f);
-
-	Play();
-}
-
-// Called when the game starts or when spawned
-void ATime::BeginPlay()
-{
-	Super::BeginPlay();
+	GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
 	
+	//TimeTimeline = NewObject<UTimelineComponent>(this, FName("TimeTimeLine"));
+	//TimeTimeline->CreationMethod = EComponentCreationMethod::Native;
+
+	//TimeTimeline->SetLooping(true);
+	//TimeTimeline->SetTimelineLength(1.0f);
+	//TimeTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_TimelineLength);
+
+	//FOnTimelineEvent TimelineEvent;
+	//TimelineEvent.BindUFunction(UGameplayStatics::GetGameMode(GetWorld()), FName("TimelineTick"));
+
+	//TimeTimeline->AddEvent(0.0f, TimelineEvent);
+
+	//TimeTimeline->SetPlaybackPosition(0.0f, false);
+	//TimeTimeline->SetPlayRate(1.0f);
+	//
+	//
+	//TimeTimeline->PlayFromStart();
 }
 
-// Called every frame
-void ATime::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 
-
-void ATime::TimelineTick()
-{
-
-}
-
-void ATime::Play()
+void UTime::Play()
 {
 	switch (CurrentTimeMode)
 	{
 	case NORMAL:
 		CurrentTimeMode = PAUSE;
-		TimeTimeline->Stop();
+		GetWorld()->GetTimerManager().ClearTimer(TimeTimer);
 		break;
 	case SLOW:
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		TimeTimeline->SetPlayRate(1.0f);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
 		break;
 	case PAUSE:
 		CurrentTimeMode = NORMAL;
-		TimeTimeline->Play();
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
 		break;
 	}
 }
 
-void ATime::Slower()
+void UTime::Slower()
 {
 	switch (CurrentTimeMode)
 	{
 	case SLOW:
 		CurrentTimeMode = NORMAL;
-		TimeTimeline->SetPlayRate(1.0f);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case FAST:
 		CurrentTimeMode = SLOW;
-		TimeTimeline->SetPlayRate(0.3f);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 3.0f, true);
 	default:
 		break;
 	}
 }
 
-void ATime::Faster()
+void UTime::Faster()
 {
 	switch (CurrentTimeMode)
 	{
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		TimeTimeline->SetPlayRate(1.0f);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case SLOW:
 		CurrentTimeMode = FAST;
-		TimeTimeline->SetPlayRate(3.0f);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 0.3f, true);
 	default:
 		break;
 	}

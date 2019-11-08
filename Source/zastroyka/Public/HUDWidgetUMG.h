@@ -18,6 +18,21 @@ public:
 	UFUNCTION()
 	void BuildButtonClicked();
 
+	UFUNCTION()
+	void PauseButtonClicked();
+
+	UFUNCTION()
+	void SppedUpButtonClicked();
+
+	UFUNCTION()
+	void SpeedDownButtonClicked();
+
+	UFUNCTION()
+	void UpdateVisibleStat();
+
+	UFUNCTION()
+	void UpdateVisibleIncome();
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BuildModeButton;
 
@@ -42,6 +57,15 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ClimateIncome;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* PauseButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* SpeedUpButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* SpeedDownButton;
+	
 	class ADefaultGameState* DefaultGameStateRef;
 	class ADefaultHUD* DefaultHUDRef;
 	class UShopWidgetUMG* ShopWidgetRef;

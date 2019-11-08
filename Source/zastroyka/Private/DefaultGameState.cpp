@@ -3,7 +3,15 @@
 #include "DefaultGameState.h"
 
 #include "Engine.h"
+#include "Tile.h"
+#include "Time.h"
+#include "Building.h"
 #include "PlayerPawn.h"
+#include "GamePlayerController.h"
+#include "DefaultHUD.h"
+#include "Kismet/GameplayStatics.h"
+#include "zastroykaGameModeBase.h"
+#include "HUDWidgetUMG.h"
 
 ADefaultGameState::ADefaultGameState()
 {
@@ -24,7 +32,6 @@ ADefaultGameState::ADefaultGameState()
 	IsBuildModeEnabled = false;
 
 	temp = 0;
-
 }
 
 void ADefaultGameState::BeginPlay()
@@ -41,7 +48,19 @@ void ADefaultGameState::BeginPlay()
 
 	SetDefaultTiles();
 	SetDefaultBuildings();
+	//InitializeTime();
+}
 
+void ADefaultGameState::InitializeTime()
+{
+	CurrentTimeRef = NewObject<UTime>(this);
+	CurrentTimeRef->Initialize();
+}
+
+void ADefaultGameState::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
+{
+	HUDWidgetRef = _HUDWidgetRef;
+	CurrentTimeRef->SetHUDWidgetRef(_HUDWidgetRef);
 }
 
 void ADefaultGameState::SetDefaultTiles()
@@ -51,7 +70,7 @@ void ADefaultGameState::SetDefaultTiles()
 		for (int16 j = 0; j < YMapSize; j++)
 		{
 			//Tiles.Add(new ATile(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false));
-			Tiles.Add(NewObject<ATile>(this));
+			Tiles.Add(NewObject<UTile>());
 			Tiles[ConvertCoordinateToIndex(i, j)]->Initialize(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false);
 		}
 	}
@@ -71,7 +90,7 @@ void ADefaultGameState::SetDefaultTiles()
 		}
 	}
 
-	TileInfo = Tiles[0]->TileInfo;
+	//TileInfo = Tiles[0]->TileInfo;
 }
 
 void ADefaultGameState::SetDefaultBuildings()
@@ -88,9 +107,16 @@ void ADefaultGameState::SetDefaultBuildings()
 	Buildings["1C"]->Initialize(2, 2, 300, FString("Larek"));
 }
 
+void ADefaultGameState::UpdateStat()
+{
+	CurrentStat->Money += Income->Money;
+	CurrentStat->Population += Income->Population;
+	CurrentStat->Climate += Income->Climate;
+}
+
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
-	SelectedBuilding = Buildings.FindRef(_BuildingID);
+	SelectedBuilding = Buildings[_BuildingID];
 
 	GetPlayerRef()->GetController()->SetActorTickEnabled(true);
 
@@ -102,11 +128,11 @@ void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 
 	IsBuildModeEnabled = _IsBuildModeEnabled;
 
-	//(IsBuildModeEnabled) ? (GetPlayerRef()->GetController()->SetActorTickEnabled(true)) : (GetPlayerRef()->GetController()->SetActorTickEnabled(false));
+	(IsBuildModeEnabled) ? (GetPlayerRef()->GetController()->SetActorTickEnabled(true)) : (GetPlayerRef()->GetController()->SetActorTickEnabled(false));
 	
-	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
 	
-	for (ATile* CurrentTile : Tiles)
+	for (UTile* CurrentTile : Tiles)
 	{
 		CurrentTile->ChangeInBuildMode(MainTilemapComponent, _IsBuildModeEnabled);
 	}
@@ -248,7 +274,7 @@ void ADefaultGameState::RefreshConnectionMap()
 {
 	temp = 0;
 
-	for (ATile* CurrentTile : Tiles)
+	for (UTile* CurrentTile : Tiles)
 	{
 		CurrentTile->IsTileConnected = false;
 	}

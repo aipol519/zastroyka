@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "Tile.h"
-#include "Building.h"
-
 #include "CoreMinimal.h"
+#include "PaperTileMapComponent.h"
+#include "PaperTileMapActor.h"
+#include "PaperTileSet.h"
 #include "GameFramework/GameStateBase.h"
 #include "DefaultGameState.generated.h"
 
@@ -31,7 +31,6 @@ struct FStat
 		Population = _Population;
 		Climate = _Climate;
 	}
-
 };
 
 UCLASS()
@@ -51,17 +50,21 @@ public:
 	void SelectBuilding(FString _BuildingID);
 	void ToggleBuildMode(bool _IsBuildModeEnabled);
 
+	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
+	void InitializeTime();
+
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
 
 	class APlayerPawn* GetPlayerRef();
 
-	TArray<ATile*> Tiles;
-	TMap<FString, ABuilding*> Buildings;
+	TArray<class UTile*> Tiles;
+	TMap<FString, class ABuilding*> Buildings;
 
 	FStat* CurrentStat;
 	FStat* Income;
+	void UpdateStat();
 
-	ABuilding* SelectedBuilding;
+	class ABuilding* SelectedBuilding;
 
 	int16 XMapSize, YMapSize;
 	bool IsBuildModeEnabled;
@@ -78,7 +81,11 @@ public:
 	void Action(int16 _XTileCoord, int16 _YTileCoord);
 	void PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord);
 
-	class UPaperTileMapComponent* MainTilemapComponent;
-	class UPaperTileSet* DefaultTileset;
-	
+	UPaperTileMapComponent* MainTilemapComponent;
+	UPaperTileSet* DefaultTileset;
+
+	class AzastroykaGameModeBase* GameModeBaseRef;
+	class UTime* CurrentTimeRef;
+	class UHUDWidgetUMG* HUDWidgetRef;
+
 };
