@@ -69,9 +69,8 @@ public:
 	int16 XMapSize, YMapSize;
 	bool IsBuildModeEnabled;
 
-	FPaperTileInfo TileInfo;
+	FPaperTileInfo ExtraTileInfo;
 	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
-	int16 BuildingLength, BuildingWidth;
 	bool IsBuildingMapRestricted;
 
 	void RefreshConnectionMap();

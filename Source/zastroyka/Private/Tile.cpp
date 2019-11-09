@@ -23,26 +23,39 @@ FPaperTileInfo UTile::GetTileInfo()
 
 void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
 {
-	FPaperTileInfo TempTileInfo;
-	TempTileInfo.TileSet = TileInfo.TileSet;
+	//FPaperTileInfo TempTileInfo;
+	//TempTileInfo.TileSet = TileInfo.TileSet;
 
 	if (_BuildFlag)
 	{
 		switch (TileType)
 		{
 		case GREEN:
-			TempTileInfo.PackedTileIndex = 4;
+			TileInfo.PackedTileIndex = 4;
+			//TempTileInfo.PackedTileIndex = 4;
 			break;
 		default:
-			TempTileInfo.PackedTileIndex = 3;
+			TileInfo.PackedTileIndex = 3;
+			//TempTileInfo.PackedTileIndex = 3;
 			break;
 		}
 	}
 	else
 	{
-		TempTileInfo = TileInfo;
+		switch (TileType)
+		{
+		case GREEN:
+		case BUILDING_RESTRICTED:
+			TileInfo.PackedTileIndex = 0;
+			//TempTileInfo.PackedTileIndex = 4;
+			break;
+		case ROAD:
+			TileInfo.PackedTileIndex = 1;
+			break;
+		}
+		//TempTileInfo = TileInfo;
 	}
-	_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TempTileInfo);
+	_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TileInfo);
 }
 
 FPaperTileInfo UTile::SetTileInfoIndex(int _Index)

@@ -20,21 +20,15 @@ public:
 	void Faster();
 	void Slower();
 
-	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
-	UFUNCTION()
 	void Initialize();
 
 	TEnumAsByte<TimeMode> CurrentTimeMode;
 	unsigned short Day, Month, Year;
 
-	UPROPERTY()
-	class UTimelineComponent* TimeTimeline;
-
 	FTimerHandle TimeTimer;
 	
-	UFUNCTION()
-	void TimelineTick();
+	void TimeTick();
 
 	class ADefaultGameState* DefaultGameStateRef;
 	class UHUDWidgetUMG* HUDWidgetRef;

@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DefaultGameState.h"
-
 #include "Engine.h"
 #include "Tile.h"
 #include "Time.h"
@@ -22,8 +21,6 @@ ADefaultGameState::ADefaultGameState()
 	XMapSize = 64;
 	YMapSize = 64;
 
-	BuildingLength = 10;
-	BuildingWidth = 5;
 	IsBuildingMapRestricted = false;
 
 	CurrentStat = new FStat(1000, 0, 5);
@@ -48,7 +45,7 @@ void ADefaultGameState::BeginPlay()
 
 	SetDefaultTiles();
 	SetDefaultBuildings();
-	//InitializeTime();
+	InitializeTime();
 }
 
 void ADefaultGameState::InitializeTime()
@@ -70,7 +67,7 @@ void ADefaultGameState::SetDefaultTiles()
 		for (int16 j = 0; j < YMapSize; j++)
 		{
 			//Tiles.Add(new ATile(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false));
-			Tiles.Add(NewObject<UTile>());
+			Tiles.Add(NewObject<UTile>(this));
 			Tiles[ConvertCoordinateToIndex(i, j)]->Initialize(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false);
 		}
 	}
@@ -90,7 +87,7 @@ void ADefaultGameState::SetDefaultTiles()
 		}
 	}
 
-	//TileInfo = Tiles[0]->TileInfo;
+	ExtraTileInfo = Tiles[0]->TileInfo;
 }
 
 void ADefaultGameState::SetDefaultBuildings()
@@ -124,11 +121,11 @@ void ADefaultGameState::SelectBuilding(FString _BuildingID)
 
 void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 {
+	CurrentTimeRef->Play();
+	
 	if (IsBuildModeEnabled) { GetPlayerRef()->GetController()->SetActorTickEnabled(false); }
 
 	IsBuildModeEnabled = _IsBuildModeEnabled;
-
-	(IsBuildModeEnabled) ? (GetPlayerRef()->GetController()->SetActorTickEnabled(true)) : (GetPlayerRef()->GetController()->SetActorTickEnabled(false));
 	
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
 	
@@ -154,13 +151,13 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 					{
 						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
 						{
-							TileInfo.PackedTileIndex = 4;
+							ExtraTileInfo.PackedTileIndex = 4;
 						}
 						else
 						{
-							TileInfo.PackedTileIndex = 3;
+							ExtraTileInfo.PackedTileIndex = 3;
 						}
-						MainTilemapComponent->SetTile(i, j, 0, TileInfo);
+						MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 					}
 				}
 			}
@@ -168,7 +165,7 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 			_PrevXTileCoord = _XTileCoord;
 			_PrevYTileCoord = _YTileCoord;
 
-			TileInfo.PackedTileIndex = 2;
+			ExtraTileInfo.PackedTileIndex = 2;
 
 			if (!IsBuildingMapRestricted)
 			{
@@ -183,20 +180,20 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 						}
 						else if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 						{
-							MainTilemapComponent->SetTile(i, j, 0, TileInfo);
+							MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 						}
 					}
 					if (IsBuildingMapRestricted)
 					{
 
-						TileInfo.PackedTileIndex = 3;
+						ExtraTileInfo.PackedTileIndex = 3;
 						for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
 						{
 							for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 							{
 								if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 								{
-									MainTilemapComponent->SetTile(i, j, 0, TileInfo);
+									MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 								}
 							}
 						}
@@ -225,14 +222,14 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 
 void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
 {
-	TileInfo.PackedTileIndex = 3;
+	ExtraTileInfo.PackedTileIndex = 3;
 	for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
 	{
 		for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 		{
 			Tiles[ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED;
 			Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
-			MainTilemapComponent->SetTile(i, j, 0, TileInfo);
+			MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 		}
 	}
 	for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot - 1; i -= (SelectedBuilding->XSize + 1))
@@ -245,7 +242,7 @@ void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
 				{
 					Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
 					Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 1;
-					MainTilemapComponent->SetTile(i, j, 0, TileInfo);
+					MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 				}
 			}
 		}
@@ -260,7 +257,7 @@ void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
 				{
 					Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
 					Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 1;
-					MainTilemapComponent->SetTile(i, j, 0, TileInfo);
+					MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 				}
 			}
 		}

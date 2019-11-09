@@ -1,20 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Time.h"
 #include "HUDWidgetUMG.h"
-#include "Components/TimelineComponent.h"
 #include "DefaultGameState.h"
-#include "Kismet/GameplayStatics.h"
-
 
 // Sets default values
 UTime::UTime()
 {
-
+	HUDWidgetRef = nullptr;
+	DefaultGameStateRef = nullptr;
 }
 
-void UTime::TimelineTick()
+void UTime::TimeTick()
 {
 	DefaultGameStateRef->UpdateStat();
 	HUDWidgetRef->UpdateVisibleStat();
@@ -22,10 +19,9 @@ void UTime::TimelineTick()
 
 void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
 {
-
-
 	HUDWidgetRef = _HUDWidgetRef;
-	TimelineTick();
+	HUDWidgetRef->UpdateVisibleStat();
+	HUDWidgetRef->UpdateVisibleIncome();
 }
 
 void UTime::Initialize()
@@ -36,25 +32,7 @@ void UTime::Initialize()
 	Year = 1950;
 	CurrentTimeMode = NORMAL;
 
-	GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
-	
-	//TimeTimeline = NewObject<UTimelineComponent>(this, FName("TimeTimeLine"));
-	//TimeTimeline->CreationMethod = EComponentCreationMethod::Native;
-
-	//TimeTimeline->SetLooping(true);
-	//TimeTimeline->SetTimelineLength(1.0f);
-	//TimeTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_TimelineLength);
-
-	//FOnTimelineEvent TimelineEvent;
-	//TimelineEvent.BindUFunction(UGameplayStatics::GetGameMode(GetWorld()), FName("TimelineTick"));
-
-	//TimeTimeline->AddEvent(0.0f, TimelineEvent);
-
-	//TimeTimeline->SetPlaybackPosition(0.0f, false);
-	//TimeTimeline->SetPlayRate(1.0f);
-	//
-	//
-	//TimeTimeline->PlayFromStart();
+	GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 }
 
 
@@ -65,16 +43,17 @@ void UTime::Play()
 	{
 	case NORMAL:
 		CurrentTimeMode = PAUSE;
-		GetWorld()->GetTimerManager().ClearTimer(TimeTimer);
+		GetWorld()->GetTimerManager().PauseTimer(TimeTimer);
 		break;
 	case SLOW:
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
+		GetWorld()->GetTimerManager().UnPauseTimer(TimeTimer);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case PAUSE:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
+		GetWorld()->GetTimerManager().UnPauseTimer(TimeTimer);
 		break;
 	}
 }
@@ -85,12 +64,12 @@ void UTime::Slower()
 	{
 	case SLOW:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case FAST:
 		CurrentTimeMode = SLOW;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 3.0f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 3.0f, true);
 	default:
 		break;
 	}
@@ -102,12 +81,12 @@ void UTime::Faster()
 	{
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 1.0f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case SLOW:
 		CurrentTimeMode = FAST;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimelineTick, 0.3f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 0.3f, true);
 	default:
 		break;
 	}

@@ -50,7 +50,9 @@ void UHUDWidgetUMG::UpdateVisibleStat()
 
 void UHUDWidgetUMG::UpdateVisibleIncome()
 {
-
+	MoneyIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Money));
+	PopulationIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Population));
+	ClimateIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Climate));
 }
 
 void UHUDWidgetUMG::PauseButtonClicked()

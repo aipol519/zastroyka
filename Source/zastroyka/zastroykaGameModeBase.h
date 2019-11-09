@@ -20,19 +20,7 @@ public:
 	AzastroykaGameModeBase();
 
 	virtual void Tick(float DeltaSeconds) override;
-
-	void PlayTimeline();
-	void CalculateIncome();
-	void UpdateShopWidget();
-
-	class UHUDWidgetUMG* HUDWidgetRef;
+	
 	class ADefaultGameState* DefaultGameStateRef;
-	class UTime* CurrentTimeRef;
-
-	UFUNCTION()
-	void TimelineTick();
-
-	UPROPERTY()
-	class UTimelineComponent* MainTimeline;
 
 };
