@@ -76,7 +76,7 @@ void ADefaultGameState::SetDefaultTiles()
 	{
 		for (int16 j = 28; j < 36; j++)
 		{
-			if ((i == 27 || i == 36) && ((j == 28) || (j == 35)))
+			if (i < 28 || i > 35 || j < 29 || j > 34)
 			{
 				Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
 			}
@@ -99,9 +99,13 @@ void ADefaultGameState::SetDefaultBuildings()
 	Buildings.Add("1A", NewObject<ABuilding>(this));
 	Buildings.Add("1B", NewObject<ABuilding>(this));
 	Buildings.Add("1C", NewObject<ABuilding>(this));
+	Buildings.Add("1D", NewObject<ABuilding>(this));
+	Buildings.Add("1E", NewObject<ABuilding>(this));
 	Buildings["1A"]->Initialize(4, 4, 250, FString("Izba"));
 	Buildings["1B"]->Initialize(6, 4, 500, FString("Barak"));
 	Buildings["1C"]->Initialize(2, 2, 300, FString("Larek"));
+	Buildings["1D"]->Initialize(1, 1, 300, FString("Road"));
+	Buildings["1E"]->Initialize(1, 12, 300, FString("Test"));
 }
 
 void ADefaultGameState::UpdateStat()
@@ -215,7 +219,8 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 	{
 		if (!IsBuildingMapRestricted)
 		{
-			PlaceBuilding(_XTileCoord, _YTileCoord);
+			SelectedBuilding->Place(this, Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord);
+			//PlaceBuilding(_XTileCoord, _YTileCoord);
 		}
 	}
 }

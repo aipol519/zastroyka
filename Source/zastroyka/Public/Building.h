@@ -18,11 +18,16 @@ public:
 
 	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name);
 
+	void Place(class ADefaultGameState* _TempGameStateRef, TArray<class UTile*>& _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
+	
 	int16 XSize, YSize;
 	int32 Cost;
 
 	FString Name;
 
+	UPROPERTY()
+	UStaticMeshComponent* Placeholder;
+ 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
