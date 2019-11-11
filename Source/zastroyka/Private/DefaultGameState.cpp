@@ -96,16 +96,16 @@ void ADefaultGameState::SetDefaultBuildings()
 	//Buildings.Add("1B", new ABuilding(6, 4, 500, FString("Barak")));
 	//Buildings.Add("1C", new ABuilding(2, 2, 300, FString("Larek")));
 
-	Buildings.Add("1A", NewObject<ABuilding>(this));
-	Buildings.Add("1B", NewObject<ABuilding>(this));
-	Buildings.Add("1C", NewObject<ABuilding>(this));
-	Buildings.Add("1D", NewObject<ABuilding>(this));
-	Buildings.Add("1E", NewObject<ABuilding>(this));
-	Buildings["1A"]->Initialize(4, 4, 250, FString("Izba"));
-	Buildings["1B"]->Initialize(6, 4, 500, FString("Barak"));
-	Buildings["1C"]->Initialize(2, 2, 300, FString("Larek"));
-	Buildings["1D"]->Initialize(1, 1, 300, FString("Road"));
-	Buildings["1E"]->Initialize(1, 12, 300, FString("Test"));
+	DefaultBuildings.Add("1A", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("1B", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("1E", NewObject<ABuilding>(this));
+	DefaultBuildings["1A"]->Initialize(4, 4, 250, FString("Izba"), FStat(5, 15, 1));
+	DefaultBuildings["1B"]->Initialize(6, 4, 500, FString("Barak"), FStat(5, 15, 1));
+	DefaultBuildings["1C"]->Initialize(2, 2, 300, FString("Larek"), FStat(5, 15, 1));
+	DefaultBuildings["1D"]->Initialize(1, 1, 300, FString("Road"), FStat(5, 15, 1));
+	DefaultBuildings["1E"]->Initialize(1, 12, 300, FString("Test"), FStat(5, 15, 1));
 }
 
 void ADefaultGameState::UpdateStat()
@@ -115,9 +115,17 @@ void ADefaultGameState::UpdateStat()
 	CurrentStat->Climate += Income->Climate;
 }
 
+void ADefaultGameState::SetIncome(FStat _NewBuildingIncome)
+{
+	Income->Climate += _NewBuildingIncome.Climate;
+	Income->Money += _NewBuildingIncome.Money;
+	Income->Population += _NewBuildingIncome.Population;
+}
+
+
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
-	SelectedBuilding = Buildings[_BuildingID];
+	SelectedBuilding = DefaultBuildings[_BuildingID];
 
 	GetPlayerRef()->GetController()->SetActorTickEnabled(true);
 
@@ -127,11 +135,15 @@ void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 {
 	CurrentTimeRef->Play();
 	
-	if (IsBuildModeEnabled) { GetPlayerRef()->GetController()->SetActorTickEnabled(false); }
+	if (IsBuildModeEnabled)
+	{
+		GetPlayerRef()->GetController()->SetActorTickEnabled(false);
+		RefreshConnectionMap();
+	}
 
 	IsBuildModeEnabled = _IsBuildModeEnabled;
 	
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
+	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
 	
 	for (UTile* CurrentTile : Tiles)
 	{
@@ -220,56 +232,10 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 		if (!IsBuildingMapRestricted)
 		{
 			SelectedBuilding->Place(this, Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord);
-			//PlaceBuilding(_XTileCoord, _YTileCoord);
+			SetIncome(SelectedBuilding->Income);
+			HUDWidgetRef->UpdateVisibleIncome();
 		}
 	}
-}
-
-void ADefaultGameState::PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord)
-{
-	ExtraTileInfo.PackedTileIndex = 3;
-	for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
-	{
-		for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
-		{
-			Tiles[ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED;
-			Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
-			MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
-		}
-	}
-	for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot - 1; i -= (SelectedBuilding->XSize + 1))
-	{
-		for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot - 1; j--)
-		{
-			if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
-			{
-				if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
-				{
-					Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
-					Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 1;
-					MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
-				}
-			}
-		}
-	}
-	for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot - 1; j -= (SelectedBuilding->YSize + 1))
-	{
-		for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot - 1; i--)
-		{
-			if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
-			{
-				if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
-				{
-					Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
-					Tiles[ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 1;
-					MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
-				}
-			}
-		}
-	}
-
-	RefreshConnectionMap();
-	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Building Placed");
 }
 
 void ADefaultGameState::RefreshConnectionMap()

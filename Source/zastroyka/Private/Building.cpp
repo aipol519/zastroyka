@@ -29,7 +29,7 @@ ABuilding::ABuilding()
 //	Name = _Name;
 //}
 
-void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name)
+void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name, FStat _Income)
 {
 	XSize = _XSize;
 	YSize = _YSize;
@@ -37,6 +37,11 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Nam
 
 	Name = _Name;
 
+	Income.Climate = _Income.Climate;
+	Income.Money = _Income.Money;
+	Income.Population = _Income.Population;
+	
+	
 	if (Name == "Road")
 	{
 		Placeholder->SetStaticMesh(nullptr);
@@ -74,7 +79,7 @@ void ABuilding::Place(ADefaultGameState* _TempGameStateRef, TArray<UTile*>& _Til
 				_MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 			}
 		}
-		GetWorld()->SpawnActor<ThisClass>(FVector(_XTileCoord * 32.0f - test2.X, _YTileCoord * 32.0f - test2.Y, 0.0f), FRotator(), FActorSpawnParameters());
+		GetWorld()->SpawnActor<ThisClass>(FVector((_XTileCoord - div(XSize, 2).quot) * 32.0f, (_YTileCoord  - div(YSize, 2).quot) * 32.0f, 0.0f), FRotator(0.0f,0.0f,0.0f), FActorSpawnParameters());
 	}
 	else
 	{
@@ -83,6 +88,6 @@ void ABuilding::Place(ADefaultGameState* _TempGameStateRef, TArray<UTile*>& _Til
 		_MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
 	}
 
-	_TempGameStateRef->RefreshConnectionMap();
+	//_TempGameStateRef->RefreshConnectionMap();
 	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Building Placed");
 }

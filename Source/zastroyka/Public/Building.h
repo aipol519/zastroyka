@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DefaultGameState.h"
 #include "Building.generated.h"
 
 UCLASS()
@@ -16,7 +17,7 @@ public:
 	ABuilding();
 	//ABuilding(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name);
 
-	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name);
+	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name, FStat _Income);
 
 	void Place(class ADefaultGameState* _TempGameStateRef, TArray<class UTile*>& _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
 	
@@ -25,6 +26,8 @@ public:
 
 	FString Name;
 
+	FStat Income;
+	
 	UPROPERTY()
 	UStaticMeshComponent* Placeholder;
  	

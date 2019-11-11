@@ -58,11 +58,14 @@ public:
 	class APlayerPawn* GetPlayerRef();
 
 	TArray<class UTile*> Tiles;
-	TMap<FString, class ABuilding*> Buildings;
+	
+	TMap<FString, class ABuilding*> DefaultBuildings;
+	TArray<class ABuilding*> CurrentBuildings;
 
 	FStat* CurrentStat;
 	FStat* Income;
 	void UpdateStat();
+	void SetIncome(FStat _NewBuildingIncome);
 
 	class ABuilding* SelectedBuilding;
 
@@ -78,7 +81,6 @@ public:
 	int16 temp;
 
 	void Action(int16 _XTileCoord, int16 _YTileCoord);
-	void PlaceBuilding(int16 _XTileCoord, int16 _YTileCoord);
 
 	UPaperTileMapComponent* MainTilemapComponent;
 	UPaperTileSet* DefaultTileset;
