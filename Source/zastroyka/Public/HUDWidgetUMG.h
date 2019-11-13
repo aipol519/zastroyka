@@ -49,13 +49,13 @@ public:
 	class UTextBlock* CurrentClimate;
 
 	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CurrentEmployment;
+
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* MoneyIncome;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* PopulationIncome;
-
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* ClimateIncome;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* PauseButton;

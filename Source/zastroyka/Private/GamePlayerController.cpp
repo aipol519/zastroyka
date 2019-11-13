@@ -8,6 +8,7 @@
 #include "PaperTileMapComponent.h"
 #include "PaperTileSet.h"
 #include "DefaultGameState.h"
+#include "Building.h"
 #include "PlayerPawn.h"
 
 AGamePlayerController::AGamePlayerController()
@@ -136,6 +137,25 @@ void AGamePlayerController::RightMouseButtonDownContinious(float _Value)
 }
 
 void AGamePlayerController::LeftMouseButtonDownOnce()
+{
+	if (DefaultGameStateRef->SelectedBuilding->Name != "Road")
+	{
+		DefaultGameStateRef->Action(XTileCoord, YTileCoord);
+	}
+	else
+	{
+		InputComponent->BindAxis("LeftMouseButtonContinious", this, &AGamePlayerController::LeftMouseButtonDownContinious);
+		InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::LeftMouseButtonUp);
+	}
+}
+
+void AGamePlayerController::LeftMouseButtonUp()
+{
+	InputComponent->AxisBindings.RemoveAt(InputComponent->AxisBindings.Num() - 1);
+	InputComponent->RemoveActionBinding(InputComponent->GetNumActionBindings() - 1);
+}
+
+void AGamePlayerController::LeftMouseButtonDownContinious(float _Value)
 {
 	DefaultGameStateRef->Action(XTileCoord, YTileCoord);
 }

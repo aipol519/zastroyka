@@ -45,14 +45,14 @@ void UHUDWidgetUMG::UpdateVisibleStat()
 {
 	CurrentMoney->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Money));
 	CurrentPopulation->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Population));
-	CurrentClimate->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Climate));
+	CurrentClimate->SetText(FText::Format(FTextFormat(FText::FromString("{Climate} %")), DefaultGameStateRef->CurrentStat->Climate));
+	CurrentEmployment->SetText(FText::Format(FTextFormat(FText::FromString("{Employment} %")), DefaultGameStateRef->CurrentStat->Employment));
 }
 
 void UHUDWidgetUMG::UpdateVisibleIncome()
 {
 	MoneyIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Money));
 	PopulationIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Population));
-	ClimateIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Climate));
 }
 
 void UHUDWidgetUMG::PauseButtonClicked()

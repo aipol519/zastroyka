@@ -40,6 +40,7 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Nam
 	Income.Climate = _Income.Climate;
 	Income.Money = _Income.Money;
 	Income.Population = _Income.Population;
+	Income.Employment = _Income.Employment;
 	
 	
 	if (Name == "Road")

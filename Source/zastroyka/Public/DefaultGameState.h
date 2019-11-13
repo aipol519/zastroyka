@@ -23,13 +23,17 @@ struct FStat
 	UPROPERTY()
 	int32 Climate;
 
+	UPROPERTY()
+	int32 Employment;
+	
 	FStat() {}
 
-	FStat(int32 _Money, int32 _Population, int32 _Climate)
+	FStat(int32 _Money, int32 _Population, int32 _Climate, int32 _Employment)
 	{
 		Money = _Money;
 		Population = _Population;
 		Climate = _Climate;
+		Employment = _Employment;
 	}
 };
 

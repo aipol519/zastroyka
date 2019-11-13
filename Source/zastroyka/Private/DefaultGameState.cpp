@@ -23,8 +23,8 @@ ADefaultGameState::ADefaultGameState()
 
 	IsBuildingMapRestricted = false;
 
-	CurrentStat = new FStat(1000, 0, 5);
-	Income = new FStat(-10, 1, 0);
+	CurrentStat = new FStat(1000, 0, 5, 5);
+	Income = new FStat(-10, 1, 0, 0);
 
 	IsBuildModeEnabled = false;
 
@@ -101,11 +101,11 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1E", NewObject<ABuilding>(this));
-	DefaultBuildings["1A"]->Initialize(4, 4, 250, FString("Izba"), FStat(5, 15, 1));
-	DefaultBuildings["1B"]->Initialize(6, 4, 500, FString("Barak"), FStat(5, 15, 1));
-	DefaultBuildings["1C"]->Initialize(2, 2, 300, FString("Larek"), FStat(5, 15, 1));
-	DefaultBuildings["1D"]->Initialize(1, 1, 300, FString("Road"), FStat(5, 15, 1));
-	DefaultBuildings["1E"]->Initialize(1, 12, 300, FString("Test"), FStat(5, 15, 1));
+	DefaultBuildings["1A"]->Initialize(4, 4, 250, FString("Izba"), FStat(5, 15, 1, 1));
+	DefaultBuildings["1B"]->Initialize(6, 4, 500, FString("Barak"), FStat(5, 15, 1, 1));
+	DefaultBuildings["1C"]->Initialize(2, 2, 300, FString("Larek"), FStat(5, 15, 1,1));
+	DefaultBuildings["1D"]->Initialize(1, 1, 300, FString("Road"), FStat(5, 15, 1, 1));
+	DefaultBuildings["1E"]->Initialize(1, 12, 300, FString("Test"), FStat(5, 15, 1, 1));
 }
 
 void ADefaultGameState::UpdateStat()
@@ -113,6 +113,7 @@ void ADefaultGameState::UpdateStat()
 	CurrentStat->Money += Income->Money;
 	CurrentStat->Population += Income->Population;
 	CurrentStat->Climate += Income->Climate;
+	CurrentStat->Employment += Income->Employment;
 }
 
 void ADefaultGameState::SetIncome(FStat _NewBuildingIncome)
@@ -120,6 +121,7 @@ void ADefaultGameState::SetIncome(FStat _NewBuildingIncome)
 	Income->Climate += _NewBuildingIncome.Climate;
 	Income->Money += _NewBuildingIncome.Money;
 	Income->Population += _NewBuildingIncome.Population;
+	Income->Employment += _NewBuildingIncome.Employment;
 }
 
 
@@ -227,14 +229,11 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Action Triggered");
-	if (IsBuildModeEnabled)
+	if (!IsBuildingMapRestricted)
 	{
-		if (!IsBuildingMapRestricted)
-		{
-			SelectedBuilding->Place(this, Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord);
-			SetIncome(SelectedBuilding->Income);
-			HUDWidgetRef->UpdateVisibleIncome();
-		}
+		SelectedBuilding->Place(this, Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord);
+		SetIncome(SelectedBuilding->Income);
+		HUDWidgetRef->UpdateVisibleIncome();
 	}
 }
 

@@ -30,6 +30,7 @@ public:
 	bool IsMouseMoving();
 
 	void LeftMouseButtonDownOnce();
+	void LeftMouseButtonUp();
 	void LeftMouseButtonDownContinious(float _Value);
 	
 	FVector MouseWorldPosition;
