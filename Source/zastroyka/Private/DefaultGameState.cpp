@@ -92,18 +92,15 @@ void ADefaultGameState::SetDefaultTiles()
 
 void ADefaultGameState::SetDefaultBuildings()
 {
-	//Buildings.Add("1A", new ABuilding(4, 4, 250, FString("Izba")));
-	//Buildings.Add("1B", new ABuilding(6, 4, 500, FString("Barak")));
-	//Buildings.Add("1C", new ABuilding(2, 2, 300, FString("Larek")));
-
 	DefaultBuildings.Add("1A", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1B", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1E", NewObject<ABuilding>(this));
+
 	DefaultBuildings["1A"]->Initialize(4, 4, 250, FString("Izba"), FStat(5, 15, 1, 1));
 	DefaultBuildings["1B"]->Initialize(6, 4, 500, FString("Barak"), FStat(5, 15, 1, 1));
-	DefaultBuildings["1C"]->Initialize(2, 2, 300, FString("Larek"), FStat(5, 15, 1,1));
+	DefaultBuildings["1C"]->Initialize(2, 1, 300, FString("Larek"), FStat(5, 15, 1,1));
 	DefaultBuildings["1D"]->Initialize(1, 1, 300, FString("Road"), FStat(5, 15, 1, 1));
 	DefaultBuildings["1E"]->Initialize(1, 12, 300, FString("Test"), FStat(5, 15, 1, 1));
 }

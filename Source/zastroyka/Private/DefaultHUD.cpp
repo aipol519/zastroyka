@@ -8,7 +8,11 @@
 #include "HUDWidgetUMG.h"
 #include "ShopWidgetUMG.h"
 #include "CameraControlWidgetUMG.h"
+#include "BuildingInfoWidgetUMG.h"
 #include "DefaultGameState.h"
+
+#include "GamePlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 void ADefaultHUD::BeginPlay()
 {
@@ -23,4 +27,16 @@ void ADefaultHUD::BeginPlay()
 
 	CameraControlWidgetRef = CreateWidget<UCameraControlWidgetUMG>(GetWorld(), CameraControlWidgetClass);
 	CameraControlWidgetRef->AddToViewport();
+}
+
+void ADefaultHUD::AddBuildingInfoWidget()
+{
+	BuildingInfoWidgetRef = CreateWidget<UBuildingInfoWidgetUMG>(GetWorld(), BuildingInfoWidgetClass);
+
+	float MousePositionX, MousePositionY;
+
+	Cast<AGamePlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->GetMousePosition(MousePositionX, MousePositionY);
+
+	BuildingInfoWidgetRef->SetLocation(MousePositionX, MousePositionY);
+	BuildingInfoWidgetRef->AddToViewport();
 }

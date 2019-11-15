@@ -19,6 +19,9 @@ public:
 
 	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name, FStat _Income);
 
+	UFUNCTION()
+	void OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
+
 	void Place(class ADefaultGameState* _TempGameStateRef, TArray<class UTile*>& _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
 	
 	int16 XSize, YSize;
@@ -28,8 +31,7 @@ public:
 
 	FStat Income;
 	
-	UPROPERTY()
-	UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* MeshComponent;
  	
 protected:
 	// Called when the game starts or when spawned

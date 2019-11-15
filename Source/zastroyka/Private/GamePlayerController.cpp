@@ -17,6 +17,10 @@ AGamePlayerController::AGamePlayerController()
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	MouseWorldPosition = FVector(0.0f, 0.0f, 0.0f);
 
+	bEnableClickEvents = true;
+	bEnableTouchEvents = true;
+	bShowMouseCursor = true;
+
 	MouseStartScreenPosition = FVector2D(0.0f, 0.0f);
 	MouseCurrentScreenPosition = FVector2D(0.0f, 0.0f);
 
@@ -62,16 +66,12 @@ void AGamePlayerController::SetupInputComponent()
 
 	FInputModeGameAndUI InputMode;
 
-	bShowMouseCursor = true;
-	bEnableClickEvents = true;
-	bEnableMouseOverEvents = true;
-
 	InputMode.SetHideCursorDuringCapture(false);
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 	SetInputMode(InputMode);
 
-	InputComponent->BindAction("RightMouseButtonSingle", EInputEvent::IE_Pressed, this, &AGamePlayerController::RightMouseButtonDownOnce);
-	InputComponent->BindAction("RightMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::RightMouseButtonUp);
+	//InputComponent->BindAction("RightMouseButtonSingle", EInputEvent::IE_Pressed, this, &AGamePlayerController::RightMouseButtonDownOnce);
+	//InputComponent->BindAction("RightMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::RightMouseButtonUp);
 
 	InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Pressed, this, &AGamePlayerController::LeftMouseButtonDownOnce);
 }
