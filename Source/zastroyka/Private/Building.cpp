@@ -14,10 +14,10 @@ ABuilding::ABuilding()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
-	Placeholder = CreateDefaultSubobject<UStaticMeshComponent>(FName("Placeholder"));
-	Placeholder->SetupAttachment(RootComponent);
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>SphereMeshAsset(TEXT("StaticMesh'/Game/geometry/town_hall_lvl1.town_hall_lvl1'"));
-	Placeholder->SetStaticMesh(SphereMeshAsset.Object);
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Mesh"));
+	Mesh->SetupAttachment(RootComponent);
+	//static ConstructorHelpers::FObjectFinder<UStaticMesh> BuildingMeshAsset(TEXT("StaticMesh'/Game/geometry/town_hall_lvl1.town_hall_lvl1'"));
+	//Mesh->SetStaticMesh(BuildingMeshAsset.Object);
 }
 
 //ABuilding::ABuilding(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name)
@@ -37,16 +37,26 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Nam
 
 	Name = _Name;
 
+	UStaticMesh* test = LoadObject<UStaticMesh>(nullptr, TEXT("StaticMesh'/Game/geometry/stand/stand.stand'"), nullptr, LOAD_None, nullptr);
+	
+	//if (Name == "Road")
+	//{
+	//	Mesh->SetStaticMesh(nullptr);
+	//}
+	//if (Name == "Larek")
+	//{
+	//	static ConstructorHelpers::FObjectFinder<UStaticMesh> BuildingMeshAsset(TEXT("StaticMesh'/Game/geometry/stand/stand.stand'"));
+	//	Mesh->SetStaticMesh(BuildingMeshAsset.Object);
+	//}
+	//else
+	//{
+		Mesh->SetStaticMesh(test);
+	//}
+	
 	Income.Climate = _Income.Climate;
 	Income.Money = _Income.Money;
 	Income.Population = _Income.Population;
 	Income.Employment = _Income.Employment;
-	
-	
-	if (Name == "Road")
-	{
-		Placeholder->SetStaticMesh(nullptr);
-	}
 }
 
 // Called when the game starts or when spawned
@@ -67,8 +77,6 @@ void ABuilding::Place(ADefaultGameState* _TempGameStateRef, TArray<UTile*>& _Til
 {
 	FPaperTileInfo ExtraTileInfo = _Tiles[0]->TileInfo;
 	ExtraTileInfo.PackedTileIndex = 3;
-	FVector test, test2;
-	GetActorBounds(false, test, test2);
 	if (Name != "Road")
 	{
 		for (int i = _XTileCoord + div(XSize, 2).quot + div(XSize, 2).rem - 1; i >= _XTileCoord - div(XSize, 2).quot; i--)

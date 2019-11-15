@@ -29,7 +29,7 @@ public:
 	FStat Income;
 	
 	UPROPERTY()
-	UStaticMeshComponent* Placeholder;
+	UStaticMeshComponent* Mesh;
  	
 protected:
 	// Called when the game starts or when spawned

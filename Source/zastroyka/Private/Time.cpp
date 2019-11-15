@@ -26,13 +26,14 @@ void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
 
 void UTime::Initialize()
 {
-	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	WorldRef = GetWorld();
+	DefaultGameStateRef = Cast<ADefaultGameState>(WorldRef->GetGameState());
 	Day = 1;
 	Month = 1;
 	Year = 1950;
 	CurrentTimeMode = NORMAL;
-
-	GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+	
+	WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 }
 
 
@@ -43,17 +44,17 @@ void UTime::Play()
 	{
 	case NORMAL:
 		CurrentTimeMode = PAUSE;
-		GetWorld()->GetTimerManager().PauseTimer(TimeTimer);
+		WorldRef->GetTimerManager().PauseTimer(TimeTimer);
 		break;
 	case SLOW:
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().UnPauseTimer(TimeTimer);
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+		WorldRef->GetTimerManager().UnPauseTimer(TimeTimer);
+		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case PAUSE:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().UnPauseTimer(TimeTimer);
+		WorldRef->GetTimerManager().UnPauseTimer(TimeTimer);
 		break;
 	}
 }
@@ -64,12 +65,12 @@ void UTime::Slower()
 	{
 	case SLOW:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case FAST:
 		CurrentTimeMode = SLOW;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 3.0f, true);
+		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 3.0f, true);
 	default:
 		break;
 	}
@@ -81,12 +82,12 @@ void UTime::Faster()
 	{
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case SLOW:
 		CurrentTimeMode = FAST;
-		GetWorld()->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 0.3f, true);
+		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 0.3f, true);
 	default:
 		break;
 	}
