@@ -35,7 +35,11 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, EBuldingType
 	YSize = _YSize;
 	Cost = _Cost;
 
+	AnchorCoord = 0;
+	
 	BuildingType = _BuildingType;
+
+	isBuildingConnected = false;
 	
 	Income.Climate = _Income.Climate;
 	Income.Money = _Income.Money;
@@ -49,6 +53,7 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 	if (DefaultGameStateRef->IsDestroyModeEnabled)
 	{
 		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
+		DefaultGameStateRef->DeleteBuildingInfo(this);
 		this->Destroy();
 		//удаление клеток, удаление здания из списка референсов
 	}
@@ -74,49 +79,45 @@ void ABuilding::Tick(float DeltaTime)
 
 }
 
-void ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord)
+ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord)
 {
 	
 	FPaperTileInfo ExtraTileInfo = _Tiles[0]->TileInfo;
 	ExtraTileInfo.PackedTileIndex = 3;
 
-	if (BuildingType != ROAD_BUILDING)
-	{
+	AnchorCoord = DefaultGameStateRef->ConvertCoordinateToIndex(_XTileCoord - div(XSize, 2).quot, _YTileCoord - div(YSize, 2).quot);
 
-		AnchorCoord = DefaultGameStateRef->ConvertCoordinateToIndex(_XTileCoord - div(XSize, 2).quot, _YTileCoord - div(YSize, 2).quot);
-		
-		for (int i = _XTileCoord + div(XSize, 2).quot + div(XSize, 2).rem - 1; i >= _XTileCoord - div(XSize, 2).quot; i--)
-		{
-			for (int j = _YTileCoord + div(YSize, 2).quot + div(YSize, 2).rem - 1; j >= _YTileCoord - div(YSize, 2).quot; j--)
-			{
-				_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
-				_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
-				_MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
-
-			}
-		}
-		
-		ABuilding* NewBuilding = GetWorld()->SpawnActor<ABuilding>(
-			FVector(_Tiles[AnchorCoord]->XTileCoord * 32.0f + 16.0f,_Tiles[AnchorCoord]->YTileCoord * 32.0f + 16.0f,0.0f), 
-			FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
-		NewBuilding->DefaultGameStateRef = DefaultGameStateRef;
-		
-		switch (BuildingType)
-		{
-		case STAND_BUILDING:
-			NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/stand/stand"), NULL, LOAD_None, NULL));
-			break;
-		default:
-			NewBuilding->MeshComponent->SetStaticMesh(nullptr);
-			break;
-		}
-		
-	}
-	else
+	for (int i = _XTileCoord + div(XSize, 2).quot + div(XSize, 2).rem - 1; i >= _XTileCoord - div(XSize, 2).quot; i--)
 	{
-		AnchorCoord = DefaultGameStateRef->ConvertCoordinateToIndex(_XTileCoord, _YTileCoord);
-		_Tiles[AnchorCoord]->TileType = ROAD_TILE;
-		_Tiles[AnchorCoord]->TileInfo.PackedTileIndex = 1;
-		_MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
+		for (int j = _YTileCoord + div(YSize, 2).quot + div(YSize, 2).rem - 1; j >= _YTileCoord - div(YSize, 2).quot; j--)
+		{
+			_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
+			_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
+			_MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
+
+		}
 	}
+
+	ABuilding* NewBuilding = GetWorld()->SpawnActor<ABuilding>(
+		FVector(_Tiles[AnchorCoord]->XTileCoord * 32.0f + 16.0f, _Tiles[AnchorCoord]->YTileCoord * 32.0f + 16.0f, 0.0f),
+		FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
+
+	NewBuilding->Initialize(XSize, YSize, Cost, BuildingType, Income);
+	NewBuilding->AnchorCoord = AnchorCoord;
+
+	switch (BuildingType)
+	{
+	case STAND_BUILDING:
+		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/stand/stand"), NULL, LOAD_None, NULL));
+		break;
+	case HUT_BUILDING:
+		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/hut/hut"), NULL, LOAD_None, NULL));
+		break;
+	default:
+		NewBuilding->MeshComponent->SetStaticMesh(nullptr);
+		break;
+	}
+
+	return NewBuilding;
+	
 }

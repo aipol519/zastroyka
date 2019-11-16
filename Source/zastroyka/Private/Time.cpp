@@ -35,7 +35,7 @@ void UTime::Initialize()
 	Month = 1;
 	Year = 1950;
 	CurrentTimeMode = NORMAL;
-	
+
 	WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 }
 

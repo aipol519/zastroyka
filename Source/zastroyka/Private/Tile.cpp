@@ -62,3 +62,8 @@ FPaperTileInfo UTile::SetTileInfoIndex(int _Index)
 {
 	return GetTileInfo();
 }
+
+void UTile::PlaceRoad(int16 _XTileCoord, int16 _YTileCoord)
+{
+	
+}

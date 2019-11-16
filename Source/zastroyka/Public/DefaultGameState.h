@@ -59,14 +59,17 @@ public:
 	void InitializeTime();
 
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
-
+	int16 GetXCoordFromIndex(int16 _Index);
+	int16 GetYCoordFromIndex(int16 _Index);
+	
 	class APlayerPawn* GetPlayerRef();
 
 	TArray<class UTile*> Tiles;
 	
 	TMap<FString, class ABuilding*> DefaultBuildings;
-	TArray<class ABuilding*> CurrentBuildings;
-
+	TArray<class ABuilding*> Buildings;
+	void DeleteBuildingInfo(class ABuilding* _DeletingBuilding);
+	
 	FStat* CurrentStat;
 	FStat* Income;
 	void UpdateStat();
@@ -84,7 +87,7 @@ public:
 
 	void RefreshConnectionMap();
 	void CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord);
-	int16 temp;
+	int16 temp, temp2;
 
 	void Action(int16 _XTileCoord, int16 _YTileCoord);
 

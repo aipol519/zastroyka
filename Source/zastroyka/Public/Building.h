@@ -26,12 +26,14 @@ public:
 	UFUNCTION()
 	void OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
-	void Place(TArray<class UTile*> _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
+	ABuilding* Place(TArray<class UTile*> _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
 
 	int16 AnchorCoord;
 	int16 XSize, YSize;
 	int32 Cost;
 
+	bool isBuildingConnected;
+	
 	EBuldingType BuildingType;
 
 	struct FStat Income;

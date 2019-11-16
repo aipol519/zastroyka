@@ -27,6 +27,8 @@ public:
 
 	void Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
+	void PlaceRoad(int16 _XTileCoord, int16 _YTileCoord);
+	
 	FPaperTileInfo SetTileInfoIndex(int _Index);
 
 	bool IsTileConnected;
