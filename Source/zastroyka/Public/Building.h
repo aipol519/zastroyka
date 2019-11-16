@@ -7,6 +7,11 @@
 #include "DefaultGameState.h"
 #include "Building.generated.h"
 
+
+
+UENUM()
+enum EBuldingType {	ROAD_BUILDING, TOWNHALLONE_BUILDING, STAND_BUILDING, HUT_BUILDING, BARRACK_BUILDING };
+
 UCLASS()
 class ZASTROYKA_API ABuilding : public AActor
 {
@@ -15,22 +20,23 @@ class ZASTROYKA_API ABuilding : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABuilding();
-	//ABuilding(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name);
 
-	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FString _Name, FStat _Income);
+	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, EBuldingType _BuildingType, FStat _Income);
 
 	UFUNCTION()
 	void OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
-	void Place(class ADefaultGameState* _TempGameStateRef, TArray<class UTile*>& _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
-	
+	void Place(TArray<class UTile*> _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
+
+	int16 AnchorCoord;
 	int16 XSize, YSize;
 	int32 Cost;
 
-	FString Name;
+	EBuldingType BuildingType;
 
-	FStat Income;
-	
+	struct FStat Income;
+
+	ADefaultGameState* DefaultGameStateRef;
 	UStaticMeshComponent* MeshComponent;
  	
 protected:

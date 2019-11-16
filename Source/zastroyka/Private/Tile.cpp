@@ -21,7 +21,7 @@ FPaperTileInfo UTile::GetTileInfo()
 	return TileInfo;
 }
 
-void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
+void UTile::ChangeInBuildDestroyMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
 {
 	//FPaperTileInfo TempTileInfo;
 	//TempTileInfo.TileSet = TileInfo.TileSet;
@@ -30,7 +30,7 @@ void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, boo
 	{
 		switch (TileType)
 		{
-		case GREEN:
+		case GREEN_TILE:
 			TileInfo.PackedTileIndex = 4;
 			//TempTileInfo.PackedTileIndex = 4;
 			break;
@@ -44,12 +44,12 @@ void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, boo
 	{
 		switch (TileType)
 		{
-		case GREEN:
-		case BUILDING_RESTRICTED:
+		case GREEN_TILE:
+		case BUILDING_RESTRICTED_TILE:
 			TileInfo.PackedTileIndex = 0;
 			//TempTileInfo.PackedTileIndex = 4;
 			break;
-		case ROAD:
+		case ROAD_TILE:
 			TileInfo.PackedTileIndex = 1;
 			break;
 		}

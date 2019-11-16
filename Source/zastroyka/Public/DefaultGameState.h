@@ -14,18 +14,18 @@ struct FStat
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	int32 Money;
+		UPROPERTY()
+		int32 Money;
 
 	UPROPERTY()
-	int32 Population;
+		int32 Population;
 
 	UPROPERTY()
-	int32 Climate;
+		int32 Climate;
 
 	UPROPERTY()
-	int32 Employment;
-	
+		int32 Employment;
+
 	FStat() {}
 
 	FStat(int32 _Money, int32 _Population, int32 _Climate, int32 _Employment)
@@ -53,6 +53,7 @@ public:
 	void SetDefaultBuildings();
 	void SelectBuilding(FString _BuildingID);
 	void ToggleBuildMode(bool _IsBuildModeEnabled);
+	void ToggleDestroyMode(bool _IsDestroyModeEnabled);
 
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
 	void InitializeTime();
@@ -75,6 +76,7 @@ public:
 
 	int16 XMapSize, YMapSize;
 	bool IsBuildModeEnabled;
+	bool IsDestroyModeEnabled;
 
 	FPaperTileInfo ExtraTileInfo;
 	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);

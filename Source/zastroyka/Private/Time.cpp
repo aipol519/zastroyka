@@ -13,8 +13,10 @@ UTime::UTime()
 
 void UTime::TimeTick()
 {
+	UpdateDate();
 	DefaultGameStateRef->UpdateStat();
 	HUDWidgetRef->UpdateVisibleStat();
+	HUDWidgetRef->UpdateVisibleDate();
 }
 
 void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
@@ -22,6 +24,7 @@ void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
 	HUDWidgetRef = _HUDWidgetRef;
 	HUDWidgetRef->UpdateVisibleStat();
 	HUDWidgetRef->UpdateVisibleIncome();
+	HUDWidgetRef->UpdateVisibleDate();
 }
 
 void UTime::Initialize()
@@ -33,10 +36,78 @@ void UTime::Initialize()
 	Year = 1950;
 	CurrentTimeMode = NORMAL;
 	
-	WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+	WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 }
 
+void UTime::UpdateDate()
+{
+	switch (Month)
+	{
+	case 1:
+	case 3:
+	case 5:
+	case 7:
+	case 8:
+	case 10:
+	case 12:
+		if (Day < 31)
+		{
+			++Day;
+		}
+		else
+		{
+			++Month;
+			Day = 1;
+		}
+		break;
+	case 2:
+		if ((div(Year, 400).rem == 0) || ((div(Year, 100).rem != 0) && (div(Year, 4).rem == 0)))
+		{
+			if (Day < 29)
+			{
+				++Day;
+			}
+			else
+			{
+				++Month;
+				Day = 1;
+			}
+		}
+		else
+		{
+			if (Day < 28)
+			{
+				++Day;
+			}
+			else
+			{
+				++Month;
+				Day = 1;
+			}
+		}
+		break;
 
+	case 4:
+	case 6:
+	case 9:
+	case 11:
+		if (Day < 30)
+		{
+			++Day;
+		}
+		else
+		{
+			++Month;
+			Day = 1;
+		}
+		break;
+	default:
+		++Year;
+		Month = 1;
+		Day = 1;
+		break;
+	}
+}
 
 void UTime::Play()
 {
@@ -44,17 +115,17 @@ void UTime::Play()
 	{
 	case NORMAL:
 		CurrentTimeMode = PAUSE;
-		WorldRef->GetTimerManager().PauseTimer(TimeTimer);
+		WorldRef->GetTimerManager().PauseTimer(TimerHandle);
 		break;
 	case SLOW:
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		WorldRef->GetTimerManager().UnPauseTimer(TimeTimer);
-		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+		WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
+		WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case PAUSE:
 		CurrentTimeMode = NORMAL;
-		WorldRef->GetTimerManager().UnPauseTimer(TimeTimer);
+		WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
 		break;
 	}
 }
@@ -65,12 +136,12 @@ void UTime::Slower()
 	{
 	case SLOW:
 		CurrentTimeMode = NORMAL;
-		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+		WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case FAST:
 		CurrentTimeMode = SLOW;
-		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 3.0f, true);
+		WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 3.0f, true);
 	default:
 		break;
 	}
@@ -82,12 +153,12 @@ void UTime::Faster()
 	{
 	case FAST:
 		CurrentTimeMode = NORMAL;
-		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 1.0f, true);
+		WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 		break;
 	case NORMAL:
 	case SLOW:
 		CurrentTimeMode = FAST;
-		WorldRef->GetTimerManager().SetTimer(TimeTimer, this, &UTime::TimeTick, 0.3f, true);
+		WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 0.3f, true);
 	default:
 		break;
 	}

@@ -9,7 +9,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Tile.generated.h"
 
-enum ETileType { GREEN, ROAD, BUILDING_ALLOWED, BUILDING_RESTRICTED, BUILDING_SELECTABLE };
+enum ETileType { GREEN_TILE, ROAD_TILE, BUILDING_ALLOWED_TILE, BUILDING_RESTRICTED_TILE, BUILDING_SELECTABLE_TILE };
 
 UCLASS()
 class ZASTROYKA_API UTile : public UObject
@@ -20,7 +20,7 @@ public:
 	UTile();
 	//ATile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
-	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
+	void ChangeInBuildDestroyMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
 
 	FPaperTileInfo TileInfo;
 	FPaperTileInfo GetTileInfo();

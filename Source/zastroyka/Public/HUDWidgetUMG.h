@@ -16,6 +16,9 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
+	void DestroyButtonClicked();
+	
+	UFUNCTION()
 	void BuildButtonClicked();
 
 	UFUNCTION()
@@ -33,6 +36,12 @@ public:
 	UFUNCTION()
 	void UpdateVisibleIncome();
 
+	UFUNCTION()
+	void UpdateVisibleDate();
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* DestroyModeButton;
+	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BuildModeButton;
 
@@ -56,6 +65,15 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* PopulationIncome;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Day;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Month;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Year;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* PauseButton;

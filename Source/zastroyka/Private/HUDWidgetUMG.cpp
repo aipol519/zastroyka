@@ -20,6 +20,7 @@ void UHUDWidgetUMG::NativeConstruct()
 
 	//Binding event to build button clicked
 	BuildModeButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::BuildButtonClicked);
+	DestroyModeButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::DestroyButtonClicked);
 
 	PauseButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::PauseButtonClicked);
 	SpeedUpButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SppedUpButtonClicked);
@@ -30,7 +31,7 @@ void UHUDWidgetUMG::NativeConstruct()
 
 void UHUDWidgetUMG::BuildButtonClicked()
 {
-	if (!ShopWidgetRef->IsAnimationPlaying(ShopWidgetRef->ShopBorderAnimation))
+	if (!ShopWidgetRef->IsAnimationPlaying(ShopWidgetRef->ShopBorderAnimation) && !(DefaultGameStateRef->IsDestroyModeEnabled))
 	{
 		DefaultGameStateRef->IsBuildModeEnabled ?
 			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Reverse) :
@@ -55,6 +56,13 @@ void UHUDWidgetUMG::UpdateVisibleIncome()
 	PopulationIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Population));
 }
 
+void UHUDWidgetUMG::UpdateVisibleDate()
+{
+	Day->SetText(FText::Format(FTextFormat(FText::FromString("D : {Day}")), DefaultGameStateRef->CurrentTimeRef->Day));
+	Month->SetText(FText::Format(FTextFormat(FText::FromString("M : {Month}")), DefaultGameStateRef->CurrentTimeRef->Month));
+	Year->SetText(FText::Format(FTextFormat(FText::FromString("Y : {Year}")), DefaultGameStateRef->CurrentTimeRef->Year));
+}
+
 void UHUDWidgetUMG::PauseButtonClicked()
 {
 	DefaultGameStateRef->CurrentTimeRef->Play();
@@ -68,4 +76,12 @@ void UHUDWidgetUMG::SppedUpButtonClicked()
 void UHUDWidgetUMG::SpeedDownButtonClicked()
 {
 	DefaultGameStateRef->CurrentTimeRef->Slower();
+}
+
+void UHUDWidgetUMG::DestroyButtonClicked()
+{
+	if (!(DefaultGameStateRef->IsBuildModeEnabled))
+	{
+		DefaultGameStateRef->ToggleDestroyMode(!(DefaultGameStateRef->IsDestroyModeEnabled));
+	}
 }

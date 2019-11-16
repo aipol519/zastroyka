@@ -23,10 +23,12 @@ public:
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
 	void Initialize();
 
+	void UpdateDate();
+
 	TEnumAsByte<TimeMode> CurrentTimeMode;
 	unsigned short Day, Month, Year;
 
-	FTimerHandle TimeTimer;
+	FTimerHandle TimerHandle;
 	
 	void TimeTick();
 

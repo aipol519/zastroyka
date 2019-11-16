@@ -138,7 +138,7 @@ void AGamePlayerController::RightMouseButtonDownContinious(float _Value)
 
 void AGamePlayerController::LeftMouseButtonDownOnce()
 {
-	if (DefaultGameStateRef->SelectedBuilding->Name != "Road")
+	if (DefaultGameStateRef->SelectedBuilding->BuildingType != ROAD_BUILDING)
 	{
 		DefaultGameStateRef->Action(XTileCoord, YTileCoord);
 	}

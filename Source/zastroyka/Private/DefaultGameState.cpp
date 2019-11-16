@@ -27,6 +27,7 @@ ADefaultGameState::ADefaultGameState()
 	Income = new FStat(-10, 1, 0, 0);
 
 	IsBuildModeEnabled = false;
+	IsDestroyModeEnabled = false;
 
 	temp = 0;
 }
@@ -66,9 +67,8 @@ void ADefaultGameState::SetDefaultTiles()
 	{
 		for (int16 j = 0; j < YMapSize; j++)
 		{
-			//Tiles.Add(new ATile(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false));
 			Tiles.Add(NewObject<UTile>(this));
-			Tiles[ConvertCoordinateToIndex(i, j)]->Initialize(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN, false);
+			Tiles[ConvertCoordinateToIndex(i, j)]->Initialize(i, j, MainTilemapComponent->GetTile(i, j, 0), GREEN_TILE, false);
 		}
 	}
 
@@ -78,11 +78,11 @@ void ADefaultGameState::SetDefaultTiles()
 		{
 			if (i < 28 || i > 35 || j < 29 || j > 34)
 			{
-				Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD;
+				Tiles[ConvertCoordinateToIndex(i, j)]->TileType = ROAD_TILE;
 			}
 			else
 			{
-				Tiles[ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED;
+				Tiles[ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
 			}
 		}
 	}
@@ -96,13 +96,11 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings.Add("1B", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
-	DefaultBuildings.Add("1E", NewObject<ABuilding>(this));
 
-	DefaultBuildings["1A"]->Initialize(4, 4, 250, FString("Izba"), FStat(5, 15, 1, 1));
-	DefaultBuildings["1B"]->Initialize(6, 4, 500, FString("Barak"), FStat(5, 15, 1, 1));
-	DefaultBuildings["1C"]->Initialize(2, 1, 300, FString("Larek"), FStat(5, 15, 1,1));
-	DefaultBuildings["1D"]->Initialize(1, 1, 300, FString("Road"), FStat(5, 15, 1, 1));
-	DefaultBuildings["1E"]->Initialize(1, 12, 300, FString("Test"), FStat(5, 15, 1, 1));
+	DefaultBuildings["1A"]->Initialize(4, 4, 250, HUT_BUILDING, FStat(5, 15, 1, 1));
+	DefaultBuildings["1B"]->Initialize(6, 4, 500, BARRACK_BUILDING, FStat(5, 15, 1, 1));
+	DefaultBuildings["1C"]->Initialize(2, 1, 300, STAND_BUILDING, FStat(5, 15, 1,1));
+	DefaultBuildings["1D"]->Initialize(1, 1, 300, ROAD_BUILDING, FStat(5, 15, 1, 1));
 }
 
 void ADefaultGameState::UpdateStat()
@@ -146,7 +144,25 @@ void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
 	
 	for (UTile* CurrentTile : Tiles)
 	{
-		CurrentTile->ChangeInBuildMode(MainTilemapComponent, _IsBuildModeEnabled);
+		CurrentTile->ChangeInBuildDestroyMode(MainTilemapComponent, _IsBuildModeEnabled);
+	}
+}
+
+void ADefaultGameState::ToggleDestroyMode(bool _IsDestroyModeEnabled)
+{
+	CurrentTimeRef->Play();
+
+	if (IsDestroyModeEnabled)
+	{
+		GetPlayerRef()->GetController()->SetActorTickEnabled(false);
+		RefreshConnectionMap();
+	}
+
+	IsDestroyModeEnabled = _IsDestroyModeEnabled;
+
+	for (UTile* CurrentTile : Tiles)
+	{
+		CurrentTile->ChangeInBuildDestroyMode(MainTilemapComponent, _IsDestroyModeEnabled);
 	}
 }
 
@@ -164,7 +180,7 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 				{
 					if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 					{
-						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN)
+						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN_TILE)
 						{
 							ExtraTileInfo.PackedTileIndex = 4;
 						}
@@ -188,7 +204,7 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 				{
 					for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 					{
-						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType != GREEN)
+						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType != GREEN_TILE)
 						{
 							IsBuildingMapRestricted = true;
 							break;
@@ -228,9 +244,13 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Action Triggered");
 	if (!IsBuildingMapRestricted)
 	{
-		SelectedBuilding->Place(this, Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord);
+		SelectedBuilding->Place(Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord);
 		SetIncome(SelectedBuilding->Income);
 		HUDWidgetRef->UpdateVisibleIncome();
+	}
+	else
+	{
+		
 	}
 }
 
@@ -248,7 +268,7 @@ void ADefaultGameState::RefreshConnectionMap()
 void ADefaultGameState::CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord)
 {
 	if (Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->IsTileConnected == false &&
-		(Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->TileType == ROAD || Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->TileType == BUILDING_RESTRICTED))
+		(Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->TileType == ROAD_TILE || Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->TileType == BUILDING_RESTRICTED_TILE))
 	{
 		Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->IsTileConnected = true;
 		++temp;
