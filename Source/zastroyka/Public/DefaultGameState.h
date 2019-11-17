@@ -35,6 +35,24 @@ struct FStat
 		Climate = _Climate;
 		Employment = _Employment;
 	}
+
+	FStat& operator+=(const FStat& _AddStat)
+	{
+		Money += _AddStat.Money;
+		Population += _AddStat.Population;
+		Climate += _AddStat.Climate;
+		Employment += _AddStat.Employment;
+		return * this;
+	}
+	
+	FStat& operator=(const FStat& _AssignedStat)
+	{
+		Money = _AssignedStat.Money;
+		Population = _AssignedStat.Population;
+		Climate = _AssignedStat.Climate;
+		Employment = _AssignedStat.Employment;
+		return * this;
+	}
 };
 
 UCLASS()
@@ -52,8 +70,7 @@ public:
 	void SetDefaultTiles();
 	void SetDefaultBuildings();
 	void SelectBuilding(FString _BuildingID);
-	void ToggleBuildMode(bool _IsBuildModeEnabled);
-	void ToggleDestroyMode(bool _IsDestroyModeEnabled);
+	void ToggleMode(bool _IsBuildMode);
 
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
 	void InitializeTime();
@@ -73,20 +90,19 @@ public:
 	FStat* CurrentStat;
 	FStat* Income;
 	void UpdateStat();
-	void SetIncome(FStat _NewBuildingIncome);
+	void RefreshIncome();
 
 	class ABuilding* SelectedBuilding;
 
 	int16 XMapSize, YMapSize;
-	bool IsBuildModeEnabled;
-	bool IsDestroyModeEnabled;
+	bool IsBuildModeEnabled, IsDestroyModeEnabled;
 
 	FPaperTileInfo ExtraTileInfo;
 	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
 	bool IsBuildingMapRestricted;
 
 	void RefreshConnectionMap();
-	void CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord);
+	void CheckConnection(int16 _XTileCoord, int16 _YTileCoord);
 	int16 temp, temp2;
 
 	void Action(int16 _XTileCoord, int16 _YTileCoord);

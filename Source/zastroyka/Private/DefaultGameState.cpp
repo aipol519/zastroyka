@@ -21,14 +21,16 @@ ADefaultGameState::ADefaultGameState()
 	XMapSize = 64;
 	YMapSize = 64;
 
-	IsBuildingMapRestricted = false;
+	IsBuildingMapRestricted = true;
 
-	CurrentStat = new FStat(1000, 0, 5, 5);
-	Income = new FStat(-10, 1, 0, 0);
+	CurrentStat = new FStat(1000, 3, 50, 100);
+	Income = new FStat(-10, 0, 0, 0);
 
 	IsBuildModeEnabled = false;
 	IsDestroyModeEnabled = false;
 
+	SelectedBuilding = nullptr;
+	
 	temp = 0;
 }
 
@@ -92,86 +94,69 @@ void ADefaultGameState::SetDefaultTiles()
 		Tiles[ConvertCoordinateToIndex(31, i)]->TileType = ROAD_TILE;
 	}
 	 
-	ExtraTileInfo = Tiles[0]->TileInfo;
+	ExtraTileInfo = Tiles[ConvertCoordinateToIndex(XMapSize / 2, YMapSize / 2)]->TileInfo;
 }
 
 void ADefaultGameState::SetDefaultBuildings()
 {
+	DefaultBuildings.Add("1", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1A", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1B", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
 
+	DefaultBuildings["1"]->Initialize(4, 3, 0, TOWNHALLONE_BUILDING, FStat(0, 0, 0, 0));
 	DefaultBuildings["1A"]->Initialize(2, 2, 250, HUT_BUILDING, FStat(5, 15, 1, 1));
 	DefaultBuildings["1B"]->Initialize(6, 4, 500, BARRACK_BUILDING, FStat(5, 15, 1, 1));
 	DefaultBuildings["1C"]->Initialize(2, 1, 300, STAND_BUILDING, FStat(5, 15, 1,1));
 	DefaultBuildings["1D"]->Initialize(1, 1, 300, ROAD_BUILDING, FStat(5, 15, 1, 1));
+
+	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
 }
 
 void ADefaultGameState::UpdateStat()
 {
-	CurrentStat->Money += Income->Money;
-	CurrentStat->Population += Income->Population;
-	CurrentStat->Climate += Income->Climate;
-	CurrentStat->Employment += Income->Employment;
-}
-
-void ADefaultGameState::SetIncome(FStat _NewBuildingIncome)
-{
-	Income->Climate += _NewBuildingIncome.Climate;
-	Income->Money += _NewBuildingIncome.Money;
-	Income->Population += _NewBuildingIncome.Population;
-	Income->Employment += _NewBuildingIncome.Employment;
+	*CurrentStat += *Income;
 }
 
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
 	SelectedBuilding = DefaultBuildings[_BuildingID];
-
-	GetPlayerRef()->GetController()->SetActorTickEnabled(true);
-
 }
 
-void ADefaultGameState::ToggleBuildMode(bool _IsBuildModeEnabled)
+void ADefaultGameState::ToggleMode(bool _IsBuildMode)
 {
 	CurrentTimeRef->Play();
-	
-	if (IsBuildModeEnabled)
+	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
+	if (IsBuildModeEnabled || IsDestroyModeEnabled)
 	{
 		GetPlayerRef()->GetController()->SetActorTickEnabled(false);
+		ExtraTileInfo.PackedTileIndex = 0;
+		SelectedBuilding = nullptr;
 		RefreshConnectionMap();
+		RefreshIncome();
+		HUDWidgetRef->UpdateVisibleIncome();
 	}
-
-	IsBuildModeEnabled = _IsBuildModeEnabled;
-	
-	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build mode toggled");
-	
+	if (_IsBuildMode)
+	{
+		IsBuildModeEnabled = !IsBuildModeEnabled;
+		if (IsDestroyModeEnabled)
+		{
+			ExtraTileInfo.PackedTileIndex = 3;
+		}
+	}
+	else
+	{
+		IsDestroyModeEnabled = !IsDestroyModeEnabled;
+		if (IsDestroyModeEnabled)
+		{
+			ExtraTileInfo.PackedTileIndex = 4;
+		}
+	}
 	for (UTile* CurrentTile : Tiles)
 	{
-		CurrentTile->ChangeInBuildDestroyMode(MainTilemapComponent, _IsBuildModeEnabled);
+		CurrentTile->ChangeInBuildDestroyMode(MainTilemapComponent, IsBuildModeEnabled || IsDestroyModeEnabled);
 	}
-	
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, FString::FromInt(temp2));
-	
-}
-
-void ADefaultGameState::ToggleDestroyMode(bool _IsDestroyModeEnabled)
-{
-	CurrentTimeRef->Play();
-
-	if (IsDestroyModeEnabled)
-	{
-		GetPlayerRef()->GetController()->SetActorTickEnabled(false);
-		RefreshConnectionMap();
-	}
-
-	IsDestroyModeEnabled = _IsDestroyModeEnabled;
-
-	for (UTile* CurrentTile : Tiles)
-	{
-		CurrentTile->ChangeInBuildDestroyMode(MainTilemapComponent, _IsDestroyModeEnabled);
-	}
-
 }
 
 void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord)
@@ -250,24 +235,33 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 {
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Action Triggered");
-	if (!IsBuildingMapRestricted)
+	if (IsBuildModeEnabled)
 	{
-		if (SelectedBuilding->BuildingType == ROAD_BUILDING)
+		if (!IsBuildingMapRestricted)
 		{
-			Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = ROAD_TILE;
-			Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 1;
-			MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
-		}
-		else
-		{
-			Buildings.Add(SelectedBuilding->Place(Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord));
-			SetIncome(SelectedBuilding->Income);
-			HUDWidgetRef->UpdateVisibleIncome();
+			if (SelectedBuilding->BuildingType == ROAD_BUILDING)
+			{
+				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = ROAD_TILE;
+				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 1;
+				MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
+			}
+			else
+			{
+				Buildings.Add(SelectedBuilding->Place(Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord));
+			}
 		}
 	}
-	else
+	else if (IsDestroyModeEnabled)
 	{
-		
+		if (_XTileCoord < 27 || _XTileCoord > 35 || _YTileCoord < 28 || _YTileCoord > 35)
+		{
+			if (Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType == ROAD_TILE)
+			{
+				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = GREEN_TILE;
+				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 0;
+				MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
+			}
+		}
 	}
 }
 
@@ -282,12 +276,12 @@ void ADefaultGameState::RefreshConnectionMap()
 	}
 	for (ABuilding* CurrentBuilding: Buildings)
 	{
-		CurrentBuilding->isBuildingConnected = false;
+		CurrentBuilding->IsBuildingConnected = false;
 	}
-	CheckTileConnection(XMapSize / 2, YMapSize / 2);
+	CheckConnection(XMapSize / 2, YMapSize / 2);
 }
 
-void ADefaultGameState::CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord)
+void ADefaultGameState::CheckConnection(int16 _XTileCoord, int16 _YTileCoord)
 {
 	if (Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->IsTileConnected == false &&
 		(Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->TileType == ROAD_TILE || Tiles[(ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))]->TileType == BUILDING_RESTRICTED_TILE))
@@ -297,11 +291,11 @@ void ADefaultGameState::CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord
 		{
 			for (ABuilding* CurrentBuilding: Buildings)
 			{
-				if (CurrentBuilding->isBuildingConnected == false)
+				if (CurrentBuilding->IsBuildingConnected == false)
 				{
 					if (CurrentBuilding->AnchorCoord == ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))
 					{
-						CurrentBuilding->isBuildingConnected = true;
+						CurrentBuilding->IsBuildingConnected = true;
 						++temp2;
 						break;
 					}
@@ -310,12 +304,25 @@ void ADefaultGameState::CheckTileConnection(int16 _XTileCoord, int16 _YTileCoord
 		}
 		if (_XTileCoord >= 0 && _YTileCoord >= 0 && _XTileCoord < XMapSize && _YTileCoord < YMapSize)
 		{
-			CheckTileConnection(_XTileCoord + 1, _YTileCoord);
-			CheckTileConnection(_XTileCoord, _YTileCoord + 1);
-			CheckTileConnection(_XTileCoord - 1, _YTileCoord);
-			CheckTileConnection(_XTileCoord, _YTileCoord - 1);
+			CheckConnection(_XTileCoord + 1, _YTileCoord);
+			CheckConnection(_XTileCoord, _YTileCoord + 1);
+			CheckConnection(_XTileCoord - 1, _YTileCoord);
+			CheckConnection(_XTileCoord, _YTileCoord - 1);
 		}
 	}
+}
+
+void ADefaultGameState::RefreshIncome()
+{
+	FStat TempIncome(0, 0, 0, 0);
+	for (ABuilding* CurrentBuilding: Buildings)
+	{
+		if (CurrentBuilding->IsBuildingConnected)
+		{
+			TempIncome += CurrentBuilding->Income;
+		}
+	}
+	*Income = TempIncome;
 }
 
 void ADefaultGameState::DeleteBuildingInfo(ABuilding* _DeletingBuilding)

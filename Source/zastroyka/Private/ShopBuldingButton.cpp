@@ -8,7 +8,7 @@
 
 UShopBuldingButton::UShopBuldingButton()
 {
-	BuildingID = "NONE";
+	//BuildingID = "NONE";
 
 	this->OnClicked.AddDynamic(this, &UShopBuldingButton::TranslateBuilding);
 

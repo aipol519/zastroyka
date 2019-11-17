@@ -40,7 +40,10 @@ void AGamePlayerController::Tick(float DeltaTime)
 	XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
 	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
-	DefaultGameStateRef->MoveSelectionZone(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
+	if (DefaultGameStateRef->SelectedBuilding != nullptr)
+	{
+		DefaultGameStateRef->MoveSelectionZone(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
+	}
 	
 	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
 	//	"X: " + 
@@ -138,14 +141,21 @@ void AGamePlayerController::RightMouseButtonDownContinious(float _Value)
 
 void AGamePlayerController::LeftMouseButtonDownOnce()
 {
-	if (DefaultGameStateRef->SelectedBuilding->BuildingType != ROAD_BUILDING)
+	if (DefaultGameStateRef->SelectedBuilding != nullptr)
+	{
+		if (DefaultGameStateRef->SelectedBuilding->BuildingType == ROAD_BUILDING)
+		{
+			InputComponent->BindAxis("LeftMouseButtonContinious", this, &AGamePlayerController::LeftMouseButtonDownContinious);
+			InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::LeftMouseButtonUp);
+		}
+		else
+		{
+			DefaultGameStateRef->Action(XTileCoord, YTileCoord);
+		}
+	}
+	else if (DefaultGameStateRef->IsDestroyModeEnabled)
 	{
 		DefaultGameStateRef->Action(XTileCoord, YTileCoord);
-	}
-	else
-	{
-		InputComponent->BindAxis("LeftMouseButtonContinious", this, &AGamePlayerController::LeftMouseButtonDownContinious);
-		InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::LeftMouseButtonUp);
 	}
 }
 

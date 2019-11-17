@@ -38,7 +38,7 @@ void UHUDWidgetUMG::BuildButtonClicked()
 			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
 
 		BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
-		DefaultGameStateRef->ToggleBuildMode(!(DefaultGameStateRef->IsBuildModeEnabled));
+		DefaultGameStateRef->ToggleMode(true);
 	}
 }
 
@@ -82,6 +82,6 @@ void UHUDWidgetUMG::DestroyButtonClicked()
 {
 	if (!(DefaultGameStateRef->IsBuildModeEnabled))
 	{
-		DefaultGameStateRef->ToggleDestroyMode(!(DefaultGameStateRef->IsDestroyModeEnabled));
+		DefaultGameStateRef->ToggleMode(false);
 	}
 }

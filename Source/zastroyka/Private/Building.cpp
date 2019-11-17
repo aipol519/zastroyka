@@ -39,7 +39,7 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, EBuldingType
 	
 	BuildingType = _BuildingType;
 
-	isBuildingConnected = false;
+	IsBuildingConnected = false;
 	
 	Income.Climate = _Income.Climate;
 	Income.Money = _Income.Money;
@@ -52,12 +52,14 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 {
 	if (DefaultGameStateRef->IsDestroyModeEnabled)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
-		DefaultGameStateRef->DeleteBuildingInfo(this);
-		this->Destroy();
-		//удаление клеток, удаление здания из списка референсов
+		if (BuildingType != TOWNHALLONE_BUILDING && BuildingType != TOWNHALLTWO_BUILDING)
+		{
+			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
+			DefaultGameStateRef->DeleteBuildingInfo(this);
+			this->Destroy();
+		}
 	}
-	else
+	else if (!DefaultGameStateRef->IsBuildModeEnabled)
 	{
 		TArray<AActor*> FoundHUDs;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADefaultHUD::StaticClass(), FoundHUDs);
@@ -82,8 +84,7 @@ void ABuilding::Tick(float DeltaTime)
 ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord)
 {
 	
-	FPaperTileInfo ExtraTileInfo = _Tiles[0]->TileInfo;
-	ExtraTileInfo.PackedTileIndex = 3;
+	FPaperTileInfo ExtraTileInfo = DefaultGameStateRef->ExtraTileInfo;
 
 	AnchorCoord = DefaultGameStateRef->ConvertCoordinateToIndex(_XTileCoord - div(XSize, 2).quot, _YTileCoord - div(YSize, 2).quot);
 
@@ -107,6 +108,9 @@ ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _Main
 
 	switch (BuildingType)
 	{
+	case TOWNHALLONE_BUILDING:
+		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/town_hall_lvl1/town_hall_lvl1"), NULL, LOAD_None, NULL));
+		break;
 	case STAND_BUILDING:
 		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/stand/stand"), NULL, LOAD_None, NULL));
 		break;

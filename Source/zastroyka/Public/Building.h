@@ -10,7 +10,7 @@
 
 
 UENUM()
-enum EBuldingType {	ROAD_BUILDING, TOWNHALLONE_BUILDING, STAND_BUILDING, HUT_BUILDING, BARRACK_BUILDING };
+enum EBuldingType {	ROAD_BUILDING, TOWNHALLONE_BUILDING, TOWNHALLTWO_BUILDING, STAND_BUILDING, HUT_BUILDING, BARRACK_BUILDING };
 
 UCLASS()
 class ZASTROYKA_API ABuilding : public AActor
@@ -32,7 +32,7 @@ public:
 	int16 XSize, YSize;
 	int32 Cost;
 
-	bool isBuildingConnected;
+	bool IsBuildingConnected;
 	
 	EBuldingType BuildingType;
 

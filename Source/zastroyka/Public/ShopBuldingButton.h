@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/Button.h"
+#include "Building.h"
 #include "ShopBuldingButton.generated.h"
 
 UCLASS()
@@ -18,7 +19,7 @@ public:
 	UFUNCTION()
 	void TranslateBuilding();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Property")
 	FString BuildingID;
 
 };
