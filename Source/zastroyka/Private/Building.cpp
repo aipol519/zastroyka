@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Building.h"
 #include "Tile.h"
 
@@ -20,16 +17,20 @@ ABuilding::ABuilding()
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("Mesh"));
+
 	MeshComponent->OnClicked.AddDynamic(this, &ABuilding::OnBuildingClicked);
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetNotifyRigidBodyCollision(true);
 	MeshComponent->SetCollisionProfileName("BlockAll");
+
+	RootComponent = MeshComponent;
 	
 }
 
-void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FStat _Income, bool _IsRoadBuilding, FString _BuildingName)
+void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FStat _Income, bool _IsRoadBuilding, FString _BuildingName, AActor* _Owner)
 {
-	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	SetOwner(_Owner);
+	DefaultGameStateRef = Cast<ADefaultGameState>(GetOwner());
 	
 	XSize = _XSize;
 	YSize = _YSize;
@@ -108,13 +109,15 @@ ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _Main
 
 	ABuilding* NewBuilding = DefaultGameStateRef->WorldRef->SpawnActor<ABuilding>(
 		FVector(DefaultGameStateRef->Tiles[AnchorCoord]->XTileCoord * 32.0f + 16.0f, DefaultGameStateRef->Tiles[AnchorCoord]->YTileCoord * 32.0f + 16.0f, 0.0f),
-		FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
+		FRotator(0.0f, 0.0f, 0.0f), 
+		FActorSpawnParameters());
 	
-	NewBuilding->Initialize(XSize, YSize, Cost, Income, IsRoadBuilding, BuildingName);
+	NewBuilding->Initialize(XSize, YSize, Cost, Income, IsRoadBuilding, BuildingName, GetOwner());
 	NewBuilding->AnchorCoord = AnchorCoord;
 	
 	NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName), NULL, LOAD_None, NULL));
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, NewBuilding->MeshComponent->GetFullName());
+
 	return NewBuilding;
 	
 }

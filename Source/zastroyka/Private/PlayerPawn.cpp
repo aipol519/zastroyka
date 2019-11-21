@@ -21,7 +21,7 @@ APlayerPawn::APlayerPawn()
 	SpringArm->AddRelativeRotation(FRotator(-30.0f, -45.0f, 0.0f));
 	SpringArm->TargetArmLength = 2500.0f;
 	
-	PlayerCamera->AttachTo(SpringArm);
+	PlayerCamera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
 
 	XAddition = 0;
 	YAddition = 0;

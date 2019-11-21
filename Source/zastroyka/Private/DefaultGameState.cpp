@@ -107,11 +107,11 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
 
-	DefaultBuildings["1"]->Initialize(4, 3, 0, FStat(0, 0, 0, 0), false, "town_hall_lvl1");
-	DefaultBuildings["1A"]->Initialize(2, 2, 250, FStat(5, 15, 1, 1), false, "hut");
-	DefaultBuildings["1B"]->Initialize(6, 4, 500, FStat(5, 15, 1, 1), false, "barrack");
-	DefaultBuildings["1C"]->Initialize(2, 1, 300, FStat(5, 15, 1,1), false, "stand");
-	DefaultBuildings["1D"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), true, "road");
+	DefaultBuildings["1"]->Initialize(4, 3, 0, FStat(0, 0, 0, 0), false, "town_hall_lvl1", this);
+	DefaultBuildings["1A"]->Initialize(2, 2, 250, FStat(5, 15, 1, 1), false, "hut", this);
+	DefaultBuildings["1B"]->Initialize(6, 4, 500, FStat(5, 15, 1, 1), false, "barrack", this);
+	DefaultBuildings["1C"]->Initialize(2, 1, 300, FStat(5, 15, 1,1), false, "stand", this);
+	DefaultBuildings["1D"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), true, "road", this);
 
 	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
 }
@@ -213,13 +213,13 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 					{
 
 						ExtraTileInfo.PackedTileIndex = 3;
-						for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
+						for (int k = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; k >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; k--)
 						{
 							for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
 							{
-								if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
+								if (k >= 0 && j >= 0 && k < XMapSize && j < YMapSize)
 								{
-									MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
+									MainTilemapComponent->SetTile(k, j, 0, ExtraTileInfo);
 								}
 							}
 						}
@@ -355,7 +355,7 @@ int16 ADefaultGameState::GetYCoordFromIndex(int16 _Index)
 	return div(_Index, XMapSize).rem;
 }
 
-int32 ADefaultGameState::ConvertCoordinateToIndex(int16 _i, int16 _j)
+int16 ADefaultGameState::ConvertCoordinateToIndex(int16 _i, int16 _j)
 {
 	return (XMapSize * _i + _j);
 }

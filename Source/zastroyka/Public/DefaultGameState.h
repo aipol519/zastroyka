@@ -75,7 +75,7 @@ public:
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
 	void InitializeTime();
 
-	int32 ConvertCoordinateToIndex(int16 _i, int16 _j);
+	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
 	int16 GetXCoordFromIndex(int16 _Index);
 	int16 GetYCoordFromIndex(int16 _Index);
 	

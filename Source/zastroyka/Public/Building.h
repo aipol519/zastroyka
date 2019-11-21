@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	ABuilding();
 
-	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FStat _Income, bool _IsRoadBuilding, FString _BuildingName);
+	void Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FStat _Income, bool _IsRoadBuilding, FString _BuildingName, AActor* _Owner);
 
 	UFUNCTION()
 	void OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
