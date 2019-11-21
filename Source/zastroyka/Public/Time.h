@@ -32,7 +32,6 @@ public:
 	
 	void TimeTick();
 
-	class UWorld* WorldRef;
 	class ADefaultGameState* DefaultGameStateRef;
 	class UHUDWidgetUMG* HUDWidgetRef;
 };

@@ -46,6 +46,8 @@ void ADefaultGameState::BeginPlay()
 	//Let tilemap can changing at runtime
 	MainTilemapComponent->MakeTileMapEditable();
 
+	WorldRef = GetWorld();
+	
 	SetDefaultTiles();
 	SetDefaultBuildings();
 	InitializeTime();
@@ -105,11 +107,11 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
 
-	DefaultBuildings["1"]->Initialize(4, 3, 0, TOWNHALLONE_BUILDING, FStat(0, 0, 0, 0));
-	DefaultBuildings["1A"]->Initialize(2, 2, 250, HUT_BUILDING, FStat(5, 15, 1, 1));
-	DefaultBuildings["1B"]->Initialize(6, 4, 500, BARRACK_BUILDING, FStat(5, 15, 1, 1));
-	DefaultBuildings["1C"]->Initialize(2, 1, 300, STAND_BUILDING, FStat(5, 15, 1,1));
-	DefaultBuildings["1D"]->Initialize(1, 1, 300, ROAD_BUILDING, FStat(5, 15, 1, 1));
+	DefaultBuildings["1"]->Initialize(4, 3, 0, FStat(0, 0, 0, 0), false, "town_hall_lvl1");
+	DefaultBuildings["1A"]->Initialize(2, 2, 250, FStat(5, 15, 1, 1), false, "hut");
+	DefaultBuildings["1B"]->Initialize(6, 4, 500, FStat(5, 15, 1, 1), false, "barrack");
+	DefaultBuildings["1C"]->Initialize(2, 1, 300, FStat(5, 15, 1,1), false, "stand");
+	DefaultBuildings["1D"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), true, "road");
 
 	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
 }
@@ -202,7 +204,7 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 							IsBuildingMapRestricted = true;
 							break;
 						}
-						else if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
+						if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
 						{
 							MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 						}
@@ -225,10 +227,7 @@ void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYT
 					}
 				}
 			}
-			//IsBuildingMapRestricted = true;
-			//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Building Restricted");
 		}
-	
 	}
 }
 
@@ -239,7 +238,7 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 	{
 		if (!IsBuildingMapRestricted)
 		{
-			if (SelectedBuilding->BuildingType == ROAD_BUILDING)
+			if (SelectedBuilding->IsRoadBuilding)
 			{
 				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = ROAD_TILE;
 				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 1;
@@ -356,7 +355,7 @@ int16 ADefaultGameState::GetYCoordFromIndex(int16 _Index)
 	return div(_Index, XMapSize).rem;
 }
 
-int16 ADefaultGameState::ConvertCoordinateToIndex(int16 _i, int16 _j)
+int32 ADefaultGameState::ConvertCoordinateToIndex(int16 _i, int16 _j)
 {
 	return (XMapSize * _i + _j);
 }

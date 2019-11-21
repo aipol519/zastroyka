@@ -27,7 +27,7 @@ ABuilding::ABuilding()
 	
 }
 
-void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, EBuldingType _BuildingType, FStat _Income)
+void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FStat _Income, bool _IsRoadBuilding, FString _BuildingName)
 {
 	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
 	
@@ -37,7 +37,9 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, EBuldingType
 
 	AnchorCoord = 0;
 	
-	BuildingType = _BuildingType;
+	IsRoadBuilding = _IsRoadBuilding;
+
+	BuildingName = _BuildingName;
 
 	IsBuildingConnected = false;
 	
@@ -52,7 +54,7 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 {
 	if (DefaultGameStateRef->IsDestroyModeEnabled)
 	{
-		if (BuildingType != TOWNHALLONE_BUILDING && BuildingType != TOWNHALLTWO_BUILDING)
+		if (BuildingName != "town_hall_lvl1" && BuildingName != "town_hall_lvl2" && BuildingName != "town_hall_lvl3")
 		{
 			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
 			DefaultGameStateRef->DeleteBuildingInfo(this);
@@ -83,8 +85,6 @@ void ABuilding::Tick(float DeltaTime)
 
 ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord)
 {
-	
-	FPaperTileInfo ExtraTileInfo = DefaultGameStateRef->ExtraTileInfo;
 
 	AnchorCoord = DefaultGameStateRef->ConvertCoordinateToIndex(_XTileCoord - div(XSize, 2).quot, _YTileCoord - div(YSize, 2).quot);
 
@@ -92,36 +92,29 @@ ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _Main
 	{
 		for (int j = _YTileCoord + div(YSize, 2).quot + div(YSize, 2).rem - 1; j >= _YTileCoord - div(YSize, 2).quot; j--)
 		{
-			_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
-			_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
-			_MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
+			//_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
+			//_Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
+			//_MainTilemapComponent->SetTile(i, j, 0, DefaultGameStateRef->ExtraTileInfo);
 
+			DefaultGameStateRef->Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
+			DefaultGameStateRef->Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
+			DefaultGameStateRef->MainTilemapComponent->SetTile(i, j, 0, DefaultGameStateRef->ExtraTileInfo);
 		}
 	}
 
-	ABuilding* NewBuilding = GetWorld()->SpawnActor<ABuilding>(
-		FVector(_Tiles[AnchorCoord]->XTileCoord * 32.0f + 16.0f, _Tiles[AnchorCoord]->YTileCoord * 32.0f + 16.0f, 0.0f),
+	//ABuilding* NewBuilding = DefaultGameStateRef->WorldRef->SpawnActor<ABuilding>(
+	//	FVector(_Tiles[AnchorCoord]->XTileCoord * 32.0f + 16.0f, _Tiles[AnchorCoord]->YTileCoord * 32.0f + 16.0f, 0.0f),
+	//	FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
+
+	ABuilding* NewBuilding = DefaultGameStateRef->WorldRef->SpawnActor<ABuilding>(
+		FVector(DefaultGameStateRef->Tiles[AnchorCoord]->XTileCoord * 32.0f + 16.0f, DefaultGameStateRef->Tiles[AnchorCoord]->YTileCoord * 32.0f + 16.0f, 0.0f),
 		FRotator(0.0f, 0.0f, 0.0f), FActorSpawnParameters());
-
-	NewBuilding->Initialize(XSize, YSize, Cost, BuildingType, Income);
+	
+	NewBuilding->Initialize(XSize, YSize, Cost, Income, IsRoadBuilding, BuildingName);
 	NewBuilding->AnchorCoord = AnchorCoord;
-
-	switch (BuildingType)
-	{
-	case TOWNHALLONE_BUILDING:
-		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/town_hall_lvl1/town_hall_lvl1"), NULL, LOAD_None, NULL));
-		break;
-	case STAND_BUILDING:
-		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/stand/stand"), NULL, LOAD_None, NULL));
-		break;
-	case HUT_BUILDING:
-		NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, TEXT("/Game/geometry/hut/hut"), NULL, LOAD_None, NULL));
-		break;
-	default:
-		NewBuilding->MeshComponent->SetStaticMesh(nullptr);
-		break;
-	}
-
+	
+	NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName), NULL, LOAD_None, NULL));
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, NewBuilding->MeshComponent->GetFullName());
 	return NewBuilding;
 	
 }

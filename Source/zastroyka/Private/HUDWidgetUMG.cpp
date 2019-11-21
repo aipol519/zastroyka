@@ -39,28 +39,29 @@ void UHUDWidgetUMG::BuildButtonClicked()
 
 		BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
 		DefaultGameStateRef->ToggleMode(true);
+		DestroyModeButton->SetVisibility(DefaultGameStateRef->IsBuildModeEnabled ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 }
 
 void UHUDWidgetUMG::UpdateVisibleStat()
 {
-	CurrentMoney->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Money));
-	CurrentPopulation->SetText(FText::AsNumber(DefaultGameStateRef->CurrentStat->Population));
-	CurrentClimate->SetText(FText::Format(FTextFormat(FText::FromString("{Climate} %")), DefaultGameStateRef->CurrentStat->Climate));
-	CurrentEmployment->SetText(FText::Format(FTextFormat(FText::FromString("{Employment} %")), DefaultGameStateRef->CurrentStat->Employment));
+	CurrentMoney->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat->Money)));
+	CurrentPopulation->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat->Population)));
+	CurrentClimate->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat->Climate) + " %"));
+	CurrentEmployment->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat->Employment) + " %"));
 }
 
 void UHUDWidgetUMG::UpdateVisibleIncome()
 {
-	MoneyIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Money));
-	PopulationIncome->SetText(FText::AsNumber(DefaultGameStateRef->Income->Population));
+	MoneyIncome->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->Income->Money)));
+	PopulationIncome->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->Income->Population)));
 }
 
 void UHUDWidgetUMG::UpdateVisibleDate()
 {
-	Day->SetText(FText::Format(FTextFormat(FText::FromString("D : {Day}")), DefaultGameStateRef->CurrentTimeRef->Day));
-	Month->SetText(FText::Format(FTextFormat(FText::FromString("M : {Month}")), DefaultGameStateRef->CurrentTimeRef->Month));
-	Year->SetText(FText::Format(FTextFormat(FText::FromString("Y : {Year}")), DefaultGameStateRef->CurrentTimeRef->Year));
+	Day->SetText(FText::FromString("D: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->Day)));
+	Month->SetText(FText::FromString("M: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->Month)));
+	Year->SetText(FText::FromString("Y: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->Year)));
 }
 
 void UHUDWidgetUMG::PauseButtonClicked()

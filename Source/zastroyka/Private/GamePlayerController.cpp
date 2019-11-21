@@ -143,7 +143,7 @@ void AGamePlayerController::LeftMouseButtonDownOnce()
 {
 	if (DefaultGameStateRef->SelectedBuilding != nullptr)
 	{
-		if (DefaultGameStateRef->SelectedBuilding->BuildingType == ROAD_BUILDING)
+		if (DefaultGameStateRef->SelectedBuilding->IsRoadBuilding)
 		{
 			InputComponent->BindAxis("LeftMouseButtonContinious", this, &AGamePlayerController::LeftMouseButtonDownContinious);
 			InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::LeftMouseButtonUp);
