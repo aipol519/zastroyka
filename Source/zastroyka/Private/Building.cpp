@@ -60,6 +60,7 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
 			DefaultGameStateRef->DeleteBuildingInfo(this);
 			this->Destroy();
+			this->ConditionalBeginDestroy();
 		}
 	}
 	else if (!DefaultGameStateRef->IsBuildModeEnabled)
@@ -74,14 +75,12 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void ABuilding::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord)

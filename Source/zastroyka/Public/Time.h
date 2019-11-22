@@ -7,6 +7,7 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Time.generated.h"
 
+UENUM()
 enum TimeMode { PAUSE, SLOW, NORMAL, FAST };
 
 UCLASS()
@@ -15,6 +16,7 @@ class ZASTROYKA_API UTime : public UObject
 	GENERATED_BODY()
 	// Sets default values for this actor's properties
 	UTime();
+	
 public:
 	void Play();
 	void Faster();
@@ -25,13 +27,26 @@ public:
 
 	void UpdateDate();
 
+	UPROPERTY()
 	TEnumAsByte<TimeMode> CurrentTimeMode;
-	unsigned short Day, Month, Year;
 
+	UPROPERTY()
+	int16 Day;
+
+	UPROPERTY()
+	int16 Month;
+
+	UPROPERTY()
+	int16 Year;
+
+	UPROPERTY()
 	FTimerHandle TimerHandle;
 	
 	void TimeTick();
 
+	UPROPERTY()
 	class ADefaultGameState* DefaultGameStateRef;
+
+	UPROPERTY()
 	class UHUDWidgetUMG* HUDWidgetRef;
 };

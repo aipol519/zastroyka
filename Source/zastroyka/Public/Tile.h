@@ -9,6 +9,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Tile.generated.h"
 
+UENUM()
 enum ETileType { GREEN_TILE, ROAD_TILE, BUILDING_ALLOWED_TILE, BUILDING_RESTRICTED_TILE, BUILDING_SELECTABLE_TILE };
 
 UCLASS()
@@ -22,6 +23,7 @@ public:
 
 	void ChangeInBuildDestroyMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
 
+	UPROPERTY()
 	FPaperTileInfo TileInfo;
 	FPaperTileInfo GetTileInfo();
 
@@ -31,9 +33,15 @@ public:
 	
 	FPaperTileInfo SetTileInfoIndex(int _Index);
 
+	UPROPERTY()
 	bool IsTileConnected;
+
+	UPROPERTY()
 	int16 XTileCoord;
+
+	UPROPERTY()
 	int16 YTileCoord;
 
+	UPROPERTY()
 	TEnumAsByte<ETileType> TileType;
 };

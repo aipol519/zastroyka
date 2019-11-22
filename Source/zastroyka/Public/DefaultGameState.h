@@ -12,23 +12,23 @@
 USTRUCT()
 struct FStat
 {
-	GENERATED_BODY()
-
-		UPROPERTY()
-		int32 Money;
+	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-		int32 Population;
+	int16 Money;
 
 	UPROPERTY()
-		int32 Climate;
+	int16 Population;
 
 	UPROPERTY()
-		int32 Employment;
+	int16 Climate;
+
+	UPROPERTY()
+	int16 Employment;
 
 	FStat() {}
 
-	FStat(int32 _Money, int32 _Population, int32 _Climate, int32 _Employment)
+	FStat(int16 _Money, int16 _Population, int16 _Climate, int16 _Employment)
 	{
 		Money = _Money;
 		Population = _Population;
@@ -78,27 +78,59 @@ public:
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
 	int16 GetXCoordFromIndex(int16 _Index);
 	int16 GetYCoordFromIndex(int16 _Index);
-	
+
 	class APlayerPawn* GetPlayerRef();
 
+	UPROPERTY()
 	TArray<class UTile*> Tiles;
-	
+
+	UPROPERTY()
 	TMap<FString, class ABuilding*> DefaultBuildings;
+
+	UPROPERTY()
 	TArray<class ABuilding*> Buildings;
+
 	void DeleteBuildingInfo(class ABuilding* _DeletingBuilding);
+
+	UPROPERTY()
+	FStat CurrentStat;
+
+	UPROPERTY()
+	FStat BaseStat;
 	
-	FStat* CurrentStat;
-	FStat* Income;
+	UPROPERTY()
+	FStat Income;
+
 	void UpdateStat();
 	void RefreshIncome();
 
+	FStat BaseIncome;
+	int16 MaxPopulation;
+	int16 PopulationClimateMultiplier;
+	float BasePIMultiplier;
+	float IncomePIMultiplier;
+
+	UPROPERTY()
 	class ABuilding* SelectedBuilding;
 
-	int16 XMapSize, YMapSize;
-	bool IsBuildModeEnabled, IsDestroyModeEnabled;
+	UPROPERTY()
+	int16 XMapSize;
 
+	UPROPERTY()
+	int16 YMapSize;
+
+	UPROPERTY()
+	bool IsBuildModeEnabled;
+
+	UPROPERTY()
+	bool IsDestroyModeEnabled;
+
+	UPROPERTY()
 	FPaperTileInfo ExtraTileInfo;
+
 	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
+
+	UPROPERTY()
 	bool IsBuildingMapRestricted;
 
 	void RefreshConnectionMap();
@@ -107,12 +139,22 @@ public:
 
 	void Action(int16 _XTileCoord, int16 _YTileCoord);
 
+	UPROPERTY()
 	UPaperTileMapComponent* MainTilemapComponent;
+
+	UPROPERTY()
 	UPaperTileSet* DefaultTileset;
 
+	UPROPERTY()
 	class UWorld* WorldRef;
+
+	UPROPERTY()
 	class AzastroykaGameModeBase* GameModeBaseRef;
+
+	UPROPERTY()
 	class UTime* CurrentTimeRef;
+
+	UPROPERTY()
 	class UHUDWidgetUMG* HUDWidgetRef;
 
 };

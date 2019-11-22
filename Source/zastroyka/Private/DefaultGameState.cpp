@@ -23,9 +23,15 @@ ADefaultGameState::ADefaultGameState()
 
 	IsBuildingMapRestricted = true;
 
-	CurrentStat = new FStat(1000, 3, 50, 100);
-	Income = new FStat(-10, 0, 0, 0);
+	BaseStat = FStat(1000, 3, 12, 3);
+	BaseIncome = FStat(-10, 0, 0, 0);
+	CurrentStat = FStat(1000, 3, 12, 3);
+	Income = FStat(0, 0, 0, 0);
 
+	PopulationClimateMultiplier = 5;
+	BasePIMultiplier = 0.05f;
+	IncomePIMultiplier = 0.3f;
+	
 	IsBuildModeEnabled = false;
 	IsDestroyModeEnabled = false;
 
@@ -118,7 +124,28 @@ void ADefaultGameState::SetDefaultBuildings()
 
 void ADefaultGameState::UpdateStat()
 {
-	*CurrentStat += *Income;
+	//CurrentStat.Climate = BaseStat.Climate / (CurrentStat.Population * PopulationClimateMultiplier);
+
+	//CurrentStat.Employment = static_cast<float>(BaseStat.Employment) / CurrentStat.Population;
+
+	//CurrentStat.Money = BaseStat.Money + Income.Money;
+
+	//CurrentStat.Population += Income.Population;
+
+	//if (BaseIncome.Money >= 0)
+	//{
+	//	Income.Money = BaseIncome.Money * CurrentStat.Employment;
+	//}
+	//else
+	//{
+	//	Income.Money = BaseIncome.Money * (1 - CurrentStat.Employment);
+	//}
+
+	//Income.Population = BasePIMultiplier * (CurrentStat.Employment + CurrentStat.Climate - IncomePIMultiplier);
+
+	//BaseStat.Climate += BaseIncome.Climate;
+
+	CurrentStat += Income;
 }
 
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
@@ -321,7 +348,12 @@ void ADefaultGameState::RefreshIncome()
 			TempIncome += CurrentBuilding->Income;
 		}
 	}
-	*Income = TempIncome;
+	//BaseIncome.Climate = TempIncome.Climate;
+	//BaseIncome.Money = TempIncome.Money;
+	//MaxPopulation = TempIncome.Population;
+	//BaseStat.Employment = TempIncome.Employment;
+	//BaseIncome = TempIncome;
+	Income = TempIncome;
 }
 
 void ADefaultGameState::DeleteBuildingInfo(ABuilding* _DeletingBuilding)

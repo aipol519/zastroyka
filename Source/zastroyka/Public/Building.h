@@ -23,19 +23,34 @@ public:
 
 	ABuilding* Place(TArray<class UTile*> _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
 
+	UPROPERTY()
 	int16 AnchorCoord;
-	int16 XSize, YSize;
+
+	UPROPERTY()
+	int16 XSize;
+
+	UPROPERTY()
+	int16 YSize;
+
+	UPROPERTY()
 	int32 Cost;
 
+	UPROPERTY()
 	bool IsBuildingConnected;
-	
+
+	UPROPERTY()
 	bool IsRoadBuilding;
 
+	UPROPERTY()
 	struct FStat Income;
 
+	UPROPERTY()
 	FString BuildingName;
 
+	UPROPERTY()
 	ADefaultGameState* DefaultGameStateRef;
+
+	UPROPERTY()
 	UStaticMeshComponent* MeshComponent;
  	
 protected:
