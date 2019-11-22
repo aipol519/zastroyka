@@ -25,7 +25,7 @@ public:
 	void PauseButtonClicked();
 
 	UFUNCTION()
-	void SppedUpButtonClicked();
+	void SpeedUpButtonClicked();
 
 	UFUNCTION()
 	void SpeedDownButtonClicked();
@@ -87,5 +87,21 @@ public:
 	class ADefaultGameState* DefaultGameStateRef;
 	class ADefaultHUD* DefaultHUDRef;
 	class UShopWidgetUMG* ShopWidgetRef;
+
+	struct FButtonStyle PlayButtonStyle;
+	struct FButtonStyle SpeedUpButtonStyle;
+	struct FButtonStyle SpeedDownButtonStyle;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	struct FButtonStyle PauseButtonStyle;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	struct FButtonStyle ActivePauseButtonStyle;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	struct FButtonStyle ActiveSpeedUpButtonStyle;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	struct FButtonStyle ActiveSpeedDownButtonStyle;
 	
 };

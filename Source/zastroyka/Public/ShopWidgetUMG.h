@@ -17,7 +17,26 @@ public:
 
 	void PlayShopBorderAnimation(EUMGSequencePlayMode::Type _PlayMode);
 
+	void CheckAvailabilityForButtons();
+
+	TArray<class UShopBuldingButton*> ShopButtons;
+
+	UPROPERTY()
+	class ADefaultGameState* DefaultGameStateRef;
+
 	UPROPERTY(meta = (BindWidgetAnim))
 	class UWidgetAnimation* ShopBorderAnimation;
+
+	UPROPERTY(meta = (BindWidget))
+	class UShopBuldingButton* RoadButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UShopBuldingButton* HutButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UShopBuldingButton* BarrackButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UShopBuldingButton* StandButton;
 
 };

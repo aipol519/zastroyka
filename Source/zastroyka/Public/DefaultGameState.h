@@ -69,10 +69,15 @@ public:
 
 	void SetDefaultTiles();
 	void SetDefaultBuildings();
+
 	void SelectBuilding(FString _BuildingID);
+	class ABuilding* FindBuilding(FString _BuildingID);
+
 	void ToggleMode(bool _IsBuildMode);
 
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
+	void SetShopWidgetRef(class UShopWidgetUMG* _ShopWidgetRef);
+
 	void InitializeTime();
 
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
@@ -156,5 +161,8 @@ public:
 
 	UPROPERTY()
 	class UHUDWidgetUMG* HUDWidgetRef;
+
+	UPROPERTY()
+	class UShopWidgetUMG* ShopWidgetRef;
 
 };

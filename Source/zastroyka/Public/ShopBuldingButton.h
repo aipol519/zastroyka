@@ -16,10 +16,21 @@ public:
 
 	UShopBuldingButton();
 
+	void CheckAvailability();
+	void Initialize();
+
 	UFUNCTION()
 	void TranslateBuilding();
 
+	UPROPERTY()
+	ADefaultGameState* DefaultGameStateRef;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Property")
 	FString BuildingID;
+
+	struct FButtonStyle AvailableButtonStyle;
+
+	UPROPERTY(EditAnywhere, Category = "Property")
+	struct FButtonStyle UnavailableButtonStyle;
 
 };

@@ -10,7 +10,9 @@
 #include "DefaultHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "zastroykaGameModeBase.h"
+
 #include "HUDWidgetUMG.h"
+#include "ShopWidgetUMG.h"
 
 ADefaultGameState::ADefaultGameState()
 {
@@ -69,6 +71,12 @@ void ADefaultGameState::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
 {
 	HUDWidgetRef = _HUDWidgetRef;
 	CurrentTimeRef->SetHUDWidgetRef(_HUDWidgetRef);
+}
+
+void ADefaultGameState::SetShopWidgetRef(class UShopWidgetUMG* _ShopWidgetRef)
+{
+	ShopWidgetRef = _ShopWidgetRef;
+	//CurrentTimeRef->SetHUDWidgetRef(_HUDWidgetRef);
 }
 
 void ADefaultGameState::SetDefaultTiles()
@@ -151,6 +159,11 @@ void ADefaultGameState::UpdateStat()
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
 	SelectedBuilding = DefaultBuildings[_BuildingID];
+}
+
+ABuilding* ADefaultGameState::FindBuilding(FString _BuildingID)
+{
+	return DefaultBuildings[_BuildingID];
 }
 
 void ADefaultGameState::ToggleMode(bool _IsBuildMode)
@@ -274,6 +287,11 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 			else
 			{
 				Buildings.Add(SelectedBuilding->Place(Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord));
+
+				CurrentStat.Money -= SelectedBuilding->Cost;
+				HUDWidgetRef->UpdateVisibleStat();
+				ShopWidgetRef->CheckAvailabilityForButtons();
+				
 			}
 		}
 	}

@@ -116,20 +116,23 @@ void UTime::Play()
 	switch (CurrentTimeMode)
 	{
 	case NORMAL:
+	case SLOW:
+	case FAST:
 		CurrentTimeMode = PAUSE;
 		DefaultGameStateRef->WorldRef->GetTimerManager().PauseTimer(TimerHandle);
 		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Pause");
 		break;
-	case SLOW:
-	case FAST:
-		CurrentTimeMode = NORMAL;
-		DefaultGameStateRef->WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
-		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
-		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Normal");
-		break;
+	//case SLOW:
+	//case FAST:
+	//	CurrentTimeMode = NORMAL;
+	//	DefaultGameStateRef->WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
+	//	DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
+	//	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Normal");
+	//	break;
 	case PAUSE:
 		CurrentTimeMode = NORMAL;
 		DefaultGameStateRef->WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
+		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Normal");
 		break;
 	}
@@ -139,7 +142,6 @@ void UTime::Slower()
 {
 	switch (CurrentTimeMode)
 	{
-	case SLOW:
 	case FAST:
 		CurrentTimeMode = NORMAL;
 		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
@@ -149,6 +151,7 @@ void UTime::Slower()
 		CurrentTimeMode = SLOW;
 		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 3.0f, true);
 		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Slow");
+	case SLOW:
 	default:
 		break;
 	}
@@ -158,7 +161,6 @@ void UTime::Faster()
 {
 	switch (CurrentTimeMode)
 	{
-	case FAST:
 	case SLOW:
 		CurrentTimeMode = NORMAL;
 		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
@@ -168,6 +170,7 @@ void UTime::Faster()
 		CurrentTimeMode = FAST;
 		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 0.3f, true);
 		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Fast");
+	case FAST:
 	default:
 		break;
 	}

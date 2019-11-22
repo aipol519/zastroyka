@@ -23,8 +23,12 @@ void UHUDWidgetUMG::NativeConstruct()
 	DestroyModeButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::DestroyButtonClicked);
 
 	PauseButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::PauseButtonClicked);
-	SpeedUpButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SppedUpButtonClicked);
+	SpeedUpButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SpeedUpButtonClicked);
 	SpeedDownButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SpeedDownButtonClicked);
+
+	PlayButtonStyle = PauseButton->WidgetStyle;
+	SpeedUpButtonStyle = SpeedUpButton->WidgetStyle;
+	SpeedDownButtonStyle = SpeedDownButton->WidgetStyle;
 	
 	DefaultGameStateRef->SetHUDWidgetRef(this);
 }
@@ -72,17 +76,68 @@ void UHUDWidgetUMG::UpdateVisibleDate()
 
 void UHUDWidgetUMG::PauseButtonClicked()
 {
+	switch (DefaultGameStateRef->CurrentTimeRef->CurrentTimeMode)
+	{
+	case NORMAL:
+	case FAST:
+	case SLOW:
+		PauseButton->SetStyle(PlayButtonStyle);
+		SpeedUpButton->SetStyle(SpeedUpButtonStyle);
+		SpeedDownButton->SetStyle(SpeedDownButtonStyle);
+		break;
+	case PAUSE:
+		PauseButton->SetStyle(ActivePauseButtonStyle);
+		break;
+	default:
+		break;
+	}
+
 	DefaultGameStateRef->CurrentTimeRef->Play();
+
 }
 
-void UHUDWidgetUMG::SppedUpButtonClicked()
+void UHUDWidgetUMG::SpeedUpButtonClicked()
 {
+	switch (DefaultGameStateRef->CurrentTimeRef->CurrentTimeMode)
+	{
+	case NORMAL:
+		PauseButton->SetStyle(PauseButtonStyle);
+		SpeedUpButton->SetStyle(ActiveSpeedUpButtonStyle);
+		break;
+	case SLOW:
+		PauseButton->SetStyle(ActivePauseButtonStyle);
+		SpeedDownButton->SetStyle(SpeedDownButtonStyle);
+		break;
+	case PAUSE:
+	case FAST:
+	default:
+		break;
+	}
+
 	DefaultGameStateRef->CurrentTimeRef->Faster();
+
 }
 
 void UHUDWidgetUMG::SpeedDownButtonClicked()
 {
+	switch (DefaultGameStateRef->CurrentTimeRef->CurrentTimeMode)
+	{
+	case NORMAL:
+		SpeedDownButton->SetStyle(ActiveSpeedDownButtonStyle);
+		PauseButton->SetStyle(PauseButtonStyle);
+		break;
+	case FAST:
+		SpeedUpButton->SetStyle(SpeedUpButtonStyle);
+		PauseButton->SetStyle(ActivePauseButtonStyle);
+		break;
+	case SLOW:
+	case PAUSE:
+	default:
+		break;
+	}
+
 	DefaultGameStateRef->CurrentTimeRef->Slower();
+
 }
 
 void UHUDWidgetUMG::DestroyButtonClicked()
