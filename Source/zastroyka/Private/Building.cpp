@@ -21,7 +21,7 @@ ABuilding::ABuilding()
 	MeshComponent->OnClicked.AddDynamic(this, &ABuilding::OnBuildingClicked);
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetNotifyRigidBodyCollision(true);
-	MeshComponent->SetCollisionProfileName("BlockAll");
+	//MeshComponent->SetCollisionProfileName("BlockAll");
 
 	RootComponent = MeshComponent;
 	
