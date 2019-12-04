@@ -67,7 +67,7 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 	{
 		TArray<AActor*> FoundHUDs;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADefaultHUD::StaticClass(), FoundHUDs);
-		Cast<ADefaultHUD>(FoundHUDs[0])->AddBuildingInfoWidget();
+		//Cast<ADefaultHUD>(FoundHUDs[0])->AddBuildingInfoWidget();
 	}
 }
 

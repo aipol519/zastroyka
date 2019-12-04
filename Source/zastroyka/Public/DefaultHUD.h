@@ -12,8 +12,12 @@ class ZASTROYKA_API ADefaultHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	
+	//UFUNCTION()
+	//void AddBuildingInfoWidget();
 
-	void AddBuildingInfoWidget();
+	UFUNCTION()
+	UEventWigdetUMG * GetEventWidget();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UHUDWidgetUMG> HUDWidgetClass;
@@ -24,13 +28,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UShopWidgetUMG> ShopWidgetClass;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	//TSubclassOf<class UBuildingInfoWidgetUMG> BuildingInfoWidgetClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<class UBuildingInfoWidgetUMG> BuildingInfoWidgetClass;
+	TSubclassOf<class UEventWigdetUMG> EventWidgetClass;
 
 	UHUDWidgetUMG* HUDWidgetRef;
 	UCameraControlWidgetUMG* CameraControlWidgetRef;
 	UShopWidgetUMG* ShopWidgetRef;
-	UBuildingInfoWidgetUMG* BuildingInfoWidgetRef;
+
+	//UBuildingInfoWidgetUMG* BuildingInfoWidgetRef;
+
+	UEventWigdetUMG* EventWidgetRef;
 
 	void BeginPlay();
 

@@ -10,9 +10,10 @@
 #include "CameraControlWidgetUMG.h"
 #include "BuildingInfoWidgetUMG.h"
 #include "DefaultGameState.h"
+#include "EventWigdetUMG.h"
 
-#include "GamePlayerController.h"
-#include "Kismet/GameplayStatics.h"
+//#include "GamePlayerController.h"
+//#include "Kismet/GameplayStatics.h"
 
 void ADefaultHUD::BeginPlay()
 {
@@ -27,16 +28,27 @@ void ADefaultHUD::BeginPlay()
 
 	CameraControlWidgetRef = CreateWidget<UCameraControlWidgetUMG>(GetWorld(), CameraControlWidgetClass);
 	CameraControlWidgetRef->AddToViewport();
+
+	EventWidgetRef = CreateWidget<UEventWigdetUMG>(GetWorld(), EventWidgetClass);
+	EventWidgetRef->AddToViewport();
+
 }
 
-void ADefaultHUD::AddBuildingInfoWidget()
+//Will be added in future releases
+
+//void ADefaultHUD::AddBuildingInfoWidget()
+//{
+//	BuildingInfoWidgetRef = CreateWidget<UBuildingInfoWidgetUMG>(GetWorld(), BuildingInfoWidgetClass);
+//
+//	float MousePositionX, MousePositionY;
+//
+//	Cast<AGamePlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->GetMousePosition(MousePositionX, MousePositionY);
+//
+//	BuildingInfoWidgetRef->SetLocation(MousePositionX, MousePositionY);
+//	BuildingInfoWidgetRef->AddToViewport();
+//}
+
+UEventWigdetUMG * ADefaultHUD::GetEventWidget()
 {
-	BuildingInfoWidgetRef = CreateWidget<UBuildingInfoWidgetUMG>(GetWorld(), BuildingInfoWidgetClass);
-
-	float MousePositionX, MousePositionY;
-
-	Cast<AGamePlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->GetMousePosition(MousePositionX, MousePositionY);
-
-	BuildingInfoWidgetRef->SetLocation(MousePositionX, MousePositionY);
-	BuildingInfoWidgetRef->AddToViewport();
+	return EventWidgetRef;
 }
