@@ -130,6 +130,13 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
 }
 
+void ADefaultGameState::SetDefaultEvents()
+{
+	//DefaultEvents.Add(KEY, NEW OBJECT)
+
+	//DefaultEvents[EVENT KEY]->Initialize(EVENT DESCRIPTION)
+}
+
 void ADefaultGameState::UpdateStat()
 {
 	//CurrentStat.Climate = BaseStat.Climate / (CurrentStat.Population * PopulationClimateMultiplier);

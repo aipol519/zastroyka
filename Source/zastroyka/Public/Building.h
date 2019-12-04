@@ -42,7 +42,7 @@ public:
 	bool IsRoadBuilding;
 
 	UPROPERTY()
-	struct FStat Income;
+	FStat Income;
 
 	UPROPERTY()
 	FString BuildingName;

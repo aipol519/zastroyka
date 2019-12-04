@@ -67,27 +67,50 @@ protected:
 public:
 	ADefaultGameState();
 
+	UFUNCTION()
 	void SetDefaultTiles();
+
+	UFUNCTION()
 	void SetDefaultBuildings();
 
+	UFUNCTION()
+	void SetDefaultEvents();
+
+	UFUNCTION()
 	void SelectBuilding(FString _BuildingID);
+
+	UFUNCTION()
 	class ABuilding* FindBuilding(FString _BuildingID);
 
+	UFUNCTION()
 	void ToggleMode(bool _IsBuildMode);
 
+	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
+
+	UFUNCTION()
 	void SetShopWidgetRef(class UShopWidgetUMG* _ShopWidgetRef);
 
+	UFUNCTION()
 	void InitializeTime();
 
+	UFUNCTION()
 	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
+
+	UFUNCTION()
 	int16 GetXCoordFromIndex(int16 _Index);
+
+	UFUNCTION()
 	int16 GetYCoordFromIndex(int16 _Index);
 
+	UFUNCTION()
 	class APlayerPawn* GetPlayerRef();
 
 	UPROPERTY()
 	TArray<class UTile*> Tiles;
+
+	UPROPERTY()
+	TMap<FString, class UEventBase*> DefaultEvents;
 
 	UPROPERTY()
 	TMap<FString, class ABuilding*> DefaultBuildings;
@@ -95,6 +118,7 @@ public:
 	UPROPERTY()
 	TArray<class ABuilding*> Buildings;
 
+	UFUNCTION()
 	void DeleteBuildingInfo(class ABuilding* _DeletingBuilding);
 
 	UPROPERTY()
@@ -106,13 +130,25 @@ public:
 	UPROPERTY()
 	FStat Income;
 
+	UFUNCTION()
 	void UpdateStat();
+
+	UFUNCTION()
 	void RefreshIncome();
 
+	UPROPERTY()
 	FStat BaseIncome;
+
+	UPROPERTY()
 	int16 MaxPopulation;
+
+	UPROPERTY()
 	int16 PopulationClimateMultiplier;
+
+	UPROPERTY()
 	float BasePIMultiplier;
+
+	UPROPERTY()
 	float IncomePIMultiplier;
 
 	UPROPERTY()
@@ -133,15 +169,21 @@ public:
 	UPROPERTY()
 	FPaperTileInfo ExtraTileInfo;
 
+	UFUNCTION()
 	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
 
 	UPROPERTY()
 	bool IsBuildingMapRestricted;
 
+	UFUNCTION()
 	void RefreshConnectionMap();
+
+	UFUNCTION()
 	void CheckConnection(int16 _XTileCoord, int16 _YTileCoord);
+
 	int16 temp, temp2;
 
+	UFUNCTION()
 	void Action(int16 _XTileCoord, int16 _YTileCoord);
 
 	UPROPERTY()
