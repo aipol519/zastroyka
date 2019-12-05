@@ -41,12 +41,6 @@ public:
 
 	UFUNCTION()
 	void ReadingEventDone();
-
-	UFUNCTION()
-	void SetEventWidgetRef(class UEventWigdetUMG* _EventWidgetRef);
-
-	UFUNCTION()
-	void SetCurrentTimeRef(class UTime* _CurrentTimeRef);
 	
 private:
 	
@@ -69,5 +63,5 @@ private:
 	UEventWigdetUMG* EventWidgetRef;
 
 	UPROPERTY()
-	UTime* CurrentTimeRef;
+	UHUDWidgetUMG* HUDWidgetRef;
 };

@@ -86,7 +86,10 @@ public:
 	class ABuilding* FindBuilding(FString _BuildingID);
 
 	UFUNCTION()
-	void ToggleMode(bool _IsBuildMode);
+	void ToggleBuildMode();
+
+	UFUNCTION()
+	void ToggleDestroyMode();
 
 	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);

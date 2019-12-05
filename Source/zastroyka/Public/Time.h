@@ -18,13 +18,37 @@ class ZASTROYKA_API UTime : public UObject
 	UTime();
 	
 public:
+	
+	UFUNCTION()
 	void Play();
+
+	UFUNCTION()
 	void Faster();
+
+	UFUNCTION()
 	void Slower();
 
+	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
+
+	UFUNCTION()
 	void Initialize();
 
+	UFUNCTION()
+	TimeMode GetCurrentTimeMode();
+
+	UFUNCTION()
+	int16 GetDay();
+
+	UFUNCTION()
+	int16 GetMonth();
+
+	UFUNCTION()
+	int16 GetYear();
+
+private:
+	
+	UFUNCTION()
 	void UpdateDate();
 
 	UPROPERTY()

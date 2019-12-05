@@ -21,7 +21,7 @@ public:
 	UTile();
 	//ATile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
-	void ChangeInBuildDestroyMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
+	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
 
 	UPROPERTY()
 	FPaperTileInfo TileInfo;

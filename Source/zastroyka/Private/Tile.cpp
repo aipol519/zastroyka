@@ -21,7 +21,7 @@ FPaperTileInfo UTile::GetTileInfo()
 	return TileInfo;
 }
 
-void UTile::ChangeInBuildDestroyMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
+void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
 {
 	//FPaperTileInfo TempTileInfo;
 	//TempTileInfo.TileSet = TileInfo.TileSet;

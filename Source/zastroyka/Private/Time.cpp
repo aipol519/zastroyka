@@ -42,6 +42,11 @@ void UTime::Initialize()
 	//Play();
 }
 
+TimeMode UTime::GetCurrentTimeMode()
+{
+	return CurrentTimeMode;
+}
+
 void UTime::UpdateDate()
 {
 	switch (Month)
@@ -175,4 +180,19 @@ void UTime::Faster()
 	default:
 		break;
 	}
+}
+
+int16 UTime::GetDay()
+{
+	return Day;
+}
+
+int16 UTime::GetMonth()
+{
+	return Month;
+}
+
+int16 UTime::GetYear()
+{
+	return Year;
 }

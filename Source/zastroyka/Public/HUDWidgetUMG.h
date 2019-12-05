@@ -83,13 +83,23 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* SpeedDownButton;
-	
+
+	UPROPERTY()
 	class ADefaultGameState* DefaultGameStateRef;
+
+	UPROPERTY()
 	class ADefaultHUD* DefaultHUDRef;
+
+	UPROPERTY()
 	class UShopWidgetUMG* ShopWidgetRef;
 
+	UPROPERTY()
 	struct FButtonStyle PlayButtonStyle;
+
+	UPROPERTY()
 	struct FButtonStyle SpeedUpButtonStyle;
+
+	UPROPERTY()
 	struct FButtonStyle SpeedDownButtonStyle;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)

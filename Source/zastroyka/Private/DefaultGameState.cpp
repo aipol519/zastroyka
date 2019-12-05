@@ -219,38 +219,74 @@ ABuilding* ADefaultGameState::FindBuilding(FString _BuildingID)
 	return DefaultBuildings[_BuildingID];
 }
 
-void ADefaultGameState::ToggleMode(bool _IsBuildMode)
+void ADefaultGameState::ToggleBuildMode()
 {
-	CurrentTimeRef->Play();
-	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
-	if (IsBuildModeEnabled || IsDestroyModeEnabled)
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build Mode Toggled");
+	//CurrentTimeRef->Play();
+	if (IsBuildModeEnabled)
 	{
-		GetPlayerRef()->GetController()->SetActorTickEnabled(false);
 		ExtraTileInfo.PackedTileIndex = 0;
+		IsDestroyModeEnabled = false;
 		SelectedBuilding = nullptr;
 		RefreshConnectionMap();
 		RefreshIncome();
 		HUDWidgetRef->UpdateVisibleIncome();
 	}
-	if (_IsBuildMode)
+	else
 	{
-		IsBuildModeEnabled = !IsBuildModeEnabled;
-		if (IsDestroyModeEnabled)
-		{
-			ExtraTileInfo.PackedTileIndex = 3;
-		}
+		ShopWidgetRef->CheckAvailabilityForButtons();
+		ExtraTileInfo.PackedTileIndex = 3;
+	}
+	IsBuildModeEnabled = !IsBuildModeEnabled;
+	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
+	//if (IsBuildModeEnabled || IsDestroyModeEnabled)
+	//{
+	//	GetPlayerRef()->GetController()->SetActorTickEnabled(false);
+	//	ExtraTileInfo.PackedTileIndex = 0;
+	//	SelectedBuilding = nullptr;
+	//	RefreshConnectionMap();
+	//	RefreshIncome();
+	//	HUDWidgetRef->UpdateVisibleIncome();
+	//}
+	//if (IsBuildModeEnabled)
+	//{
+	//	IsBuildModeEnabled = !IsBuildModeEnabled;
+	//	if (IsDestroyModeEnabled)
+	//	{
+	//		ExtraTileInfo.PackedTileIndex = 3;
+	//	}
+	//}
+	//else
+	//{
+	//	IsDestroyModeEnabled = !IsDestroyModeEnabled;
+	//	if (IsDestroyModeEnabled)
+	//	{
+	//		ExtraTileInfo.PackedTileIndex = 4;
+	//	}
+	//}
+	for (UTile* CurrentTile : Tiles)
+	{
+		CurrentTile->ChangeInBuildMode(MainTilemapComponent, IsBuildModeEnabled);
+	}
+}
+
+void ADefaultGameState::ToggleDestroyMode()
+{
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Destroy Mode Toggled");
+	if (!IsDestroyModeEnabled)
+	{
+		ExtraTileInfo.PackedTileIndex = 4;
 	}
 	else
 	{
-		IsDestroyModeEnabled = !IsDestroyModeEnabled;
-		if (IsDestroyModeEnabled)
-		{
-			ExtraTileInfo.PackedTileIndex = 4;
-		}
+		SelectedBuilding = nullptr;
+		HUDWidgetRef->UpdateVisibleIncome();
 	}
+	IsDestroyModeEnabled = !IsDestroyModeEnabled;
+	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
 	for (UTile* CurrentTile : Tiles)
 	{
-		CurrentTile->ChangeInBuildDestroyMode(MainTilemapComponent, IsBuildModeEnabled || IsDestroyModeEnabled);
+		CurrentTile->ChangeInBuildMode(MainTilemapComponent, IsBuildModeEnabled);
 	}
 }
 
@@ -329,7 +365,19 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Action Triggered");
 	if (IsBuildModeEnabled)
 	{
-		if (!IsBuildingMapRestricted)
+		if (IsDestroyModeEnabled)
+		{
+			if (_XTileCoord < 27 || _XTileCoord > 35 || _YTileCoord < 28 || _YTileCoord > 35)
+			{
+				if (Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType == ROAD_TILE)
+				{
+					Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = GREEN_TILE;
+					Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 0;
+					MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
+				}
+			}
+		}
+		else if (!IsBuildingMapRestricted)
 		{
 			if (SelectedBuilding->IsRoadBuilding)
 			{
@@ -342,21 +390,14 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 				Buildings.Add(SelectedBuilding->Place(Tiles, MainTilemapComponent, _XTileCoord, _YTileCoord));
 
 				CurrentStat.Money -= SelectedBuilding->Cost;
+				if (SelectedBuilding->Cost > CurrentStat.Money)
+				{
+					SelectedBuilding = nullptr;
+					IsBuildingMapRestricted = true;
+				}
 				HUDWidgetRef->UpdateVisibleStat();
 				ShopWidgetRef->CheckAvailabilityForButtons();
-				
-			}
-		}
-	}
-	else if (IsDestroyModeEnabled)
-	{
-		if (_XTileCoord < 27 || _XTileCoord > 35 || _YTileCoord < 28 || _YTileCoord > 35)
-		{
-			if (Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType == ROAD_TILE)
-			{
-				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = GREEN_TILE;
-				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 0;
-				MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
+
 			}
 		}
 	}

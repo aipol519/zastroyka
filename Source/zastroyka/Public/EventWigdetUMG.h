@@ -16,10 +16,12 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
-	void AcceptButtonClicked();
-
-	UFUNCTION()
 	void ShowUp(class UEventBase* _CurrentEventRef);
+
+private:
+	
+	UFUNCTION()
+	void AcceptButtonClicked();
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* HeaderText;

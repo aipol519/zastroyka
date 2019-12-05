@@ -9,14 +9,14 @@
 
 UShopBuldingButton::UShopBuldingButton()
 {
-	this->OnClicked.AddDynamic(this, &UShopBuldingButton::TranslateBuilding);
+	OnClicked.AddDynamic(this, &UShopBuldingButton::TranslateBuilding);
 
 }
 
 void UShopBuldingButton::Initialize()
 {
 	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
-	AvailableButtonStyle = this->WidgetStyle;
+	AvailableButtonStyle = WidgetStyle;
 
 }
 
@@ -24,11 +24,13 @@ void UShopBuldingButton::CheckAvailability()
 {
 	if (DefaultGameStateRef->CurrentStat.Money - DefaultGameStateRef->FindBuilding(BuildingID)->Cost < 0)
 	{
-		this->SetStyle(UnavailableButtonStyle);
+		SetStyle(UnavailableButtonStyle);
+		SetIsEnabled(false);
 	}
 	else
 	{
-		this->SetStyle(AvailableButtonStyle);
+		SetStyle(AvailableButtonStyle);
+		SetIsEnabled(true);
 	}
 
 }

@@ -42,7 +42,8 @@ void UHUDWidgetUMG::BuildButtonClicked()
 			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
 
 		BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
-		DefaultGameStateRef->ToggleMode(true);
+		DefaultGameStateRef->ToggleBuildMode();
+		PauseButtonClicked();
 		DestroyModeButton->SetVisibility(DefaultGameStateRef->IsBuildModeEnabled ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 	}
 }
@@ -69,14 +70,14 @@ void UHUDWidgetUMG::UpdateVisibleIncome()
 
 void UHUDWidgetUMG::UpdateVisibleDate()
 {
-	Day->SetText(FText::FromString("D: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->Day)));
-	Month->SetText(FText::FromString("M: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->Month)));
-	Year->SetText(FText::FromString("Y: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->Year)));
+	Day->SetText(FText::FromString("D: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->GetDay())));
+	Month->SetText(FText::FromString("M: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->GetMonth())));
+	Year->SetText(FText::FromString("Y: " + FString::FromInt(DefaultGameStateRef->CurrentTimeRef->GetYear())));
 }
 
 void UHUDWidgetUMG::PauseButtonClicked()
 {
-	switch (DefaultGameStateRef->CurrentTimeRef->CurrentTimeMode)
+	switch (DefaultGameStateRef->CurrentTimeRef->GetCurrentTimeMode())
 	{
 	case NORMAL:
 	case FAST:
@@ -98,7 +99,7 @@ void UHUDWidgetUMG::PauseButtonClicked()
 
 void UHUDWidgetUMG::SpeedUpButtonClicked()
 {
-	switch (DefaultGameStateRef->CurrentTimeRef->CurrentTimeMode)
+	switch (DefaultGameStateRef->CurrentTimeRef->GetCurrentTimeMode())
 	{
 	case NORMAL:
 		PauseButton->SetStyle(PauseButtonStyle);
@@ -120,7 +121,7 @@ void UHUDWidgetUMG::SpeedUpButtonClicked()
 
 void UHUDWidgetUMG::SpeedDownButtonClicked()
 {
-	switch (DefaultGameStateRef->CurrentTimeRef->CurrentTimeMode)
+	switch (DefaultGameStateRef->CurrentTimeRef->GetCurrentTimeMode())
 	{
 	case NORMAL:
 		SpeedDownButton->SetStyle(ActiveSpeedDownButtonStyle);
@@ -142,8 +143,9 @@ void UHUDWidgetUMG::SpeedDownButtonClicked()
 
 void UHUDWidgetUMG::DestroyButtonClicked()
 {
-	if (!(DefaultGameStateRef->IsBuildModeEnabled))
-	{
-		DefaultGameStateRef->ToggleMode(false);
-	}
+	DefaultGameStateRef->ToggleDestroyMode();
+	DefaultGameStateRef->IsDestroyModeEnabled ?
+		ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Reverse) :
+		ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
+
 }
