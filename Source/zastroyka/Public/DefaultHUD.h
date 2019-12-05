@@ -16,9 +16,6 @@ public:
 	//UFUNCTION()
 	//void AddBuildingInfoWidget();
 
-	UFUNCTION()
-	UEventWigdetUMG * GetEventWidget();
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UHUDWidgetUMG> HUDWidgetClass;
 
@@ -34,14 +31,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UEventWigdetUMG> EventWidgetClass;
 
+	UFUNCTION()
+	UEventWigdetUMG* GetEventWidget();
+
+	UPROPERTY()
 	UHUDWidgetUMG* HUDWidgetRef;
+
+	UPROPERTY()
 	UCameraControlWidgetUMG* CameraControlWidgetRef;
+
+	UPROPERTY()
 	UShopWidgetUMG* ShopWidgetRef;
 
 	//UBuildingInfoWidgetUMG* BuildingInfoWidgetRef;
 
+	UPROPERTY()
 	UEventWigdetUMG* EventWidgetRef;
 
+	UFUNCTION()
 	void BeginPlay();
 
 };

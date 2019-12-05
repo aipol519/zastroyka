@@ -19,7 +19,7 @@ public:
 	void AcceptButtonClicked();
 
 	UFUNCTION()
-	void InitializeEventWidget(FString _HeaderText, FString _DescriptionText);
+	void ShowUp(class UEventBase* _CurrentEventRef);
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* HeaderText;
@@ -29,5 +29,10 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* AcceptButton;
-	
+
+	UPROPERTY()
+	class ADefaultGameState* DefaultGameStateRef;
+
+	UPROPERTY()
+	UEventBase* CurrentEventRef;
 };

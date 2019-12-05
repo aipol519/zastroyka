@@ -41,9 +41,10 @@ public:
 
 	UPROPERTY()
 	FTimerHandle TimerHandle;
-	
-	void TimeTick();
 
+	UFUNCTION()
+	void TimeTick();
+	
 	UPROPERTY()
 	class ADefaultGameState* DefaultGameStateRef;
 

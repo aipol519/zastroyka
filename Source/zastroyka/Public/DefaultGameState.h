@@ -77,6 +77,9 @@ public:
 	void SetDefaultEvents();
 
 	UFUNCTION()
+	void CheckEvents();
+	
+	UFUNCTION()
 	void SelectBuilding(FString _BuildingID);
 
 	UFUNCTION()
@@ -90,6 +93,9 @@ public:
 
 	UFUNCTION()
 	void SetShopWidgetRef(class UShopWidgetUMG* _ShopWidgetRef);
+
+	UFUNCTION()
+	void SetEventWidgetRef(class UEventWigdetUMG* _EventWidgetRef);
 
 	UFUNCTION()
 	void InitializeTime();
@@ -206,5 +212,8 @@ public:
 
 	UPROPERTY()
 	class UShopWidgetUMG* ShopWidgetRef;
+
+	UPROPERTY()
+	class UEventWigdetUMG* EventWidgetRef;
 
 };

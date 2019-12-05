@@ -25,13 +25,28 @@ public:
 	//bool IsReadyToExecute();
 
 	UFUNCTION()
-	void Initialize(FString _Name, FString _Description, FStat _ChangedStat, float _AppearChance);
+	void Initialize(FString _Name, FString _Description, FStat _ChangedStat, float _AppearChance, ADefaultGameState* _DefaultGameStateRef);
 	
 	UFUNCTION()
 	void Execute();
 
 	UFUNCTION()
 	float GetAppearChance();
+
+	UFUNCTION()
+	FString GetName();
+
+	UFUNCTION()
+	FString GetDescription();
+
+	UFUNCTION()
+	void ReadingEventDone();
+
+	UFUNCTION()
+	void SetEventWidgetRef(class UEventWigdetUMG* _EventWidgetRef);
+
+	UFUNCTION()
+	void SetCurrentTimeRef(class UTime* _CurrentTimeRef);
 	
 private:
 	
@@ -48,6 +63,11 @@ private:
 	float AppearChance;
 
 	UPROPERTY()
-	ADefaultGameState* _DefaultGameStateRef;
-	
+	ADefaultGameState* DefaultGameStateRef;
+
+	UPROPERTY()
+	UEventWigdetUMG* EventWidgetRef;
+
+	UPROPERTY()
+	UTime* CurrentTimeRef;
 };

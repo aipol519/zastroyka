@@ -5,24 +5,29 @@
 
 #include "TextBlock.h"
 #include "Button.h"
+#include "EventBase.h"
+#include "DefaultGameState.h"
 
 void UEventWigdetUMG::NativeConstruct()
 {
 	AcceptButton->OnClicked.AddDynamic(this, &UEventWigdetUMG::AcceptButtonClicked);
 
+	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	DefaultGameStateRef->SetEventWidgetRef(this);
 }
 
 void UEventWigdetUMG::AcceptButtonClicked()
 {
-	this->RemoveFromViewport();
-	
+	CurrentEventRef->ReadingEventDone();
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UEventWigdetUMG::InitializeEventWidget(FString _HeaderText, FString _DescriptionText)
+void UEventWigdetUMG::ShowUp(UEventBase* _CurrentEventRef)
 {
-	HeaderText->SetText(FText::FromString(_HeaderText));
-	DescriptionText->SetText(FText::FromString(_DescriptionText));
+	CurrentEventRef = _CurrentEventRef;
+	HeaderText->SetText(FText::FromString(CurrentEventRef->GetName()));
+	DescriptionText->SetText(FText::FromString(CurrentEventRef->GetDescription()));
 
-	this->AddToViewport();
+	SetVisibility(ESlateVisibility::Visible);
 
 }

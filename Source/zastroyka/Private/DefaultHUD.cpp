@@ -30,6 +30,7 @@ void ADefaultHUD::BeginPlay()
 	CameraControlWidgetRef->AddToViewport();
 
 	EventWidgetRef = CreateWidget<UEventWigdetUMG>(GetWorld(), EventWidgetClass);
+	EventWidgetRef->SetVisibility(ESlateVisibility::Hidden);
 	EventWidgetRef->AddToViewport();
 
 }
@@ -48,7 +49,7 @@ void ADefaultHUD::BeginPlay()
 //	BuildingInfoWidgetRef->AddToViewport();
 //}
 
-UEventWigdetUMG * ADefaultHUD::GetEventWidget()
+UEventWigdetUMG* ADefaultHUD::GetEventWidget()
 {
 	return EventWidgetRef;
 }

@@ -10,6 +10,9 @@
 #include "DefaultHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "zastroykaGameModeBase.h"
+#include "EventBase.h"
+
+#include <cstdlib>
 
 #include "HUDWidgetUMG.h"
 #include "ShopWidgetUMG.h"
@@ -38,6 +41,8 @@ ADefaultGameState::ADefaultGameState()
 	IsDestroyModeEnabled = false;
 
 	SelectedBuilding = nullptr;
+
+	srand(static_cast<unsigned>(FDateTime::Now().GetMillisecond()));
 	
 	temp = 0;
 }
@@ -77,6 +82,13 @@ void ADefaultGameState::SetShopWidgetRef(class UShopWidgetUMG* _ShopWidgetRef)
 {
 	ShopWidgetRef = _ShopWidgetRef;
 	//CurrentTimeRef->SetHUDWidgetRef(_HUDWidgetRef);
+}
+
+void ADefaultGameState::SetEventWidgetRef(UEventWigdetUMG* _EventWidgetRef)
+{
+	EventWidgetRef = _EventWidgetRef;
+
+	SetDefaultEvents();
 }
 
 void ADefaultGameState::SetDefaultTiles()
@@ -132,9 +144,43 @@ void ADefaultGameState::SetDefaultBuildings()
 
 void ADefaultGameState::SetDefaultEvents()
 {
+	DefaultEvents.Add("Tutorial", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test1", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test2", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test3", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test4", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test5", NewObject<UEventBase>(this));
 	//DefaultEvents.Add(KEY, NEW OBJECT)
-
+	
+	DefaultEvents["Tutorial"]->Initialize("Tutorial", "Hello TUTOR", FStat(0, 0, 0, 0), 0.0, this);
+	DefaultEvents["test1"]->Initialize("test1", "Hello TUTOR", FStat(0, 0, 0, 0), 0.1, this);
+	DefaultEvents["test2"]->Initialize("test2", "Hello TUTOR", FStat(0, 0, 0, 0), 0.2, this);
+	DefaultEvents["test3"]->Initialize("test3", "Hello TUTOR", FStat(0, 0, 0, 0), 0.3, this);
+	DefaultEvents["test4"]->Initialize("test4", "Hello TUTOR", FStat(0, 0, 0, 0), 0.4, this);
+	DefaultEvents["test5"]->Initialize("test5", "Hello TUTOR", FStat(0, 0, 0, 0), 0.5, this);
 	//DefaultEvents[EVENT KEY]->Initialize(EVENT DESCRIPTION)
+
+	//UEventBase::SetEventWidgetRef(EventWidgetRef);
+	//UEventBase::SetCurrentTimeRef(CurrentTimeRef);
+	
+	DefaultEvents["Tutorial"]->Execute();
+}
+
+void ADefaultGameState::CheckEvents()
+{
+	float RandomAppearChance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	TArray<UEventBase*> SuitableEvents;
+	for (auto const& Event : DefaultEvents)
+	{
+		if (Event.Value->GetAppearChance() > RandomAppearChance)
+		{
+			SuitableEvents.Add(Event.Value);
+		}
+	}
+	if (SuitableEvents.Num() > 0)
+	{
+		SuitableEvents[div(rand(), SuitableEvents.Num()).rem]->Execute();
+	}
 }
 
 void ADefaultGameState::UpdateStat()

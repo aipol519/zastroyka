@@ -18,6 +18,7 @@ void UTime::TimeTick()
 	DefaultGameStateRef->UpdateStat();
 	HUDWidgetRef->UpdateVisibleStat();
 	HUDWidgetRef->UpdateVisibleDate();
+	DefaultGameStateRef->CheckEvents();
 }
 
 void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
@@ -35,10 +36,10 @@ void UTime::Initialize()
 	Month = 1;
 	Year = 1950;
 	CurrentTimeMode = NORMAL;
-
+	
 	DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
 
-	Play();
+	//Play();
 }
 
 void UTime::UpdateDate()
