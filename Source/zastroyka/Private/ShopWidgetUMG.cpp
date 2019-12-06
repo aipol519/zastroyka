@@ -19,6 +19,8 @@ void UShopWidgetUMG::NativeConstruct()
 	ShopButtons.Add(HutButton);
 	ShopButtons.Add(BarrackButton);
 	ShopButtons.Add(StandButton);
+	ShopButtons.Add(FarmButton);
+	ShopButtons.Add(TownHallLvl2Button);
 
 	for (auto& Button : ShopButtons)
 	{

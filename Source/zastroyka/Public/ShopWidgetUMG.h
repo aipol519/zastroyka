@@ -39,4 +39,10 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UShopBuldingButton* StandButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UShopBuldingButton* FarmButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UShopBuldingButton* TownHallLvl2Button;
+
 };

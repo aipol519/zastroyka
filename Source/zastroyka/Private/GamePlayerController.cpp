@@ -61,6 +61,7 @@ void AGamePlayerController::BeginPlay()
 	//Getting instance of GameState
 	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
 
+	DefaultGameStateRef->SetPlayerControllerRef(this);
 }
 
 void AGamePlayerController::SetupInputComponent()
@@ -168,4 +169,16 @@ void AGamePlayerController::LeftMouseButtonUp()
 void AGamePlayerController::LeftMouseButtonDownContinious(float _Value)
 {
 	DefaultGameStateRef->Action(XTileCoord, YTileCoord);
+}
+
+int16 AGamePlayerController::GetMouseXCoord()
+{
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	return FMath::FloorToInt(HitResult.Location.X / 32.0f);
+}
+
+int16 AGamePlayerController::GetMouseYCoord()
+{
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	return FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 }

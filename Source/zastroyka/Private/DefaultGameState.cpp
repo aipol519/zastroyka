@@ -91,6 +91,11 @@ void ADefaultGameState::SetEventWidgetRef(UEventWigdetUMG* _EventWidgetRef)
 	SetDefaultEvents();
 }
 
+void ADefaultGameState::SetPlayerControllerRef(AGamePlayerController* _PlayerControllerRef)
+{
+	PlayerControllerRef = _PlayerControllerRef;
+}
+
 void ADefaultGameState::SetDefaultTiles()
 {
 	for (int16 i = 0; i < XMapSize; i++)
@@ -132,12 +137,16 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings.Add("1B", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("1E", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("2", NewObject<ABuilding>(this));
 
 	DefaultBuildings["1"]->Initialize(4, 3, 0, FStat(0, 0, 0, 0), false, "town_hall_lvl1", this);
 	DefaultBuildings["1A"]->Initialize(2, 2, 250, FStat(5, 15, 1, 1), false, "hut", this);
-	DefaultBuildings["1B"]->Initialize(6, 4, 500, FStat(5, 15, 1, 1), false, "barrack", this);
+	DefaultBuildings["1B"]->Initialize(6, 2, 500, FStat(5, 15, 1, 1), false, "barrack", this);
 	DefaultBuildings["1C"]->Initialize(2, 1, 300, FStat(5, 15, 1,1), false, "stand", this);
 	DefaultBuildings["1D"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), true, "road", this);
+	DefaultBuildings["1E"]->Initialize(6, 4, 300, FStat(5, 15, 1, 1), false, "farm", this);
+	DefaultBuildings["2"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), false, "town_hall_lvl2", this);
 
 	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
 }
@@ -152,12 +161,14 @@ void ADefaultGameState::SetDefaultEvents()
 	DefaultEvents.Add("test5", NewObject<UEventBase>(this));
 	//DefaultEvents.Add(KEY, NEW OBJECT)
 	
-	DefaultEvents["Tutorial"]->Initialize("Tutorial", "Hello TUTOR", FStat(0, 0, 0, 0), 0.0, this);
-	DefaultEvents["test1"]->Initialize("test1", "Hello TUTOR", FStat(0, 0, 0, 0), 0.1, this);
-	DefaultEvents["test2"]->Initialize("test2", "Hello TUTOR", FStat(0, 0, 0, 0), 0.2, this);
-	DefaultEvents["test3"]->Initialize("test3", "Hello TUTOR", FStat(0, 0, 0, 0), 0.3, this);
-	DefaultEvents["test4"]->Initialize("test4", "Hello TUTOR", FStat(0, 0, 0, 0), 0.4, this);
-	DefaultEvents["test5"]->Initialize("test5", "Hello TUTOR", FStat(0, 0, 0, 0), 0.5, this);
+	DefaultEvents["Tutorial"]->Initialize("Welcome to ZASTROYKA",
+		"You are the head of this \"city\". The goal of the game is to earn as much money as possible and maybe make people a little happier.\n\nControls:\nLMK - action\nMouse to screen borders - camera movement",
+		FStat(0, 0, 0, 0), 0.0, this);
+	DefaultEvents["test1"]->Initialize("test1", "Hello TUTOR", FStat(0, 0, 0, 0), 0.01, this);
+	DefaultEvents["test2"]->Initialize("test2", "Hello TUTOR", FStat(0, 0, 0, 0), 0.05, this);
+	DefaultEvents["test3"]->Initialize("test3", "Hello TUTOR", FStat(0, 0, 0, 0), 0.1, this);
+	DefaultEvents["test4"]->Initialize("test4", "Hello TUTOR", FStat(0, 0, 0, 0), 0.15, this);
+	DefaultEvents["test5"]->Initialize("test5", "Hello TUTOR", FStat(0, 0, 0, 0), 0.2, this);
 	//DefaultEvents[EVENT KEY]->Initialize(EVENT DESCRIPTION)
 
 	//UEventBase::SetEventWidgetRef(EventWidgetRef);
@@ -211,7 +222,25 @@ void ADefaultGameState::UpdateStat()
 
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
-	SelectedBuilding = DefaultBuildings[_BuildingID];
+	if (SelectedBuilding != nullptr)
+	{
+		ClearPreviousTileMapArea();
+	}
+	SelectedBuilding = FindBuilding(_BuildingID);
+}
+
+void ADefaultGameState::ClearPreviousTileMapArea()
+{
+	int16 MouseXCoord = PlayerControllerRef->GetMouseXCoord();
+	int16 MouseYCoord = PlayerControllerRef->GetMouseYCoord();
+	for (int i = MouseXCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= MouseXCoord - div(SelectedBuilding->XSize, 2).quot; i--)
+	{
+		for (int j = MouseYCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= MouseYCoord - div(SelectedBuilding->YSize, 2).quot; j--)
+		{
+			(Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN_TILE) ? (ExtraTileInfo.PackedTileIndex = 4) : (ExtraTileInfo.PackedTileIndex = 3);
+			MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
+		}
+	}
 }
 
 ABuilding* ADefaultGameState::FindBuilding(FString _BuildingID)
@@ -275,19 +304,16 @@ void ADefaultGameState::ToggleDestroyMode()
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Destroy Mode Toggled");
 	if (!IsDestroyModeEnabled)
 	{
+		ClearPreviousTileMapArea();
+		SelectedBuilding = nullptr;
 		ExtraTileInfo.PackedTileIndex = 4;
 	}
 	else
 	{
-		SelectedBuilding = nullptr;
 		HUDWidgetRef->UpdateVisibleIncome();
 	}
 	IsDestroyModeEnabled = !IsDestroyModeEnabled;
 	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
-	for (UTile* CurrentTile : Tiles)
-	{
-		CurrentTile->ChangeInBuildMode(MainTilemapComponent, IsBuildModeEnabled);
-	}
 }
 
 void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord)
@@ -392,6 +418,7 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 				CurrentStat.Money -= SelectedBuilding->Cost;
 				if (SelectedBuilding->Cost > CurrentStat.Money)
 				{
+					ClearPreviousTileMapArea();
 					SelectedBuilding = nullptr;
 					IsBuildingMapRestricted = true;
 				}

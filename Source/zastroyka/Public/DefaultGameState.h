@@ -92,6 +92,9 @@ public:
 	void ToggleDestroyMode();
 
 	UFUNCTION()
+	void ClearPreviousTileMapArea();
+	
+	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
 
 	UFUNCTION()
@@ -99,6 +102,9 @@ public:
 
 	UFUNCTION()
 	void SetEventWidgetRef(class UEventWigdetUMG* _EventWidgetRef);
+
+	UFUNCTION()
+	void SetPlayerControllerRef(class AGamePlayerController* _PlayerControllerRef);
 
 	UFUNCTION()
 	void InitializeTime();
@@ -219,4 +225,6 @@ public:
 	UPROPERTY()
 	class UEventWigdetUMG* EventWidgetRef;
 
+	UPROPERTY()
+	AGamePlayerController* PlayerControllerRef;
 };

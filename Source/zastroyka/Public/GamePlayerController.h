@@ -22,25 +22,60 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	UFUNCTION()
 	void RightMouseButtonDownOnce();
+
+	UFUNCTION()
 	void RightMouseButtonUp();
 
+	UFUNCTION()
 	void RightMouseButtonDownContinious(float _Value);
 
+	UFUNCTION()
 	bool IsMouseMoving();
 
+	UFUNCTION()
 	void LeftMouseButtonDownOnce();
+
+	UFUNCTION()
 	void LeftMouseButtonUp();
+
+	UFUNCTION()
 	void LeftMouseButtonDownContinious(float _Value);
+
+	UFUNCTION()
+	int16 GetMouseXCoord();
+
+	UFUNCTION()
+	int16 GetMouseYCoord();
+
+private:
 	
+	UPROPERTY()
 	FVector MouseWorldPosition;
 
+	UPROPERTY()
 	FVector2D MouseStartScreenPosition;
+
+	UPROPERTY()
 	FVector2D MouseCurrentScreenPosition;
 
+	UPROPERTY()
 	FHitResult HitResult;
-	int16 XTileCoord, YTileCoord, PrevXTileCoord, PrevYTileCoord;
 
+	UPROPERTY()
+	int16 XTileCoord;
+
+	UPROPERTY()
+	int16 YTileCoord;
+
+	UPROPERTY()
+	int16 PrevXTileCoord;
+
+	UPROPERTY()
+	int16 PrevYTileCoord;
+
+	UPROPERTY()
 	class ADefaultGameState* DefaultGameStateRef;
 
 };

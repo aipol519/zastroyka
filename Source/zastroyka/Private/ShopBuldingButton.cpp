@@ -37,7 +37,7 @@ void UShopBuldingButton::CheckAvailability()
 
 void UShopBuldingButton::TranslateBuilding()
 {
-	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	//DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
 
 	DefaultGameStateRef->SelectBuilding(BuildingID);
 
