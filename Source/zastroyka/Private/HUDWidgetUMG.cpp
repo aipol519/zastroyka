@@ -54,18 +54,22 @@ void UHUDWidgetUMG::UpdateVisibleStat()
 	//CurrentPopulation->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Population)));
 	//CurrentClimate->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Climate * 100) + " %"));
 	//CurrentEmployment->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Employment * 100) + " %"));
-	CurrentMoney->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Money)));
-	CurrentPopulation->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Population)));
-	CurrentClimate->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Climate) + "%"));
-	CurrentEmployment->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Employment) + "%"));
+	//CurrentMoney->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Money)));
+	//CurrentPopulation->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Population)));
+	//CurrentClimate->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Climate) + "%"));
+	//CurrentEmployment->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Employment) + "%"));
+	CurrentMoney->SetText(FText::FromString(DefaultGameStateRef->GetMoneyLevel()));
+	CurrentPopulation->SetText(FText::FromString(DefaultGameStateRef->GetPopulationLevel()));
+	CurrentClimate->SetText(FText::FromString(DefaultGameStateRef->GetClimateLevel()));
+	CurrentEmployment->SetText(FText::FromString(DefaultGameStateRef->GetEmploymentLevel()));
 }
 
 void UHUDWidgetUMG::UpdateVisibleIncome()
 {
 	//MoneyIncome->SetText(FText::FromString((DefaultGameStateRef->Income.Money >= 0) ? "+" + FString::SanitizeFloat(DefaultGameStateRef->Income.Money) : (FString::SanitizeFloat(DefaultGameStateRef->Income.Money))));
 	//PopulationIncome->SetText(FText::FromString("/" + FString::SanitizeFloat(DefaultGameStateRef->MaxPopulation)));
-	MoneyIncome->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->Income.Money)));
-	PopulationIncome->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->Income.Population)));
+	//MoneyIncome->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->Income.Money)));
+	//PopulationIncome->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->Income.Population)));
 }
 
 void UHUDWidgetUMG::UpdateVisibleDate()

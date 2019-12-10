@@ -26,17 +26,12 @@ ADefaultGameState::ADefaultGameState()
 	XMapSize = 64;
 	YMapSize = 64;
 
-	IsBuildingMapRestricted = true;
-
-	BaseStat = FStat(1000, 3, 12, 3);
-	BaseIncome = FStat(-10, 0, 0, 0);
-	CurrentStat = FStat(1000, 3, 12, 3);
+	CurrentStat = FStat(1000, 3, 3, 3);
 	Income = FStat(0, 0, 0, 0);
+	MaxPopulation = 6;
+	ClimateDebuffs = 0;
 
-	PopulationClimateMultiplier = 5;
-	BasePIMultiplier = 0.05f;
-	IncomePIMultiplier = 0.3f;
-	
+	IsBuildingMapRestricted = true;
 	IsBuildModeEnabled = false;
 	IsDestroyModeEnabled = false;
 
@@ -141,12 +136,12 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings.Add("2", NewObject<ABuilding>(this));
 
 	DefaultBuildings["1"]->Initialize(4, 3, 0, FStat(0, 0, 0, 0), false, "town_hall_lvl1", this);
-	DefaultBuildings["1A"]->Initialize(2, 2, 250, FStat(5, 15, 1, 1), false, "hut", this);
-	DefaultBuildings["1B"]->Initialize(6, 2, 500, FStat(5, 15, 1, 1), false, "barrack", this);
-	DefaultBuildings["1C"]->Initialize(2, 1, 300, FStat(5, 15, 1,1), false, "stand", this);
-	DefaultBuildings["1D"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), true, "road", this);
-	DefaultBuildings["1E"]->Initialize(6, 4, 300, FStat(5, 15, 1, 1), false, "farm", this);
-	DefaultBuildings["2"]->Initialize(1, 1, 300, FStat(5, 15, 1, 1), false, "town_hall_lvl2", this);
+	DefaultBuildings["1A"]->Initialize(2, 2, 300, FStat(0, 6, 2, 0), false, "hut", this);
+	DefaultBuildings["1B"]->Initialize(6, 2, 500, FStat(0, 10, 1, 0), false, "barrack", this);
+	DefaultBuildings["1C"]->Initialize(2, 1, 250, FStat(5, 0, 1,2), false, "stand", this);
+	DefaultBuildings["1D"]->Initialize(1, 1, 0, FStat(0, 0, 0, 0), true, "road", this);
+	DefaultBuildings["1E"]->Initialize(6, 4, 400, FStat(8, 0, 0, 10), false, "farm", this);
+	DefaultBuildings["2"]->Initialize(1, 1, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl2", this);
 
 	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
 }
@@ -162,7 +157,7 @@ void ADefaultGameState::SetDefaultEvents()
 	//DefaultEvents.Add(KEY, NEW OBJECT)
 	
 	DefaultEvents["Tutorial"]->Initialize("Welcome to ZASTROYKA",
-		"You are the head of this \"city\". The goal of the game is to earn as much money as possible and maybe make people a little happier.\n\nControls:\nLMK - action\nMouse to screen borders - camera movement",
+		"You are the head of this \"city\". The goal of the game is to earn as much money as possible and maybe make people a little happier.\n\nControls:\nLMB - action\nMouse to screen borders - camera movement",
 		FStat(0, 0, 0, 0), 0.0, this);
 	DefaultEvents["test1"]->Initialize("test1", "Hello TUTOR", FStat(0, 0, 0, 0), 0.01, this);
 	DefaultEvents["test2"]->Initialize("test2", "Hello TUTOR", FStat(0, 0, 0, 0), 0.05, this);
@@ -194,42 +189,85 @@ void ADefaultGameState::CheckEvents()
 	}
 }
 
+FString ADefaultGameState::GetEmploymentLevel()
+{
+	return FString(
+		FString::FromInt(static_cast<int16>(static_cast<float>(FMath::Clamp(CurrentStat.Employment , static_cast<int16>(0), CurrentStat.Population)) / CurrentStat.Population * 100))
+		+ "%");
+}
+
+FString ADefaultGameState::GetClimateLevel()
+{
+	return FString(
+		FString::FromInt(FMath::Clamp<int16>(CurrentStat.Climate, -100, 100))
+		+ ((Income.Climate - ClimateDebuffs > 0) ? ("+") : ("-"))
+		+(FString::FromInt(abs(Income.Climate - ClimateDebuffs)))
+	);
+}
+
+FString ADefaultGameState::GetPopulationLevel()
+{
+	return FString(
+		FString::FromInt(CurrentStat.Population)
+		+ "/"
+		+ FString::FromInt(MaxPopulation)
+	);
+}
+
+FString ADefaultGameState::GetMoneyLevel()
+{
+	return FString(
+		FString::FromInt(CurrentStat.Money)
+		+ ((Income.Money > 0) ? ("+") : "-")
+		+ FString::FromInt(abs(Income.Money 
+			* FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f
+			* FMath::Clamp(CurrentStat.Employment, static_cast<int16>(0), CurrentStat.Population) / CurrentStat.Population))
+	);
+}
+
+
 void ADefaultGameState::UpdateStat()
 {
-	//CurrentStat.Climate = BaseStat.Climate / (CurrentStat.Population * PopulationClimateMultiplier);
+	//сделать как-то раз в неделю приход настроениея (или месяц?)
+	//CurrentStat.Climate += Income.Climate;
 
-	//CurrentStat.Employment = static_cast<float>(BaseStat.Employment) / CurrentStat.Population;
+	if (CurrentStat.Population < MaxPopulation)
+	{
+		FMath::Min(
+			CurrentStat.Population += CurrentStat.Population * (
+				FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f
+				+ (CurrentStat.Employment > CurrentStat.Population)
+				? (static_cast<float>(FMath::Clamp(CurrentStat.Employment, static_cast<int16>(0), CurrentStat.Population)) / CurrentStat.Population)
+				: (- static_cast<float>(FMath::Clamp(CurrentStat.Population, static_cast<int16>(0), static_cast<int16>(CurrentStat.Employment * 2))) / (CurrentStat.Employment * 2))),
+			MaxPopulation);
+	}
+	else
+	{
+		CurrentStat.Population = MaxPopulation;
+	}
 
-	//CurrentStat.Money = BaseStat.Money + Income.Money;
+	CurrentStat.Money += Income.Money
+		* FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f
+		* static_cast<float>(FMath::Clamp(CurrentStat.Employment, static_cast<int16>(0), CurrentStat.Population)) / CurrentStat.Population;
 
-	//CurrentStat.Population += Income.Population;
+}
 
-	//if (BaseIncome.Money >= 0)
-	//{
-	//	Income.Money = BaseIncome.Money * CurrentStat.Employment;
-	//}
-	//else
-	//{
-	//	Income.Money = BaseIncome.Money * (1 - CurrentStat.Employment);
-	//}
-
-	//Income.Population = BasePIMultiplier * (CurrentStat.Employment + CurrentStat.Climate - IncomePIMultiplier);
-
-	//BaseStat.Climate += BaseIncome.Climate;
-
-	CurrentStat += Income;
+void ADefaultGameState::UpdateWeeklyClimate()
+{
+	CurrentStat.Climate += Income.Climate;
+	CurrentStat.Climate -= ClimateDebuffs;
 }
 
 void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
 	if (SelectedBuilding != nullptr)
 	{
-		ClearPreviousTileMapArea();
+		ClearBuildingTileMapArea();
 	}
 	SelectedBuilding = FindBuilding(_BuildingID);
 }
 
-void ADefaultGameState::ClearPreviousTileMapArea()
+void ADefaultGameState::ClearBuildingTileMapArea()
 {
 	int16 MouseXCoord = PlayerControllerRef->GetMouseXCoord();
 	int16 MouseYCoord = PlayerControllerRef->GetMouseYCoord();
@@ -268,31 +306,7 @@ void ADefaultGameState::ToggleBuildMode()
 	}
 	IsBuildModeEnabled = !IsBuildModeEnabled;
 	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
-	//if (IsBuildModeEnabled || IsDestroyModeEnabled)
-	//{
-	//	GetPlayerRef()->GetController()->SetActorTickEnabled(false);
-	//	ExtraTileInfo.PackedTileIndex = 0;
-	//	SelectedBuilding = nullptr;
-	//	RefreshConnectionMap();
-	//	RefreshIncome();
-	//	HUDWidgetRef->UpdateVisibleIncome();
-	//}
-	//if (IsBuildModeEnabled)
-	//{
-	//	IsBuildModeEnabled = !IsBuildModeEnabled;
-	//	if (IsDestroyModeEnabled)
-	//	{
-	//		ExtraTileInfo.PackedTileIndex = 3;
-	//	}
-	//}
-	//else
-	//{
-	//	IsDestroyModeEnabled = !IsDestroyModeEnabled;
-	//	if (IsDestroyModeEnabled)
-	//	{
-	//		ExtraTileInfo.PackedTileIndex = 4;
-	//	}
-	//}
+
 	for (UTile* CurrentTile : Tiles)
 	{
 		CurrentTile->ChangeInBuildMode(MainTilemapComponent, IsBuildModeEnabled);
@@ -304,7 +318,7 @@ void ADefaultGameState::ToggleDestroyMode()
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Destroy Mode Toggled");
 	if (!IsDestroyModeEnabled)
 	{
-		ClearPreviousTileMapArea();
+		ClearBuildingTileMapArea();
 		SelectedBuilding = nullptr;
 		ExtraTileInfo.PackedTileIndex = 4;
 	}
@@ -418,7 +432,7 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 				CurrentStat.Money -= SelectedBuilding->Cost;
 				if (SelectedBuilding->Cost > CurrentStat.Money)
 				{
-					ClearPreviousTileMapArea();
+					ClearBuildingTileMapArea();
 					SelectedBuilding = nullptr;
 					IsBuildingMapRestricted = true;
 				}
@@ -479,20 +493,19 @@ void ADefaultGameState::CheckConnection(int16 _XTileCoord, int16 _YTileCoord)
 
 void ADefaultGameState::RefreshIncome()
 {
-	FStat TempIncome(0, 0, 0, 0);
+	FStat TempStat(0, 0, 0, 0);
 	for (ABuilding* CurrentBuilding: Buildings)
 	{
 		if (CurrentBuilding->IsBuildingConnected)
 		{
-			TempIncome += CurrentBuilding->Income;
+			TempStat += CurrentBuilding->Income;
 		}
 	}
-	//BaseIncome.Climate = TempIncome.Climate;
-	//BaseIncome.Money = TempIncome.Money;
-	//MaxPopulation = TempIncome.Population;
-	//BaseStat.Employment = TempIncome.Employment;
-	//BaseIncome = TempIncome;
-	Income = TempIncome;
+	CurrentStat.Employment = 3 + TempStat.Employment;
+	Income.Climate = 3 + TempStat.Climate;
+	MaxPopulation = 6 + TempStat.Population;
+	CurrentStat.Population = FMath::Clamp(CurrentStat.Population, static_cast<int16>(0), MaxPopulation);
+	Income.Money = TempStat.Money;
 }
 
 void ADefaultGameState::DeleteBuildingInfo(ABuilding* _DeletingBuilding)

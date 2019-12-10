@@ -92,7 +92,7 @@ public:
 	void ToggleDestroyMode();
 
 	UFUNCTION()
-	void ClearPreviousTileMapArea();
+	void ClearBuildingTileMapArea();
 	
 	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
@@ -140,9 +140,6 @@ public:
 	FStat CurrentStat;
 
 	UPROPERTY()
-	FStat BaseStat;
-	
-	UPROPERTY()
 	FStat Income;
 
 	UFUNCTION()
@@ -152,20 +149,27 @@ public:
 	void RefreshIncome();
 
 	UPROPERTY()
-	FStat BaseIncome;
+	int16 ClimateDebuffs;
+	
+	UFUNCTION()
+	void UpdateWeeklyClimate();
+	
+	UFUNCTION()
+	FString GetEmploymentLevel();
+
+	UFUNCTION()
+	FString GetClimateLevel();
+
+	UFUNCTION()
+	FString GetPopulationLevel();
+
+	UFUNCTION()
+	FString GetMoneyLevel();
 
 	UPROPERTY()
 	int16 MaxPopulation;
-
-	UPROPERTY()
-	int16 PopulationClimateMultiplier;
-
-	UPROPERTY()
-	float BasePIMultiplier;
-
-	UPROPERTY()
-	float IncomePIMultiplier;
-
+	
+	
 	UPROPERTY()
 	class ABuilding* SelectedBuilding;
 

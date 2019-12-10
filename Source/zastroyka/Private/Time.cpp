@@ -32,6 +32,7 @@ void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
 void UTime::Initialize()
 {;
 	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
+	DayOfWeek = 1;
 	Day = 1;
 	Month = 1;
 	Year = 1950;
@@ -115,6 +116,15 @@ void UTime::UpdateDate()
 		Day = 1;
 		break;
 	}
+	if (DayOfWeek < 7)
+	{
+		++DayOfWeek;
+	}
+	else
+	{
+		DayOfWeek = 1;
+		DefaultGameStateRef->UpdateWeeklyClimate();
+	}
 }
 
 void UTime::Play()
@@ -195,4 +205,9 @@ int16 UTime::GetMonth()
 int16 UTime::GetYear()
 {
 	return Year;
+}
+
+int16 UTime::GetDayOfWeek()
+{
+	return DayOfWeek;
 }

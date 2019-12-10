@@ -38,6 +38,9 @@ public:
 	TimeMode GetCurrentTimeMode();
 
 	UFUNCTION()
+	int16 GetDayOfWeek();
+	
+	UFUNCTION()
 	int16 GetDay();
 
 	UFUNCTION()
@@ -54,6 +57,9 @@ private:
 	UPROPERTY()
 	TEnumAsByte<TimeMode> CurrentTimeMode;
 
+	UPROPERTY()
+	int16 DayOfWeek;
+	
 	UPROPERTY()
 	int16 Day;
 
