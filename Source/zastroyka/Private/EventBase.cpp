@@ -27,6 +27,13 @@ void UEventBase::ReadingEventDone()
 {
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Reading Event Done");
 	HUDWidgetRef->PauseButtonClicked();
+
+	//end game test
+	if (Name == "test6")
+	{
+		DefaultGameStateRef->CurrentStat.Money -= 1;
+		DefaultGameStateRef->CheckEndGameState();
+	}
 	//some stuff
 }
 

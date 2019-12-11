@@ -35,12 +35,15 @@ void UHUDWidgetUMG::NativeConstruct()
 
 void UHUDWidgetUMG::BuildButtonClicked()
 {
-	if (!ShopWidgetRef->IsAnimationPlaying(ShopWidgetRef->ShopBorderAnimation) && !(DefaultGameStateRef->IsDestroyModeEnabled))
+	if (!ShopWidgetRef->IsAnimationPlaying(ShopWidgetRef->ShopBorderAnimation))
 	{
-		DefaultGameStateRef->IsBuildModeEnabled ?
-			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Reverse) :
-			ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
-
+		if (!DefaultGameStateRef->IsDestroyModeEnabled)
+		{
+			DefaultGameStateRef->IsBuildModeEnabled ?
+				ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Reverse) :
+				ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
+		}
+		
 		BMB_Text->SetText(DefaultGameStateRef->IsBuildModeEnabled ? FText::FromString("Enter build mode") : FText::FromString("Exit build mode"));
 		DefaultGameStateRef->ToggleBuildMode();
 		PauseButtonClicked();
@@ -50,14 +53,6 @@ void UHUDWidgetUMG::BuildButtonClicked()
 
 void UHUDWidgetUMG::UpdateVisibleStat()
 {
-	//CurrentMoney->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Money)));
-	//CurrentPopulation->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Population)));
-	//CurrentClimate->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Climate * 100) + " %"));
-	//CurrentEmployment->SetText(FText::FromString(FString::SanitizeFloat(DefaultGameStateRef->CurrentStat.Employment * 100) + " %"));
-	//CurrentMoney->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Money)));
-	//CurrentPopulation->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Population)));
-	//CurrentClimate->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Climate) + "%"));
-	//CurrentEmployment->SetText(FText::FromString(FString::FromInt(DefaultGameStateRef->CurrentStat.Employment) + "%"));
 	CurrentMoney->SetText(FText::FromString(DefaultGameStateRef->GetMoneyLevel()));
 	CurrentPopulation->SetText(FText::FromString(DefaultGameStateRef->GetPopulationLevel()));
 	CurrentClimate->SetText(FText::FromString(DefaultGameStateRef->GetClimateLevel()));

@@ -168,7 +168,9 @@ public:
 
 	UPROPERTY()
 	int16 MaxPopulation;
-	
+
+	UFUNCTION()
+	void CheckEndGameState();
 	
 	UPROPERTY()
 	class ABuilding* SelectedBuilding;
