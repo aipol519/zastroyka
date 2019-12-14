@@ -4,13 +4,14 @@
 #include "DefaultHUD.h"
 
 #include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "DefaultGameState.h"
 
 #include "HUDWidgetUMG.h"
 #include "ShopWidgetUMG.h"
 #include "CameraControlWidgetUMG.h"
-#include "BuildingInfoWidgetUMG.h"
-#include "DefaultGameState.h"
+//#include "BuildingInfoWidgetUMG.h"
 #include "EventWigdetUMG.h"
+#include "MenuWidgetUMG.h"
 
 //#include "GamePlayerController.h"
 //#include "Kismet/GameplayStatics.h"
@@ -31,7 +32,11 @@ void ADefaultHUD::BeginPlay()
 
 	EventWidgetRef = CreateWidget<UEventWigdetUMG>(GetWorld(), EventWidgetClass);
 	EventWidgetRef->SetVisibility(ESlateVisibility::Hidden);
-	EventWidgetRef->AddToViewport();
+	EventWidgetRef->AddToViewport(-100);
+
+	MenuWidgetRef = CreateWidget<UMenuWidgetUMG>(GetWorld(), MenuWidgetClass);
+	MenuWidgetRef->SetVisibility(ESlateVisibility::Hidden);
+	MenuWidgetRef->AddToViewport();
 
 }
 
@@ -52,4 +57,9 @@ void ADefaultHUD::BeginPlay()
 UEventWigdetUMG* ADefaultHUD::GetEventWidget()
 {
 	return EventWidgetRef;
+}
+
+UMenuWidgetUMG* ADefaultHUD::GetMenuWidget()
+{
+	return MenuWidgetRef;
 }

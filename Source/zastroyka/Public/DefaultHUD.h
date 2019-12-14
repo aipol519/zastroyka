@@ -31,8 +31,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UEventWigdetUMG> EventWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<class UMenuWidgetUMG> MenuWidgetClass;
+
 	UFUNCTION()
 	UEventWigdetUMG* GetEventWidget();
+
+	UFUNCTION()
+	UMenuWidgetUMG* GetMenuWidget();
 
 	UPROPERTY()
 	UHUDWidgetUMG* HUDWidgetRef;
@@ -47,6 +53,9 @@ public:
 
 	UPROPERTY()
 	UEventWigdetUMG* EventWidgetRef;
+
+	UPROPERTY()
+	UMenuWidgetUMG* MenuWidgetRef;
 
 	UFUNCTION()
 	void BeginPlay();

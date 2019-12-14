@@ -67,33 +67,7 @@ protected:
 public:
 	ADefaultGameState();
 
-	UFUNCTION()
-	void SetDefaultTiles();
-
-	UFUNCTION()
-	void SetDefaultBuildings();
-
-	UFUNCTION()
-	void SetDefaultEvents();
-
-	UFUNCTION()
-	void CheckEvents();
-	
-	UFUNCTION()
-	void SelectBuilding(FString _BuildingID);
-
-	UFUNCTION()
-	class ABuilding* FindBuilding(FString _BuildingID);
-
-	UFUNCTION()
-	void ToggleBuildMode();
-
-	UFUNCTION()
-	void ToggleDestroyMode();
-
-	UFUNCTION()
-	void ClearBuildingTileMapArea();
-	
+	//Setters
 	UFUNCTION()
 	void SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef);
 
@@ -107,10 +81,17 @@ public:
 	void SetPlayerControllerRef(class AGamePlayerController* _PlayerControllerRef);
 
 	UFUNCTION()
-	void InitializeTime();
+	void SetDefaultTiles();
 
 	UFUNCTION()
-	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
+	void SetDefaultBuildings();
+
+	UFUNCTION()
+	void SetDefaultEvents();
+
+	//Getters
+	UFUNCTION()
+	class ADefaultHUD* GetDefaultHUD();
 
 	UFUNCTION()
 	int16 GetXCoordFromIndex(int16 _Index);
@@ -121,48 +102,6 @@ public:
 	UFUNCTION()
 	class APlayerPawn* GetPlayerRef();
 
-	UPROPERTY()
-	TArray<class UTile*> Tiles;
-
-	UPROPERTY()
-	TMap<FString, class UEventBase*> DefaultEvents;
-
-	UPROPERTY()
-	TMap<FString, class ABuilding*> DefaultBuildings;
-
-	UPROPERTY()
-	TArray<class ABuilding*> Buildings;
-
-	UFUNCTION()
-	void DeleteBuildingInfo(class ABuilding* _DeletingBuilding);
-
-	UFUNCTION()
-	bool IsCoordinatesValid(float _X, float _Y);
-
-	UPROPERTY()
-	FStat CurrentStat;
-
-	UPROPERTY()
-	FStat Income;
-
-	UFUNCTION()
-	void UpdateStat();
-
-	UFUNCTION()
-	void RefreshIncome();
-
-	UFUNCTION()
-	FString GetDay();
-
-	UFUNCTION()
-	FString GetMonth();
-
-	UFUNCTION()
-	FString GetYear();
-	
-	UPROPERTY()
-	int16 ClimateDebuffs;
-	
 	UFUNCTION()
 	FString GetEmploymentLevel();
 
@@ -175,21 +114,16 @@ public:
 	UFUNCTION()
 	FString GetMoneyLevel();
 
-	UPROPERTY()
-	int16 MaxPopulation;
+	UFUNCTION()
+	FString GetDay();
 
 	UFUNCTION()
-	void CheckEndGameState();
-	
-	UPROPERTY()
-	class ABuilding* SelectedBuilding;
+	FString GetMonth();
 
-	UPROPERTY()
-	int16 XMapSize;
+	UFUNCTION()
+	FString GetYear();
 
-	UPROPERTY()
-	int16 YMapSize;
-
+	//Flags
 	UPROPERTY()
 	bool IsBuildModeEnabled;
 
@@ -197,31 +131,12 @@ public:
 	bool IsDestroyModeEnabled;
 
 	UPROPERTY()
-	FPaperTileInfo ExtraTileInfo;
-
-	UFUNCTION()
-	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
-
-	UPROPERTY()
 	bool IsBuildingMapRestricted;
 
 	UFUNCTION()
-	void RefreshConnectionMap();
+	bool IsCoordinatesValid(float _X, float _Y);
 
-	UFUNCTION()
-	void CheckConnection(int16 _XTileCoord, int16 _YTileCoord);
-
-	int16 temp, temp2;
-
-	UFUNCTION()
-	void Action(int16 _XTileCoord, int16 _YTileCoord);
-
-	UPROPERTY()
-	UPaperTileMapComponent* MainTilemapComponent;
-
-	UPROPERTY()
-	UPaperTileSet* DefaultTileset;
-
+	//References
 	UPROPERTY()
 	class UWorld* WorldRef;
 
@@ -242,4 +157,98 @@ public:
 
 	UPROPERTY()
 	AGamePlayerController* PlayerControllerRef;
+
+	//Other
+	UFUNCTION()
+	void CheckEvents();
+	
+	UFUNCTION()
+	void SelectBuilding(FString _BuildingID);
+
+	UFUNCTION()
+	class ABuilding* FindBuilding(FString _BuildingID);
+
+	UFUNCTION()
+	void ToggleBuildMode();
+
+	UFUNCTION()
+	void ToggleDestroyMode();
+
+	UFUNCTION()
+	void ClearBuildingTileMapArea();
+
+	UFUNCTION()
+	void InitializeTime();
+
+	UFUNCTION()
+	int16 ConvertCoordinateToIndex(int16 _i, int16 _j);
+
+	UPROPERTY()
+	TArray<class UTile*> Tiles;
+
+	UPROPERTY()
+	TMap<FString, class UEventBase*> DefaultEvents;
+
+	UPROPERTY()
+	TMap<FString, class ABuilding*> DefaultBuildings;
+
+	UPROPERTY()
+	TArray<class ABuilding*> Buildings;
+
+	UFUNCTION()
+	void DeleteBuildingInfo(class ABuilding* _DeletingBuilding);
+
+	UPROPERTY()
+	FStat CurrentStat;
+
+	UPROPERTY()
+	FStat Income;
+
+	UFUNCTION()
+	void UpdateStat();
+
+	UFUNCTION()
+	void RefreshIncome();
+	
+	UPROPERTY()
+	int16 ClimateDebuffs;
+	
+	UPROPERTY()
+	int16 MaxPopulation;
+
+	UFUNCTION()
+	void CheckEndGameState();
+	
+	UPROPERTY()
+	class ABuilding* SelectedBuilding;
+
+	UPROPERTY()
+	int16 XMapSize;
+
+	UPROPERTY()
+	int16 YMapSize;
+
+	UPROPERTY()
+	FPaperTileInfo ExtraTileInfo;
+
+	UFUNCTION()
+	void MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord);
+
+	UFUNCTION()
+	void RefreshConnectionMap();
+
+	UFUNCTION()
+	void CheckConnection(int16 _XTileCoord, int16 _YTileCoord);
+
+	int16 temp, temp2;
+
+	UFUNCTION()
+	void Action(int16 _XTileCoord, int16 _YTileCoord);
+
+	UPROPERTY()
+	UPaperTileMapComponent* MainTilemapComponent;
+
+	UPROPERTY()
+	UPaperTileSet* DefaultTileset;
+
 };

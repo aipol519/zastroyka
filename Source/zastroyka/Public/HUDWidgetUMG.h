@@ -22,6 +22,9 @@ public:
 	void BuildButtonClicked();
 
 	UFUNCTION()
+	void MainMenuButtonClicked();
+
+	UFUNCTION()
 	void PauseButtonClicked();
 
 	UFUNCTION()
@@ -44,6 +47,9 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BuildModeButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* MainMenuButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* BMB_Text;
@@ -86,9 +92,6 @@ public:
 
 	UPROPERTY()
 	class ADefaultGameState* DefaultGameStateRef;
-
-	UPROPERTY()
-	class ADefaultHUD* DefaultHUDRef;
 
 	UPROPERTY()
 	class UShopWidgetUMG* ShopWidgetRef;

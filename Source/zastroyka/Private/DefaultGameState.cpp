@@ -298,6 +298,14 @@ ABuilding* ADefaultGameState::FindBuilding(FString _BuildingID)
 	return DefaultBuildings[_BuildingID];
 }
 
+ADefaultHUD * ADefaultGameState::GetDefaultHUD()
+{
+	TArray<AActor*> FoundHUDs;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADefaultHUD::StaticClass(), FoundHUDs);
+
+	return Cast<ADefaultHUD>(FoundHUDs[0]);
+}
+
 void ADefaultGameState::ToggleBuildMode()
 {
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Build Mode Toggled");

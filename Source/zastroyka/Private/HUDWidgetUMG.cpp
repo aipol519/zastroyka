@@ -7,9 +7,11 @@
 #include "TextBlock.h"
 #include "Engine.h"
 #include "DefaultHUD.h"
-#include "ShopWidgetUMG.h"
 #include "DefaultGameState.h"
 #include "Time.h"
+
+#include "ShopWidgetUMG.h"
+#include "MenuWidgetUMG.h"
 
 void UHUDWidgetUMG::NativeConstruct()
 {
@@ -18,9 +20,10 @@ void UHUDWidgetUMG::NativeConstruct()
 	//Getting game state object reference
 	DefaultGameStateRef = Cast<ADefaultGameState>(GetWorld()->GetGameState());
 
-	//Binding event to build button clicked
+	//Binding event to buttons
 	BuildModeButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::BuildButtonClicked);
 	DestroyModeButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::DestroyButtonClicked);
+	MainMenuButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::MainMenuButtonClicked);
 
 	PauseButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::PauseButtonClicked);
 	SpeedUpButton->OnClicked.AddDynamic(this, &UHUDWidgetUMG::SpeedUpButtonClicked);
@@ -142,4 +145,15 @@ void UHUDWidgetUMG::DestroyButtonClicked()
 		DestroyModeButton->SetStyle(DestroyModeButtonStyle);
 		ShopWidgetRef->PlayShopBorderAnimation(EUMGSequencePlayMode::Forward);
 	}
+}
+
+void UHUDWidgetUMG::MainMenuButtonClicked()
+{
+	if (CurrentTimeRef->GetCurrentTimeMode() != PAUSE)
+	{
+		CurrentTimeRef->Play();
+	}
+	
+	DefaultGameStateRef->GetDefaultHUD()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
+
 }
