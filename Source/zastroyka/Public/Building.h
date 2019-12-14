@@ -21,10 +21,14 @@ public:
 	UFUNCTION()
 	void OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
+	UFUNCTION()
+	void ChangeTransparency(bool _IsTransparent);
+	
+	UFUNCTION()
 	ABuilding* Place(TArray<class UTile*> _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
 
 	UPROPERTY()
-	int16 AnchorCoord;
+	int16 AnchorCoordIndex;
 
 	UPROPERTY()
 	int16 XSize;

@@ -34,10 +34,10 @@ public:
 	void UpdateVisibleStat();
 
 	UFUNCTION()
-	void UpdateVisibleIncome();
+	void UpdateVisibleDate();
 
 	UFUNCTION()
-	void UpdateVisibleDate();
+	void SetTimeButtonsStyle();
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* DestroyModeButton;
@@ -68,7 +68,7 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Day;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Month;
 
@@ -94,24 +94,33 @@ public:
 	class UShopWidgetUMG* ShopWidgetRef;
 
 	UPROPERTY()
-	struct FButtonStyle PlayButtonStyle;
+	class UTime* CurrentTimeRef;
 
 	UPROPERTY()
-	struct FButtonStyle SpeedUpButtonStyle;
+	struct FButtonStyle DestroyModeButtonStyle;
 
 	UPROPERTY()
-	struct FButtonStyle SpeedDownButtonStyle;
+	FButtonStyle PlayButtonStyle;
+
+	UPROPERTY()
+	FButtonStyle SpeedUpButtonStyle;
+
+	UPROPERTY()
+	FButtonStyle SpeedDownButtonStyle;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FButtonStyle PauseButtonStyle;
+	FButtonStyle ActiveDestroyModeButtonStyle;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FButtonStyle ActivePauseButtonStyle;
+	FButtonStyle PauseButtonStyle;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FButtonStyle ActiveSpeedUpButtonStyle;
+	FButtonStyle ActivePauseButtonStyle;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FButtonStyle ActiveSpeedDownButtonStyle;
+	FButtonStyle ActiveSpeedUpButtonStyle;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	FButtonStyle ActiveSpeedDownButtonStyle;
 	
 };

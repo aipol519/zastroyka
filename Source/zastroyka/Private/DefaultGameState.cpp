@@ -143,7 +143,8 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings["1E"]->Initialize(6, 4, 400, FStat(8, 0, 0, 10), false, "farm", this);
 	DefaultBuildings["2"]->Initialize(1, 1, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl2", this);
 
-	DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30);
+	Buildings.Add(DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30));
+	Buildings[0]->ChangeTransparency(false);
 }
 
 void ADefaultGameState::SetDefaultEvents()
@@ -227,15 +228,27 @@ FString ADefaultGameState::GetMoneyLevel()
 	);
 }
 
+FString ADefaultGameState::GetDay()
+{
+	return FString("D: " + FString::FromInt(CurrentTimeRef->GetDay()));
+}
+
+FString ADefaultGameState::GetMonth()
+{
+	return FString("M: " + FString::FromInt(CurrentTimeRef->GetMonth()));
+}
+
+FString ADefaultGameState::GetYear()
+{
+	return FString("Y: " + FString::FromInt(CurrentTimeRef->GetYear()));
+}
 
 void ADefaultGameState::UpdateStat()
 {
-	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan,
-	//	FString::SanitizeFloat((FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f)
-	//		+ ((CurrentStat.Employment >= CurrentStat.Population)
-	//		? FMath::Clamp<float>(CurrentStat.Employment, .0f, CurrentStat.Population) / CurrentStat.Population
-	//		: -FMath::Clamp<float>(CurrentStat.Population, .0f, CurrentStat.Employment * 2) / (CurrentStat.Employment * 2))));
-
+	CurrentStat.Money += Income.Money
+		* FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f
+		* FMath::Clamp<float>(CurrentStat.Employment, .0f, CurrentStat.Population) / CurrentStat.Population;
+	
 	CurrentStat.Population = FMath::Clamp<int16>(
 		CurrentStat.Population + static_cast<int16>(truncf(CurrentStat.Population
 			* ((FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f)
@@ -244,15 +257,7 @@ void ADefaultGameState::UpdateStat()
 				: -FMath::Clamp<float>(CurrentStat.Population, .0f, CurrentStat.Employment * 2) / (CurrentStat.Employment * 2))))),
 		0,
 		MaxPopulation);
-	
-	CurrentStat.Money += Income.Money
-		* FMath::Clamp<int16>(CurrentStat.Climate, -100, 100) / 100.0f
-		* FMath::Clamp<float>(CurrentStat.Employment, .0f, CurrentStat.Population) / CurrentStat.Population;
 
-}
-
-void ADefaultGameState::UpdateWeeklyClimate()
-{
 	CurrentStat.Climate += Income.Climate;
 	CurrentStat.Climate -= ClimateDebuffs;
 }
@@ -276,16 +281,15 @@ void ADefaultGameState::ClearBuildingTileMapArea()
 {
 	if (SelectedBuilding != nullptr)
 	{
-		int16 MouseXCoord = PlayerControllerRef->GetMouseXCoord();
-		int16 MouseYCoord = PlayerControllerRef->GetMouseYCoord();
-		for (int i = MouseXCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= MouseXCoord - div(SelectedBuilding->XSize, 2).quot; i--)
+		for (int16 i = GetXCoordFromIndex(SelectedBuilding->AnchorCoordIndex); i < GetXCoordFromIndex(SelectedBuilding->AnchorCoordIndex) + SelectedBuilding->XSize; i++)
 		{
-			for (int j = MouseYCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= MouseYCoord - div(SelectedBuilding->YSize, 2).quot; j--)
+			for (int16 j = GetYCoordFromIndex(SelectedBuilding->AnchorCoordIndex); j < GetYCoordFromIndex(SelectedBuilding->AnchorCoordIndex) + SelectedBuilding->YSize; j++)
 			{
 				(Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN_TILE) ? (ExtraTileInfo.PackedTileIndex = 4) : (ExtraTileInfo.PackedTileIndex = 3);
 				MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 			}
 		}
+		SelectedBuilding = nullptr;
 	}
 }
 
@@ -306,19 +310,24 @@ void ADefaultGameState::ToggleBuildMode()
 		RefreshIncome();
 		//HUDWidgetRef->UpdateVisibleIncome();
 		HUDWidgetRef->UpdateVisibleStat();
+		GetPlayerRef()->GetController()->SetActorTickEnabled(false);
 	}
 	else
 	{
 		ShopWidgetRef->CheckAvailabilityForButtons();
 		ExtraTileInfo.PackedTileIndex = 3;
+		GetPlayerRef()->GetController()->SetActorTickEnabled(true);
 	}
 	IsDestroyModeEnabled = false;
 	IsBuildModeEnabled = !IsBuildModeEnabled;
-	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
 
 	for (UTile* CurrentTile : Tiles)
 	{
 		CurrentTile->ChangeInBuildMode(MainTilemapComponent, IsBuildModeEnabled);
+	}
+	for (ABuilding* CurrentBuilding : Buildings)
+	{
+		CurrentBuilding->ChangeTransparency(IsBuildModeEnabled);
 	}
 }
 
@@ -328,81 +337,97 @@ void ADefaultGameState::ToggleDestroyMode()
 	if (!IsDestroyModeEnabled)
 	{
 		ClearBuildingTileMapArea();
-		SelectedBuilding = nullptr;
 		ExtraTileInfo.PackedTileIndex = 4;
+		//GetPlayerRef()->GetController()->SetActorTickEnabled(false);
 	}
 	else
 	{
-		HUDWidgetRef->UpdateVisibleIncome();
+		HUDWidgetRef->UpdateVisibleStat();
+		//GetPlayerRef()->GetController()->SetActorTickEnabled(true);
+	}
+	for (ABuilding* CurrentBuilding : Buildings)
+	{
+		CurrentBuilding->ChangeTransparency(IsDestroyModeEnabled);
 	}
 	IsDestroyModeEnabled = !IsDestroyModeEnabled;
-	GetPlayerRef()->GetController()->SetActorTickEnabled(!GetPlayerRef()->GetController()->IsActorTickEnabled());
+}
+
+bool ADefaultGameState::IsCoordinatesValid(float _X, float _Y)
+{
+	int16 XTileCoord = FMath::FloorToInt(_X / 32.0f);
+	int16 YTileCoord = FMath::FloorToInt(_Y / 32.0f);
+	return (XTileCoord >= 0 && XTileCoord < XMapSize && YTileCoord >= 0 && YTileCoord < YMapSize);
 }
 
 void ADefaultGameState::MoveSelectionZone(int16& _PrevXTileCoord, int16& _PrevYTileCoord, int16 _XTileCoord, int16 _YTileCoord)
 {
 	if ((_PrevXTileCoord != _XTileCoord) || (_PrevYTileCoord != _YTileCoord))
 	{
-		if (!(((_XTileCoord - div(SelectedBuilding->XSize, 2).quot) < 0) || ((_XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1) >= XMapSize) ||
-			((_YTileCoord - div(SelectedBuilding->YSize, 2).quot) < 0) || ((_YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1) >= YMapSize)))
+		IsBuildingMapRestricted = true;
+		
+		int16 PrevAnchorCoordIndex = 
+			ConvertCoordinateToIndex(_PrevXTileCoord - div(SelectedBuilding->XSize, 2).quot, _PrevYTileCoord - div(SelectedBuilding->YSize, 2).quot);
+
+		if (GetXCoordFromIndex(PrevAnchorCoordIndex) >= 0 && GetXCoordFromIndex(PrevAnchorCoordIndex) + SelectedBuilding->XSize < XMapSize
+			&& GetYCoordFromIndex(PrevAnchorCoordIndex) >= 0 && GetYCoordFromIndex(PrevAnchorCoordIndex) + SelectedBuilding->YSize < YMapSize)
 		{
-			IsBuildingMapRestricted = false;
-			for (int i = _PrevXTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _PrevXTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
+			for (int16 i = GetXCoordFromIndex(PrevAnchorCoordIndex); i < GetXCoordFromIndex(PrevAnchorCoordIndex) + SelectedBuilding->XSize; i++)
 			{
-				for (int j = _PrevYTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _PrevYTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
+				for (int16 j = GetYCoordFromIndex(PrevAnchorCoordIndex); j < GetYCoordFromIndex(PrevAnchorCoordIndex) + SelectedBuilding->YSize; j++)
 				{
-					if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
+					if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN_TILE)
 					{
-						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN_TILE)
-						{
-							ExtraTileInfo.PackedTileIndex = 4;
-						}
-						else
-						{
-							ExtraTileInfo.PackedTileIndex = 3;
-						}
-						MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
+						ExtraTileInfo.PackedTileIndex = 4;
 					}
+					else
+					{
+						ExtraTileInfo.PackedTileIndex = 3;
+					}
+					MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 				}
 			}
+		}
+		_PrevXTileCoord = _XTileCoord;
+		_PrevYTileCoord = _YTileCoord;
 
-			_PrevXTileCoord = _XTileCoord;
-			_PrevYTileCoord = _YTileCoord;
+		
+		ExtraTileInfo.PackedTileIndex = 2;
+		
+		int16 TempAnchorCoordIndex = 
+			ConvertCoordinateToIndex(_XTileCoord - div(SelectedBuilding->XSize, 2).quot, _YTileCoord - div(SelectedBuilding->YSize, 2).quot);
 
-			ExtraTileInfo.PackedTileIndex = 2;
+		if (GetXCoordFromIndex(TempAnchorCoordIndex) >= 0 && GetXCoordFromIndex(TempAnchorCoordIndex) + SelectedBuilding->XSize < XMapSize
+			&& GetYCoordFromIndex(TempAnchorCoordIndex) >= 0 && GetYCoordFromIndex(TempAnchorCoordIndex) + SelectedBuilding->YSize < YMapSize)
+		{
+			SelectedBuilding->AnchorCoordIndex = TempAnchorCoordIndex;
+			
+			IsBuildingMapRestricted = false;
 
-			if (!IsBuildingMapRestricted)
+			for (int16 i = GetXCoordFromIndex(SelectedBuilding->AnchorCoordIndex); i < GetXCoordFromIndex(SelectedBuilding->AnchorCoordIndex) + SelectedBuilding->XSize; i++)
 			{
-				for (int i = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; i >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; i--)
+				for (int16 j = GetYCoordFromIndex(SelectedBuilding->AnchorCoordIndex); j < GetYCoordFromIndex(SelectedBuilding->AnchorCoordIndex) + SelectedBuilding->YSize; j++)
 				{
-					for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
+					if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType == GREEN_TILE)
 					{
-						if (Tiles[ConvertCoordinateToIndex(i, j)]->TileType != GREEN_TILE)
-						{
-							IsBuildingMapRestricted = true;
-							break;
-						}
-						if (i >= 0 && j >= 0 && i < XMapSize && j < YMapSize)
-						{
-							MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
-						}
+						MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);
 					}
-					if (IsBuildingMapRestricted)
+					else
 					{
-
-						ExtraTileInfo.PackedTileIndex = 3;
-						for (int k = _XTileCoord + div(SelectedBuilding->XSize, 2).quot + div(SelectedBuilding->XSize, 2).rem - 1; k >= _XTileCoord - div(SelectedBuilding->XSize, 2).quot; k--)
-						{
-							for (int j = _YTileCoord + div(SelectedBuilding->YSize, 2).quot + div(SelectedBuilding->YSize, 2).rem - 1; j >= _YTileCoord - div(SelectedBuilding->YSize, 2).quot; j--)
-							{
-								if (k >= 0 && j >= 0 && k < XMapSize && j < YMapSize)
-								{
-									MainTilemapComponent->SetTile(k, j, 0, ExtraTileInfo);
-								}
-							}
-						}
+						IsBuildingMapRestricted = true;
 						break;
 					}
+				}
+				if (IsBuildingMapRestricted)
+				{
+					ExtraTileInfo.PackedTileIndex = 3;
+					for (int16 k = GetXCoordFromIndex(SelectedBuilding->AnchorCoordIndex); k < GetXCoordFromIndex(SelectedBuilding->AnchorCoordIndex) + SelectedBuilding->XSize; k++)
+					{
+						for (int16 l = GetYCoordFromIndex(SelectedBuilding->AnchorCoordIndex); l < GetYCoordFromIndex(SelectedBuilding->AnchorCoordIndex) + SelectedBuilding->YSize; l++)
+						{
+							MainTilemapComponent->SetTile(k, l, 0, ExtraTileInfo);
+						}
+					}
+					break;
 				}
 			}
 		}
@@ -418,10 +443,11 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 		{
 			if (_XTileCoord < 27 || _XTileCoord > 35 || _YTileCoord < 28 || _YTileCoord > 35)
 			{
-				if (Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType == ROAD_TILE)
+				int16 TileIndex = ConvertCoordinateToIndex(_XTileCoord, _YTileCoord);
+				if (Tiles[TileIndex]->TileType == ROAD_TILE)
 				{
-					Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = GREEN_TILE;
-					Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 0;
+					Tiles[TileIndex]->TileType = GREEN_TILE;
+					Tiles[TileIndex]->TileInfo.PackedTileIndex = 0;
 					MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
 				}
 			}
@@ -430,8 +456,9 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 		{
 			if (SelectedBuilding->IsRoadBuilding)
 			{
-				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileType = ROAD_TILE;
-				Tiles[ConvertCoordinateToIndex(_XTileCoord, _YTileCoord)]->TileInfo.PackedTileIndex = 1;
+				int16 TileIndex = ConvertCoordinateToIndex(_XTileCoord, _YTileCoord);
+				Tiles[TileIndex]->TileType = ROAD_TILE;
+				Tiles[TileIndex]->TileInfo.PackedTileIndex = 1;
 				MainTilemapComponent->SetTile(_XTileCoord, _YTileCoord, 0, ExtraTileInfo);
 			}
 			else
@@ -481,7 +508,7 @@ void ADefaultGameState::CheckConnection(int16 _XTileCoord, int16 _YTileCoord)
 			{
 				if (CurrentBuilding->IsBuildingConnected == false)
 				{
-					if (CurrentBuilding->AnchorCoord == ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))
+					if (CurrentBuilding->AnchorCoordIndex == ConvertCoordinateToIndex(_XTileCoord, _YTileCoord))
 					{
 						CurrentBuilding->IsBuildingConnected = true;
 						++temp2;
@@ -521,12 +548,12 @@ void ADefaultGameState::DeleteBuildingInfo(ABuilding* _DeletingBuilding)
 {
 	for (ABuilding* CurrentBuilding: Buildings)
 	{
-		if (CurrentBuilding->AnchorCoord == _DeletingBuilding->AnchorCoord)
+		if (CurrentBuilding->AnchorCoordIndex == _DeletingBuilding->AnchorCoordIndex)
 		{
 			ExtraTileInfo.PackedTileIndex = 4;
-			for (int16 i = GetXCoordFromIndex(CurrentBuilding->AnchorCoord); i < GetXCoordFromIndex(CurrentBuilding->AnchorCoord) + CurrentBuilding->XSize; i++)
+			for (int16 i = GetXCoordFromIndex(CurrentBuilding->AnchorCoordIndex); i < GetXCoordFromIndex(CurrentBuilding->AnchorCoordIndex) + CurrentBuilding->XSize; i++)
 			{
-				for (int16 j = GetYCoordFromIndex(CurrentBuilding->AnchorCoord); j < GetYCoordFromIndex(CurrentBuilding->AnchorCoord) + CurrentBuilding->YSize; j++)
+				for (int16 j = GetYCoordFromIndex(CurrentBuilding->AnchorCoordIndex); j < GetYCoordFromIndex(CurrentBuilding->AnchorCoordIndex) + CurrentBuilding->YSize; j++)
 				{
 					Tiles[ConvertCoordinateToIndex(i, j)]->TileType = GREEN_TILE;
 					MainTilemapComponent->SetTile(i, j, 0, ExtraTileInfo);

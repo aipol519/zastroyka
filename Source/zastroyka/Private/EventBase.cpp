@@ -5,6 +5,7 @@
 
 #include "EventWigdetUMG.h"
 #include "HUDWidgetUMG.h"
+#include "Time.h"
 #include "Engine/Engine.h"
 
 UEventBase::UEventBase()
@@ -26,15 +27,24 @@ void UEventBase::Execute()
 void UEventBase::ReadingEventDone()
 {
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Reading Event Done");
-	HUDWidgetRef->PauseButtonClicked();
-
+	if (Name.Contains("Game Tip") || Name == "Welcome to ZASTROYKA")
+	{
+		AppearChance = 0.0f;
+	}
+	else
+	{
+		//some stuff
+	}
+	
 	//end game test
 	if (Name == "test6")
 	{
 		DefaultGameStateRef->CurrentStat.Money -= 1;
 		DefaultGameStateRef->CheckEndGameState();
 	}
-	//some stuff
+
+	CurrentTimeRef->Play();
+	HUDWidgetRef->UpdateVisibleStat();
 }
 
 void UEventBase::Initialize(FString _Name, FString _Description, FStat _ChangedStat, float _AppearChance, ADefaultGameState* _DefaultGameStateRef)
@@ -47,6 +57,7 @@ void UEventBase::Initialize(FString _Name, FString _Description, FStat _ChangedS
 	//
 	EventWidgetRef = DefaultGameStateRef->EventWidgetRef;
 	HUDWidgetRef = DefaultGameStateRef->HUDWidgetRef;
+	CurrentTimeRef = DefaultGameStateRef->CurrentTimeRef;
 }
 
 float UEventBase::GetAppearChance()

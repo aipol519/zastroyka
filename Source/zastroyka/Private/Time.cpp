@@ -10,13 +10,17 @@ UTime::UTime()
 {
 	HUDWidgetRef = nullptr;
 	DefaultGameStateRef = nullptr;
+	DayOfWeek = 0;
+	Day = 0;
+	Month = 0;
+	Year = 0;
+	CurrentTimeMode = NORMAL;
+	PreviousTimeMode = NORMAL;
 }
 
 void UTime::TimeTick()
 {
 	UpdateDate();
-	DefaultGameStateRef->UpdateStat();
-	HUDWidgetRef->UpdateVisibleStat();
 	HUDWidgetRef->UpdateVisibleDate();
 	DefaultGameStateRef->CheckEvents();
 }
@@ -25,7 +29,6 @@ void UTime::SetHUDWidgetRef(class UHUDWidgetUMG* _HUDWidgetRef)
 {
 	HUDWidgetRef = _HUDWidgetRef;
 	HUDWidgetRef->UpdateVisibleStat();
-	HUDWidgetRef->UpdateVisibleIncome();
 	HUDWidgetRef->UpdateVisibleDate();
 }
 
@@ -95,7 +98,6 @@ void UTime::UpdateDate()
 			}
 		}
 		break;
-
 	case 4:
 	case 6:
 	case 9:
@@ -123,7 +125,8 @@ void UTime::UpdateDate()
 	else
 	{
 		DayOfWeek = 1;
-		DefaultGameStateRef->UpdateWeeklyClimate();
+		DefaultGameStateRef->UpdateStat();
+		HUDWidgetRef->UpdateVisibleStat();
 	}
 }
 
@@ -134,24 +137,35 @@ void UTime::Play()
 	case NORMAL:
 	case SLOW:
 	case FAST:
+		PreviousTimeMode = CurrentTimeMode;
 		CurrentTimeMode = PAUSE;
 		DefaultGameStateRef->WorldRef->GetTimerManager().PauseTimer(TimerHandle);
 		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Pause");
 		break;
-	//case SLOW:
-	//case FAST:
-	//	CurrentTimeMode = NORMAL;
-	//	DefaultGameStateRef->WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
-	//	DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
-	//	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Normal");
-	//	break;
 	case PAUSE:
-		CurrentTimeMode = NORMAL;
-		DefaultGameStateRef->WorldRef->GetTimerManager().UnPauseTimer(TimerHandle);
-		DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
-		GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Normal");
+		CurrentTimeMode = PreviousTimeMode;
+		switch (CurrentTimeMode)
+		{
+		case NORMAL:
+			DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);
+			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Normal");
+			break;
+		case SLOW:
+			DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 3.0f, true);
+			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Slow");
+			break;
+		case FAST:
+			DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 0.3f, true);
+			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "Fast");
+		default:
+			break;
+		}
+		break;
+	default:
 		break;
 	}
+
+	HUDWidgetRef->SetTimeButtonsStyle();
 }
 
 void UTime::Slower()
@@ -171,6 +185,8 @@ void UTime::Slower()
 	default:
 		break;
 	}
+
+	HUDWidgetRef->SetTimeButtonsStyle();
 }
 
 void UTime::Faster()
@@ -190,6 +206,8 @@ void UTime::Faster()
 	default:
 		break;
 	}
+
+	HUDWidgetRef->SetTimeButtonsStyle();
 }
 
 int16 UTime::GetDay()

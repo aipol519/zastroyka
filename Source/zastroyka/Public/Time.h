@@ -58,6 +58,9 @@ private:
 	TEnumAsByte<TimeMode> CurrentTimeMode;
 
 	UPROPERTY()
+	TEnumAsByte<TimeMode> PreviousTimeMode;
+	
+	UPROPERTY()
 	int16 DayOfWeek;
 	
 	UPROPERTY()

@@ -64,4 +64,7 @@ private:
 
 	UPROPERTY()
 	UHUDWidgetUMG* HUDWidgetRef;
+
+	UPROPERTY()
+	UTime* CurrentTimeRef;
 };

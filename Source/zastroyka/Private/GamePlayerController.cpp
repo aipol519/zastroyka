@@ -36,13 +36,16 @@ void AGamePlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//Converting mouse world position to tile coordinates
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-	XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
-	YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 
 	if (DefaultGameStateRef->SelectedBuilding != nullptr)
 	{
-		DefaultGameStateRef->MoveSelectionZone(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
+		GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+		if (DefaultGameStateRef->IsCoordinatesValid(HitResult.Location.X, HitResult.Location.Y))
+		{
+			XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
+			YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
+			DefaultGameStateRef->MoveSelectionZone(PrevXTileCoord, PrevYTileCoord, XTileCoord, YTileCoord);
+		}
 	}
 	
 	//GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, 
@@ -142,21 +145,28 @@ void AGamePlayerController::RightMouseButtonDownContinious(float _Value)
 
 void AGamePlayerController::LeftMouseButtonDownOnce()
 {
-	if (DefaultGameStateRef->SelectedBuilding != nullptr)
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "LMB");
+	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	if (DefaultGameStateRef->IsCoordinatesValid(HitResult.Location.X, HitResult.Location.Y))
 	{
-		if (DefaultGameStateRef->SelectedBuilding->IsRoadBuilding)
+		if (DefaultGameStateRef->SelectedBuilding != nullptr)
 		{
-			InputComponent->BindAxis("LeftMouseButtonContinious", this, &AGamePlayerController::LeftMouseButtonDownContinious);
-			InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::LeftMouseButtonUp);
+			if (DefaultGameStateRef->SelectedBuilding->IsRoadBuilding)
+			{
+				InputComponent->BindAxis("LeftMouseButtonContinious", this, &AGamePlayerController::LeftMouseButtonDownContinious);
+				InputComponent->BindAction("LeftMouseButtonSingle", EInputEvent::IE_Released, this, &AGamePlayerController::LeftMouseButtonUp);
+			}
+			else
+			{
+				DefaultGameStateRef->Action(XTileCoord, YTileCoord);
+			}
 		}
-		else
+		else if (DefaultGameStateRef->IsDestroyModeEnabled)
 		{
+			XTileCoord = FMath::FloorToInt(HitResult.Location.X / 32.0f);
+			YTileCoord = FMath::FloorToInt(HitResult.Location.Y / 32.0f);
 			DefaultGameStateRef->Action(XTileCoord, YTileCoord);
 		}
-	}
-	else if (DefaultGameStateRef->IsDestroyModeEnabled)
-	{
-		DefaultGameStateRef->Action(XTileCoord, YTileCoord);
 	}
 }
 
@@ -173,12 +183,10 @@ void AGamePlayerController::LeftMouseButtonDownContinious(float _Value)
 
 int16 AGamePlayerController::GetMouseXCoord()
 {
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-	return FMath::FloorToInt(HitResult.Location.X / 32.0f);
+	return XTileCoord;
 }
 
 int16 AGamePlayerController::GetMouseYCoord()
 {
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-	return FMath::FloorToInt(HitResult.Location.Y / 32.0f);
+	return YTileCoord;
 }

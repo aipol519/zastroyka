@@ -136,6 +136,9 @@ public:
 	UFUNCTION()
 	void DeleteBuildingInfo(class ABuilding* _DeletingBuilding);
 
+	UFUNCTION()
+	bool IsCoordinatesValid(float _X, float _Y);
+
 	UPROPERTY()
 	FStat CurrentStat;
 
@@ -148,11 +151,17 @@ public:
 	UFUNCTION()
 	void RefreshIncome();
 
+	UFUNCTION()
+	FString GetDay();
+
+	UFUNCTION()
+	FString GetMonth();
+
+	UFUNCTION()
+	FString GetYear();
+	
 	UPROPERTY()
 	int16 ClimateDebuffs;
-	
-	UFUNCTION()
-	void UpdateWeeklyClimate();
 	
 	UFUNCTION()
 	FString GetEmploymentLevel();
