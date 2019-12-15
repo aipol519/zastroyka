@@ -27,6 +27,9 @@ public:
 	UFUNCTION()
 	ABuilding* Place(TArray<class UTile*> _Tiles, class UPaperTileMapComponent* _MainTilemapComponent, int16 _XTileCoord, int16 _YTileCoord);
 
+	UFUNCTION()
+	void Demolish();
+	
 	UPROPERTY()
 	int16 AnchorCoordIndex;
 
@@ -40,7 +43,7 @@ public:
 	int32 Cost;
 
 	UPROPERTY()
-	bool IsBuildingConnected;
+	bool IsConnected;
 
 	UPROPERTY()
 	bool IsRoadBuilding;
@@ -49,7 +52,7 @@ public:
 	FStat Income;
 
 	UPROPERTY()
-	FString BuildingName;
+	FString Name;
 
 	UPROPERTY()
 	ADefaultGameState* DefaultGameStateRef;

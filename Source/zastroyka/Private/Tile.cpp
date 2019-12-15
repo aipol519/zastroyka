@@ -2,18 +2,20 @@
 
 
 #include "Tile.h"
+#include "Engine/Engine.h"
 
 UTile::UTile()
 {
 }
 
-void UTile::Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected)
+void UTile::Initialize(const int16& _XCoord, const int16& _YCoord, const int16& _TileMapIndex, const FPaperTileInfo _TileInfo, const ETileType& _Type)
 {
-	XTileCoord = _XTileCoord;
-	YTileCoord = _YTileCoord;
+	XCoord = _XCoord;
+	YCoord = _YCoord;
+	TileMapIndex = _TileMapIndex;
 	TileInfo = _TileInfo;
-	TileType = _TileType;
-	IsTileConnected = _IsTileConnected;
+	Type = _Type;
+	IsConnected = false;
 }
 
 FPaperTileInfo UTile::GetTileInfo()
@@ -21,41 +23,37 @@ FPaperTileInfo UTile::GetTileInfo()
 	return TileInfo;
 }
 
-void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag)
+void UTile::ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, const bool& _BuildFlag)
 {
-	//FPaperTileInfo TempTileInfo;
-	//TempTileInfo.TileSet = TileInfo.TileSet;
-
+	FPaperTileInfo TempTileInfo = TileInfo;
 	if (_BuildFlag)
 	{
-		switch (TileType)
+		switch (Type)
 		{
 		case GREEN_TILE:
-			TileInfo.PackedTileIndex = 4;
-			//TempTileInfo.PackedTileIndex = 4;
+			TempTileInfo.PackedTileIndex = BUILDING_ALLOWED_TILE;
 			break;
 		default:
-			TileInfo.PackedTileIndex = 3;
-			//TempTileInfo.PackedTileIndex = 3;
+			TempTileInfo.PackedTileIndex = BUILDING_RESTRICTED_TILE;
 			break;
 		}
 	}
 	else
 	{
-		switch (TileType)
+		switch (Type)
 		{
 		case GREEN_TILE:
 		case BUILDING_RESTRICTED_TILE:
-			TileInfo.PackedTileIndex = 0;
-			//TempTileInfo.PackedTileIndex = 4;
+			TempTileInfo.PackedTileIndex = GREEN_TILE;
 			break;
 		case ROAD_TILE:
-			TileInfo.PackedTileIndex = 1;
+			TempTileInfo.PackedTileIndex = ROAD_TILE;
+			break;
+		default:
 			break;
 		}
-		//TempTileInfo = TileInfo;
 	}
-	_MainTilemapComponent->SetTile(XTileCoord, YTileCoord, 0, TileInfo);
+	_MainTilemapComponent->SetTile(XCoord, YCoord, 0, TempTileInfo);
 }
 
 FPaperTileInfo UTile::SetTileInfoIndex(int _Index)
@@ -63,7 +61,26 @@ FPaperTileInfo UTile::SetTileInfoIndex(int _Index)
 	return GetTileInfo();
 }
 
-void UTile::PlaceRoad(int16 _XTileCoord, int16 _YTileCoord)
+void UTile::PlaceRoad(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent)
 {
-	
+	FPaperTileInfo TempTileInfo = TileInfo;
+	TempTileInfo.PackedTileIndex = BUILDING_RESTRICTED_TILE;
+	_Tiles[TileMapIndex]->Type = ROAD_TILE;
+	_Tiles[TileMapIndex]->TileInfo.PackedTileIndex = ROAD_TILE;
+	_MainTilemapComponent->SetTile(XCoord, YCoord, 0, TempTileInfo);
+}
+
+void UTile::DemolishRoad(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent)
+{
+	if (XCoord < 27 || XCoord > 35 || YCoord < 28 || YCoord > 35)
+	{
+		if (_Tiles[TileMapIndex]->Type == ROAD_TILE)
+		{
+			FPaperTileInfo TempTileInfo = TileInfo;
+			TempTileInfo.PackedTileIndex = BUILDING_ALLOWED_TILE;
+			_Tiles[TileMapIndex]->Type = GREEN_TILE;
+			_Tiles[TileMapIndex]->TileInfo.PackedTileIndex = GREEN_TILE;
+			_MainTilemapComponent->SetTile(XCoord, YCoord, 0, TempTileInfo);
+		}
+	}
 }

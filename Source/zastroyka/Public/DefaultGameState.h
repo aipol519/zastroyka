@@ -158,7 +158,19 @@ public:
 	UPROPERTY()
 	AGamePlayerController* PlayerControllerRef;
 
+	UPROPERTY()
+	UPaperTileMapComponent* MainTilemapComponent;
+
+	UPROPERTY()
+	UPaperTileSet* DefaultTileset;
+
+	UPROPERTY()
+	class AAmbientSound* AmbientSoundRef;
+	
 	//Other
+	UFUNCTION()
+	void UpgradeTownHall();
+	
 	UFUNCTION()
 	void CheckEvents();
 	
@@ -240,15 +252,6 @@ public:
 	UFUNCTION()
 	void CheckConnection(int16 _XTileCoord, int16 _YTileCoord);
 
-	int16 temp, temp2;
-
 	UFUNCTION()
 	void Action(int16 _XTileCoord, int16 _YTileCoord);
-
-	UPROPERTY()
-	UPaperTileMapComponent* MainTilemapComponent;
-
-	UPROPERTY()
-	UPaperTileSet* DefaultTileset;
-
 };

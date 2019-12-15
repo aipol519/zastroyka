@@ -10,7 +10,8 @@
 #include "Tile.generated.h"
 
 UENUM()
-enum ETileType { GREEN_TILE, ROAD_TILE, BUILDING_ALLOWED_TILE, BUILDING_RESTRICTED_TILE, BUILDING_SELECTABLE_TILE };
+enum ETileType { GREEN_TILE, ROAD_TILE, BUILDING_SELECTABLE_TILE, BUILDING_RESTRICTED_TILE, BUILDING_ALLOWED_TILE
+};
 
 UCLASS()
 class ZASTROYKA_API UTile : public UObject
@@ -19,29 +20,40 @@ class ZASTROYKA_API UTile : public UObject
 public:
 	// Sets default values for this actor's properties
 	UTile();
-	//ATile(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
 
-	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, bool _BuildFlag);
+	UFUNCTION()
+	void ChangeInBuildMode(UPaperTileMapComponent* _MainTilemapComponent, const bool& _BuildFlag);
 
 	UPROPERTY()
 	FPaperTileInfo TileInfo;
+
+	UFUNCTION()
 	FPaperTileInfo GetTileInfo();
 
-	void Initialize(int16 _XTileCoord, int16 _YTileCoord, FPaperTileInfo _TileInfo, ETileType _TileType, bool _IsTileConnected);
+	UFUNCTION()
+	void Initialize(const int16& _XCoord, const int16& _YCoord, const int16& _TileMapIndex, const FPaperTileInfo _TileInfo, const ETileType& _Type);
 
-	void PlaceRoad(int16 _XTileCoord, int16 _YTileCoord);
+	UFUNCTION()
+	void PlaceRoad(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent);
+
+	UFUNCTION()
+	void DemolishRoad(TArray<UTile*> _Tiles, UPaperTileMapComponent* _MainTilemapComponent);
 	
+	UFUNCTION()
 	FPaperTileInfo SetTileInfoIndex(int _Index);
 
 	UPROPERTY()
-	bool IsTileConnected;
+	bool IsConnected;
 
 	UPROPERTY()
-	int16 XTileCoord;
+	int16 XCoord;
 
 	UPROPERTY()
-	int16 YTileCoord;
+	int16 YCoord;
 
 	UPROPERTY()
-	TEnumAsByte<ETileType> TileType;
+	int16 TileMapIndex;
+
+	UPROPERTY()
+	TEnumAsByte<ETileType> Type;
 };

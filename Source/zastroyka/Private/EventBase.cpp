@@ -21,7 +21,7 @@ UEventBase::UEventBase()
 void UEventBase::Execute()
 {
 	EventWidgetRef->ShowUp(this);
-	HUDWidgetRef->PauseButtonClicked();
+	CurrentTimeRef->Play();
 }
 
 void UEventBase::ReadingEventDone()

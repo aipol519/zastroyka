@@ -30,14 +30,13 @@ void ADefaultHUD::BeginPlay()
 	CameraControlWidgetRef = CreateWidget<UCameraControlWidgetUMG>(GetWorld(), CameraControlWidgetClass);
 	CameraControlWidgetRef->AddToViewport();
 
-	EventWidgetRef = CreateWidget<UEventWigdetUMG>(GetWorld(), EventWidgetClass);
-	EventWidgetRef->SetVisibility(ESlateVisibility::Hidden);
-	EventWidgetRef->AddToViewport(-100);
-
 	MenuWidgetRef = CreateWidget<UMenuWidgetUMG>(GetWorld(), MenuWidgetClass);
 	MenuWidgetRef->SetVisibility(ESlateVisibility::Hidden);
 	MenuWidgetRef->AddToViewport();
 
+	EventWidgetRef = CreateWidget<UEventWigdetUMG>(GetWorld(), EventWidgetClass);
+	EventWidgetRef->SetVisibility(ESlateVisibility::Hidden);
+	EventWidgetRef->AddToViewport();
 }
 
 //Will be added in future releases

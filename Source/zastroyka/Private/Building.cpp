@@ -40,9 +40,9 @@ void ABuilding::Initialize(int16 _XSize, int16 _YSize, int32 _Cost, FStat _Incom
 	
 	IsRoadBuilding = _IsRoadBuilding;
 
-	BuildingName = _BuildingName;
+	Name = _BuildingName;
 
-	IsBuildingConnected = false;
+	IsConnected = false;
 	
 	Income.Climate = _Income.Climate;
 	Income.Money = _Income.Money;
@@ -55,12 +55,9 @@ void ABuilding::OnBuildingClicked(UPrimitiveComponent* TouchedComponent, FKey Bu
 {
 	if (DefaultGameStateRef->IsDestroyModeEnabled)
 	{
-		if (BuildingName != "town_hall_lvl1" && BuildingName != "town_hall_lvl2" && BuildingName != "town_hall_lvl3")
+		if (Name != "town_hall_lvl1" && Name != "town_hall_lvl2" && Name != "town_hall_lvl3")
 		{
-			GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
-			DefaultGameStateRef->DeleteBuildingInfo(this);
-			Destroy();
-			ConditionalBeginDestroy();
+			Demolish();
 		}
 	}
 	else if (!DefaultGameStateRef->IsBuildModeEnabled)
@@ -75,12 +72,12 @@ void ABuilding::ChangeTransparency(bool _IsTransparent)
 {
 	if (_IsTransparent)
 	{
-		MeshComponent->SetMaterial(0, LoadObject<UMaterialInterface>(NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName + "_texture_material_transparent"), NULL, LOAD_None, NULL));
+		MeshComponent->SetMaterial(0, LoadObject<UMaterialInterface>(NULL, *FString("/Game/geometry/" + Name + "/" + Name + "_texture_material_transparent"), NULL, LOAD_None, NULL));
 		MeshComponent->SetCollisionProfileName("UnclickableBuilding");
 	}
 	else
 	{
-		MeshComponent->SetMaterial(0, LoadObject<UMaterialInterface>(NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName + "_texture_material"), NULL, LOAD_None, NULL));
+		MeshComponent->SetMaterial(0, LoadObject<UMaterialInterface>(NULL, *FString("/Game/geometry/" + Name + "/" + Name + "_texture_material"), NULL, LOAD_None, NULL));
 		
 		MeshComponent->SetCollisionProfileName("ClickableBuilding");
 	}
@@ -107,25 +104,31 @@ ABuilding* ABuilding::Place(TArray<UTile*> _Tiles, UPaperTileMapComponent* _Main
 	{
 		for (int j = _YTileCoord + div(YSize, 2).quot + div(YSize, 2).rem - 1; j >= _YTileCoord - div(YSize, 2).quot; j--)
 		{
-			DefaultGameStateRef->Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileType = BUILDING_RESTRICTED_TILE;
-			DefaultGameStateRef->Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->TileInfo.PackedTileIndex = 0;
+			DefaultGameStateRef->Tiles[DefaultGameStateRef->ConvertCoordinateToIndex(i, j)]->Type = BUILDING_RESTRICTED_TILE;
 			DefaultGameStateRef->MainTilemapComponent->SetTile(i, j, 0, DefaultGameStateRef->ExtraTileInfo);
 		}
 	}
 
 	ABuilding* NewBuilding = DefaultGameStateRef->WorldRef->SpawnActor<ABuilding>(
-		FVector(DefaultGameStateRef->Tiles[AnchorCoordIndex]->XTileCoord * 32.0f + 16.0f, DefaultGameStateRef->Tiles[AnchorCoordIndex]->YTileCoord * 32.0f + 16.0f, 0.0f),
+		FVector(DefaultGameStateRef->Tiles[AnchorCoordIndex]->XCoord * 32.0f + 16.0f, DefaultGameStateRef->Tiles[AnchorCoordIndex]->YCoord * 32.0f + 16.0f, 0.0f),
 		FRotator(0.0f, 0.0f, 0.0f), 
 		FActorSpawnParameters());
-	
-	NewBuilding->Initialize(XSize, YSize, Cost, Income, IsRoadBuilding, BuildingName, GetOwner());
+	NewBuilding->Initialize(XSize, YSize, Cost, Income, IsRoadBuilding, Name, GetOwner());
 	NewBuilding->AnchorCoordIndex = AnchorCoordIndex;
-	
-	NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName), NULL, LOAD_None, NULL));
-	NewBuilding->MeshComponent->SetMaterial(0, LoadObject<UMaterialInterface>(NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName + "_texture_material_transparent"), NULL, LOAD_None, NULL));
+	//NewBuilding->MeshComponent->SetStaticMesh(StaticLoadObject(, NULL, *FString("/Game/geometry/" + BuildingName + "/" + BuildingName), NULL, LOAD_None, NULL));
+	NewBuilding->MeshComponent->SetStaticMesh(LoadObject<UStaticMesh>(NULL, *FString("/Game/geometry/" + Name + "/" + Name), NULL, LOAD_None, NULL));
+	NewBuilding->MeshComponent->SetMaterial(0, LoadObject<UMaterialInterface>(NULL, *FString("/Game/geometry/" + Name + "/" + Name + "_texture_material_transparent"), NULL, LOAD_None, NULL));
 	NewBuilding->MeshComponent->SetCollisionProfileName("UnclickableBuilding");
 	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, NewBuilding->MeshComponent->GetFullName());
 
 	return NewBuilding;
 	
+}
+
+void ABuilding::Demolish()
+{
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "DESTROY HOUSE");
+	DefaultGameStateRef->DeleteBuildingInfo(this);
+	Destroy();
+	ConditionalBeginDestroy();
 }
