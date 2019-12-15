@@ -97,8 +97,14 @@ public:
 	class UShopWidgetUMG* ShopWidgetRef;
 
 	UPROPERTY()
+	class UMenuWidgetUMG* MenuWidgetRef;
+
+	UPROPERTY()
 	class UTime* CurrentTimeRef;
 
+	UPROPERTY()
+	bool IsMenuEnabled;
+	
 	UPROPERTY()
 	struct FButtonStyle DestroyModeButtonStyle;
 

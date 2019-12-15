@@ -169,7 +169,7 @@ public:
 	
 	//Other
 	UFUNCTION()
-	void UpgradeTownHall();
+	void UpgradeTownHall(FString _TownHallID);
 	
 	UFUNCTION()
 	void CheckEvents();

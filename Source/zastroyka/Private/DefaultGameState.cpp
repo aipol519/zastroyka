@@ -138,20 +138,40 @@ void ADefaultGameState::SetDefaultTiles()
 void ADefaultGameState::SetDefaultBuildings()
 {
 	DefaultBuildings.Add("1", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("2", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("3", NewObject<ABuilding>(this));
+
 	DefaultBuildings.Add("1A", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1B", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1C", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1D", NewObject<ABuilding>(this));
 	DefaultBuildings.Add("1E", NewObject<ABuilding>(this));
-	DefaultBuildings.Add("2", NewObject<ABuilding>(this));
+
+	DefaultBuildings.Add("2A", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("2B", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("2C", NewObject<ABuilding>(this));
+
+	DefaultBuildings.Add("3A", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("3B", NewObject<ABuilding>(this));
+	DefaultBuildings.Add("3C", NewObject<ABuilding>(this));
 
 	DefaultBuildings["1"]->Initialize(4, 3, 0, FStat(0, 0, 0, 0), false, "town_hall_lvl1", this);
+	DefaultBuildings["2"]->Initialize(4, 3, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl2", this);
+	DefaultBuildings["3"]->Initialize(4, 3, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl3", this);
+
 	DefaultBuildings["1A"]->Initialize(2, 2, 300, FStat(0, 6, 2, 0), false, "hut", this);
 	DefaultBuildings["1B"]->Initialize(6, 2, 500, FStat(0, 10, 1, 0), false, "barrack", this);
 	DefaultBuildings["1C"]->Initialize(2, 1, 250, FStat(5, 0, 1,2), false, "stand", this);
 	DefaultBuildings["1D"]->Initialize(1, 1, 0, FStat(0, 0, 0, 0), true, "road", this);
 	DefaultBuildings["1E"]->Initialize(6, 4, 400, FStat(8, 0, 0, 10), false, "farm", this);
-	DefaultBuildings["2"]->Initialize(1, 1, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl2", this);
+
+	DefaultBuildings["2A"]->Initialize(7, 3, 100, FStat(0, 6, 2, 0), false, "panel_building", this);
+	DefaultBuildings["2B"]->Initialize(7, 6, 100, FStat(0, 10, 1, 0), false, "plant", this);
+	DefaultBuildings["2C"]->Initialize(3, 2, 100, FStat(5, 0, 1, 2), false, "grocery", this);
+
+	DefaultBuildings["3A"]->Initialize(4, 4, 100, FStat(0, 6, 2, 0), false, "apartments", this);
+	DefaultBuildings["3B"]->Initialize(4, 3, 100, FStat(0, 10, 1, 0), false, "business_center", this);
+	DefaultBuildings["3C"]->Initialize(9, 5, 100, FStat(5, 0, 1, 2), false, "supermarket", this);
 
 	Buildings.Add(DefaultBuildings["1"]->Place(Tiles, MainTilemapComponent, 30, 30));
 	Buildings[0]->ChangeTransparency(false);
@@ -280,9 +300,10 @@ void ADefaultGameState::SelectBuilding(FString _BuildingID)
 {
 	ClearBuildingTileMapArea();
 	SelectedBuilding = FindBuilding(_BuildingID);
+
 	if (SelectedBuilding->Name == "town_hall_lvl2" || SelectedBuilding->Name == "town_hall_lvl3")
 	{
-		UpgradeTownHall();
+		UpgradeTownHall(_BuildingID);
 		SelectedBuilding = nullptr;
 	}
 }
@@ -485,12 +506,13 @@ void ADefaultGameState::Action(int16 _XTileCoord, int16 _YTileCoord)
 	}
 }
 
-void ADefaultGameState::UpgradeTownHall()
+void ADefaultGameState::UpgradeTownHall(FString _TownHallID)
 {
 	Buildings[0]->Demolish();
 	ExtraTileInfo.PackedTileIndex = BUILDING_RESTRICTED_TILE;
 	Buildings.Insert(SelectedBuilding->Place(Tiles, MainTilemapComponent, 30, 30), 0);
-	// shop update
+
+	ShopWidgetRef->UpdateShopButtons(_TownHallID);
 }
 
 void ADefaultGameState::RefreshConnectionMap()

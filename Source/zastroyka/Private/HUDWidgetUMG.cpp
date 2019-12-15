@@ -36,6 +36,9 @@ void UHUDWidgetUMG::NativeConstruct()
 	
 	DefaultGameStateRef->SetHUDWidgetRef(this);
 	CurrentTimeRef = DefaultGameStateRef->CurrentTimeRef;
+
+	IsMenuEnabled = false;
+
 }
 
 void UHUDWidgetUMG::BuildButtonClicked()
@@ -149,11 +152,17 @@ void UHUDWidgetUMG::DestroyButtonClicked()
 
 void UHUDWidgetUMG::MainMenuButtonClicked()
 {
-	if (CurrentTimeRef->GetCurrentTimeMode() != PAUSE)
+	if (MenuWidgetRef->IsAnimationPlaying(MenuWidgetRef->MenuBorderAnimation))
 	{
-		CurrentTimeRef->Play();
+		return;
 	}
+
+	IsMenuEnabled ?
+		MenuWidgetRef->PlayMenuBorderAnimation(EUMGSequencePlayMode::Reverse) :
+		MenuWidgetRef->PlayMenuBorderAnimation(EUMGSequencePlayMode::Forward);
 	
-	DefaultGameStateRef->GetDefaultHUD()->GetMenuWidget()->SetVisibility(ESlateVisibility::Visible);
+	MenuWidgetRef->SetVisibility(ESlateVisibility::Visible);
+
+	IsMenuEnabled = !IsMenuEnabled;
 
 }

@@ -16,16 +16,22 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
-	void ResumeButtonClicked();
+	void OptionsButtonClicked();
 
 	UFUNCTION()
 	void QuitButtonClicked();
 
+	UFUNCTION()
+	void PlayMenuBorderAnimation(EUMGSequencePlayMode::Type _PlayMode);
+
 	UPROPERTY(meta = (BindWidget))
-	class UButton* ResumeButton;
+	class UButton* OptionsButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	class UWidgetAnimation* MenuBorderAnimation;
 
 	UPROPERTY()
 	class ADefaultGameState* DefaultGameStateRef;

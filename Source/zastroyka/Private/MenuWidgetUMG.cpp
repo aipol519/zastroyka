@@ -6,6 +6,7 @@
 #include "DefaultGameState.h"
 #include "Time.h"
 #include "GamePlayerController.h"
+#include "WidgetAnimation.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -15,20 +16,24 @@ void UMenuWidgetUMG::NativeConstruct()
 
 	CurrentTimeRef = DefaultGameStateRef->CurrentTimeRef;
 
-	ResumeButton->OnClicked.AddDynamic(this, &UMenuWidgetUMG::ResumeButtonClicked);
+	OptionsButton->OnClicked.AddDynamic(this, &UMenuWidgetUMG::OptionsButtonClicked);
 	QuitButton->OnClicked.AddDynamic(this, &UMenuWidgetUMG::QuitButtonClicked);
 
 }
 
-void UMenuWidgetUMG::ResumeButtonClicked()
+void UMenuWidgetUMG::OptionsButtonClicked()
 {
-	CurrentTimeRef->Play();
 
-	SetVisibility(ESlateVisibility::Collapsed);
+	// ... //
 
 }
 
 void UMenuWidgetUMG::QuitButtonClicked()
 {
 	UKismetSystemLibrary::QuitGame(DefaultGameStateRef->WorldRef, DefaultGameStateRef->PlayerControllerRef, EQuitPreference::Quit, true);
+}
+
+void UMenuWidgetUMG::PlayMenuBorderAnimation(EUMGSequencePlayMode::Type _PlayMode)
+{
+	PlayAnimation(MenuBorderAnimation, 0.0f, 1, _PlayMode, 1.0f);
 }
