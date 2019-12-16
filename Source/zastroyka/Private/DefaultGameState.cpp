@@ -159,11 +159,11 @@ void ADefaultGameState::SetDefaultBuildings()
 	DefaultBuildings["2"]->Initialize(4, 3, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl2", this);
 	DefaultBuildings["3"]->Initialize(4, 3, 300, FStat(0, 0, 0, 0), false, "town_hall_lvl3", this);
 
-	DefaultBuildings["1A"]->Initialize(2, 2, 300, FStat(0, 6, 2, 0), false, "hut", this);
-	DefaultBuildings["1B"]->Initialize(6, 2, 500, FStat(0, 10, 1, 0), false, "barrack", this);
-	DefaultBuildings["1C"]->Initialize(2, 1, 250, FStat(5, 0, 1,2), false, "stand", this);
+	DefaultBuildings["1A"]->Initialize(2, 2, 300, FStat(0, 6, 1, 0), false, "hut", this);
+	DefaultBuildings["1B"]->Initialize(6, 2, 500, FStat(0, 40, -2, 0), false, "barrack", this);
+	DefaultBuildings["1C"]->Initialize(2, 1, 200, FStat(20, 0, 5, 2), false, "stand", this);
 	DefaultBuildings["1D"]->Initialize(1, 1, 0, FStat(0, 0, 0, 0), true, "road", this);
-	DefaultBuildings["1E"]->Initialize(6, 4, 400, FStat(8, 0, 0, 10), false, "farm", this);
+	DefaultBuildings["1E"]->Initialize(6, 4, 500, FStat(40, 0, 1, 30), false, "farm", this);
 
 	DefaultBuildings["2A"]->Initialize(7, 3, 100, FStat(0, 6, 2, 0), false, "panel_building", this);
 	DefaultBuildings["2B"]->Initialize(7, 6, 100, FStat(0, 10, 1, 0), false, "plant", this);
