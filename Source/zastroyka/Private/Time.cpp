@@ -38,7 +38,7 @@ void UTime::Initialize()
 	DayOfWeek = 1;
 	Day = 1;
 	Month = 1;
-	Year = 1950;
+	Year = 1960;
 	CurrentTimeMode = NORMAL;
 	
 	DefaultGameStateRef->WorldRef->GetTimerManager().SetTimer(TimerHandle, this, &UTime::TimeTick, 1.0f, true);

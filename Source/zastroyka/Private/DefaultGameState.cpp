@@ -186,16 +186,39 @@ void ADefaultGameState::SetDefaultEvents()
 	DefaultEvents.Add("test4", NewObject<UEventBase>(this));
 	DefaultEvents.Add("test5", NewObject<UEventBase>(this));
 	DefaultEvents.Add("test6", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test7", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test8", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test9", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test10", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test11", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test12", NewObject<UEventBase>(this));
+	DefaultEvents.Add("test13", NewObject<UEventBase>(this));
 	
 	DefaultEvents["Game Start"]->Initialize("Welcome to ZASTROYKA",
 		"You are the head of this \"city\". The goal of the game is to earn as much money as possible and maybe make people a little happier.\n\nControls:\nLMB - action\nMouse to screen borders - camera movement",
 		FStat(0, 0, 0, 0), 0.0, this);
 	DefaultEvents["test1"]->Initialize("test1", "Hello TUTOR", FStat(0, 0, 0, 0), 0.01, this);
-	DefaultEvents["test2"]->Initialize("test2", "Hello TUTOR", FStat(0, 0, 0, 0), 0.05, this);
-	DefaultEvents["test3"]->Initialize("test3", "Hello TUTOR", FStat(0, 0, 0, 0), 0.1, this);
-	DefaultEvents["test4"]->Initialize("test4", "Hello TUTOR", FStat(0, 0, 0, 0), 0.15, this);
-	DefaultEvents["test5"]->Initialize("test5", "Hello TUTOR", FStat(0, 0, 0, 0), 0.2, this);
-	DefaultEvents["test6"]->Initialize("test6", "Exit Event Test", FStat(0, 0, 0, 0), 0.25, this);
+
+	DefaultEvents["test2"]->Initialize("Fire Safety Issues",
+		"A review of the manual revealed negligence in the firefighting system. A heavy fine was paid.", FStat(1, 0, 0, 0), 1.0f, this);
+	DefaultEvents["test3"]->Initialize("Cheap Bribe",
+		"Hello TUTOR", FStat(0, 1, 0, 0), 0.1, this);
+	DefaultEvents["test4"]->Initialize("Fallout",
+		"Hello TUTOR", FStat(1, 1, 1, 0), 0.1, this);
+	DefaultEvents["test5"]->Initialize("City Miracle",
+		"Hello TUTOR", FStat(1, 0, 1, 0), 0.1, this);
+	DefaultEvents["test6"]->Initialize("Rumors Of Maniac",
+		"Hello TUTOR", FStat(0, 0, 1, 0), 0.1, this);
+	DefaultEvents["test7"]->Initialize("Earthquake!",
+		"Hello TUTOR", FStat(0, 0, 0, 1), 0.1, this);
+	DefaultEvents["test8"]->Initialize("Earthquake!",
+		"Hello TUTOR", FStat(0, 0, 0, 0), 0.1, this);
+
+	DefaultEvents["test9"]->Initialize("test2", "Hello TUTOR", FStat(0, 0, 0, 0), 0.05, this);
+	DefaultEvents["test10"]->Initialize("test3", "Hello TUTOR", FStat(0, 0, 0, 0), 0.1, this);
+	DefaultEvents["test11"]->Initialize("test4", "Hello TUTOR", FStat(0, 0, 0, 0), 0.15, this);
+	DefaultEvents["test12"]->Initialize("test5", "Hello TUTOR", FStat(0, 0, 0, 0), 0.2, this);
+	DefaultEvents["test13"]->Initialize("test6", "Exit Event Test", FStat(0, 0, 0, 0), 0.25, this);
 	
 	DefaultEvents["Game Start"]->Execute();
 }
